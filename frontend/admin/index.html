@@ -8,17 +8,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #f59e0b;
-            --accent: #10b981;
+            --primary: #1B2E4B;
+            --primary-dark: #152238;
+            --accent: #C9A84C;
+            --accent-light: #F0D9A0;
+            --success: #10B981;
             --danger: #ef4444;
             --dark: #0f172a;
             --darker: #020617;
             --light: #f8fafc;
             --gray: #64748b;
             --gray-light: #e2e8f0;
-            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            --gradient: linear-gradient(135deg, #C9A84C 0%, #F0D9A0 100%);
             --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
         }
@@ -41,7 +42,7 @@
         /* Sidebar */
         .sidebar {
             width: 260px;
-            background: var(--dark);
+            background: var(--primary);
             border-right: 1px solid rgba(255,255,255,0.05);
             display: flex;
             flex-direction: column;
@@ -58,9 +59,9 @@
         .sidebar-logo {
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.5rem; font-weight: 700;
-            background: var(--gradient);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            color: var(--accent);
         }
+        .sidebar-logo span { font-weight: 300; color: white; }
 
         .sidebar-nav {
             flex: 1;
@@ -71,7 +72,7 @@
         .nav-item {
             display: flex; align-items: center; gap: 0.875rem;
             padding: 0.875rem 1.5rem;
-            color: var(--gray);
+            color: rgba(255,255,255,0.6);
             text-decoration: none;
             font-weight: 500;
             font-size: 0.95rem;
@@ -82,8 +83,8 @@
 
         .nav-item:hover, .nav-item.active {
             color: var(--light);
-            background: rgba(99, 102, 241, 0.08);
-            border-left-color: var(--primary);
+            background: rgba(201, 168, 76, 0.08);
+            border-left-color: var(--accent);
         }
 
         .nav-item i { width: 20px; text-align: center; }
@@ -103,6 +104,7 @@
             background: var(--gradient);
             display: flex; align-items: center; justify-content: center;
             font-weight: 600; font-size: 0.875rem;
+            color: var(--primary);
         }
 
         .user-details { flex: 1; }
@@ -142,7 +144,7 @@
             transition: all 0.3s;
         }
         .stat-card:hover {
-            border-color: rgba(99, 102, 241, 0.2);
+            border-color: rgba(201, 168, 76, 0.2);
             transform: translateY(-2px);
         }
 
@@ -157,9 +159,9 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 1.1rem;
         }
-        .stat-icon.purple { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
+        .stat-icon.purple { background: rgba(201, 168, 76, 0.1); color: var(--accent); }
         .stat-icon.orange { background: rgba(245, 158, 11, 0.1); color: var(--secondary); }
-        .stat-icon.green { background: rgba(16, 185, 129, 0.1); color: var(--accent); }
+        .stat-icon.green { background: rgba(16, 185, 129, 0.1); color: var(--success); }
         .stat-icon.red { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
 
         .stat-change {
@@ -168,7 +170,7 @@
             padding: 0.25rem 0.5rem;
             border-radius: 6px;
         }
-        .stat-change.up { background: rgba(16, 185, 129, 0.1); color: var(--accent); }
+        .stat-change.up { background: rgba(16, 185, 129, 0.1); color: var(--success); }
         .stat-change.down { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
 
         .stat-value {
@@ -176,6 +178,7 @@
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 0.25rem;
+            color: var(--accent);
         }
         .stat-label { color: var(--gray); font-size: 0.9rem; }
 
@@ -222,7 +225,7 @@
             border-bottom: 1px solid rgba(255,255,255,0.03);
         }
         .data-table tr:hover td {
-            background: rgba(99, 102, 241, 0.03);
+            background: rgba(201, 168, 76, 0.03);
         }
 
         .status-badge {
@@ -232,9 +235,9 @@
             font-size: 0.75rem;
             font-weight: 600;
         }
-        .status-new { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
+        .status-new { background: rgba(99, 102, 241, 0.1); color: #818cf8; }
         .status-contacted { background: rgba(245, 158, 11, 0.1); color: var(--secondary); }
-        .status-converted { background: rgba(16, 185, 129, 0.1); color: var(--accent); }
+        .status-converted { background: rgba(16, 185, 129, 0.1); color: var(--success); }
         .status-closed { background: rgba(100, 116, 139, 0.1); color: var(--gray); }
 
         .source-badge {
@@ -260,8 +263,8 @@
         }
         .tab:hover { color: var(--light); }
         .tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
+            color: var(--accent);
+            border-bottom-color: var(--accent);
         }
 
         /* Buttons */
@@ -273,10 +276,13 @@
             cursor: pointer; transition: all 0.3s;
             border: none; text-decoration: none;
         }
-        .btn-primary { background: var(--gradient); color: white; }
-        .btn-primary:hover { transform: translateY(-1px); }
+        .btn-primary {
+            background: var(--gradient);
+            color: var(--primary);
+        }
+        .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.05); }
         .btn-outline { background: transparent; color: var(--light); border: 1px solid rgba(255,255,255,0.15); }
-        .btn-outline:hover { border-color: var(--primary); }
+        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
         .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
         .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
         .btn-sm { padding: 0.4rem 0.875rem; font-size: 0.8rem; }
@@ -298,7 +304,7 @@
             outline: none; font-family: inherit;
         }
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-            border-color: var(--primary);
+            border-color: var(--accent);
         }
         .form-group textarea { min-height: 80px; resize: vertical; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -358,13 +364,14 @@
             .content-grid { grid-template-columns: 1fr; }
         }
     </style>
+<base target="_blank">
 </head>
 <body>
     <div class="admin-layout">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-logo">Ten&See Admin</div>
+                <div class="sidebar-logo">Ten<span>&</span>See Admin</div>
             </div>
             <nav class="sidebar-nav">
                 <a class="nav-item active" onclick="showSection('dashboard')">
@@ -442,7 +449,7 @@
                 <div class="content-grid">
                     <div class="card">
                         <div class="card-header">
-                            <h3><i class="fas fa-clock" style="color:var(--primary)"></i> Recent Leads</h3>
+                            <h3><i class="fas fa-clock" style="color:var(--accent)"></i> Recent Leads</h3>
                             <a class="btn btn-sm btn-outline" onclick="showSection('leads')">View All</a>
                         </div>
                         <div class="card-body">
@@ -595,7 +602,7 @@
                 </div>
                 <div class="card">
                     <div class="card-header">
-                        <h3><i class="fas fa-chart-area" style="color:var(--primary)"></i> Lead Trends (Last 30 Days)</h3>
+                        <h3><i class="fas fa-chart-area" style="color:var(--accent)"></i> Lead Trends (Last 30 Days)</h3>
                     </div>
                     <div class="card-body" id="trendsChart" style="padding:2rem;height:300px;">
                         <!-- Trend chart rendered via JS -->
@@ -745,7 +752,7 @@
             document.body.innerHTML = `
                 <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--darker);">
                     <div style="background:var(--dark);padding:2.5rem;border-radius:20px;border:1px solid rgba(255,255,255,0.1);width:100%;max-width:400px;">
-                        <div class="sidebar-logo" style="text-align:center;margin-bottom:2rem;font-size:2rem;">Ten&See Admin</div>
+                        <div class="sidebar-logo" style="text-align:center;margin-bottom:2rem;font-size:2rem;">Ten<span>&</span>See Admin</div>
                         <form onsubmit="login(event)">
                             <div class="form-group">
                                 <label>Username</label>
@@ -867,7 +874,7 @@
                 <tr>
                     <td><strong>${l.title}</strong></td>
                     <td><span style="text-transform:capitalize;font-size:0.85rem;">${l.propertyType.replace('_', ' ')}</span></td>
-                    <td>$${l.price}/${l.pricePeriod}</td>
+                    <td>RM ${l.price}/${l.pricePeriod}</td>
                     <td>${l.location?.city || '-'}</td>
                     <td>${l.views}</td>
                     <td>${l.inquiries}</td>
@@ -886,7 +893,7 @@
 
         function filterListings() {
             const search = document.getElementById('listingSearch').value.toLowerCase();
-            const filtered = allListings.filter(l => 
+            const filtered = allListings.filter(l =>
                 l.title.toLowerCase().includes(search) ||
                 l.location?.city?.toLowerCase().includes(search)
             );
@@ -1029,7 +1036,7 @@
             const search = document.getElementById('leadSearch').value.toLowerCase();
             let filtered = allLeads;
             if (leadStatusFilter !== 'all') filtered = filtered.filter(l => l.status === leadStatusFilter);
-            if (search) filtered = filtered.filter(l => 
+            if (search) filtered = filtered.filter(l =>
                 l.name.toLowerCase().includes(search) ||
                 l.email.toLowerCase().includes(search)
             );
@@ -1113,7 +1120,7 @@
 
         async function openChatSession(sessionId, name) {
             currentChatSession = sessionId;
-            document.getElementById('chatSessionTitle').innerHTML = `<i class="fas fa-user-circle" style="color:var(--primary)"></i> ${name}`;
+            document.getElementById('chatSessionTitle').innerHTML = `<i class="fas fa-user-circle" style="color:var(--accent)"></i> ${name}`;
             document.getElementById('chatInputContainer').style.display = 'flex';
             await loadChatMessages(sessionId);
 
@@ -1133,7 +1140,7 @@
                 const container = document.getElementById('adminChatMessages');
                 container.innerHTML = data.data.map(msg => `
                     <div style="margin-bottom:1rem;display:flex;${msg.isAdmin ? 'justify-content:flex-end' : ''}">
-                        <div style="max-width:70%;padding:0.75rem 1rem;border-radius:16px;${msg.isAdmin ? 'background:var(--gradient);color:white;border-bottom-right-radius:4px;' : 'background:rgba(255,255,255,0.05);border-bottom-left-radius:4px;'}">
+                        <div style="max-width:70%;padding:0.75rem 1rem;border-radius:16px;${msg.isAdmin ? 'background:var(--gradient);color:var(--primary);border-bottom-right-radius:4px;' : 'background:rgba(255,255,255,0.05);border-bottom-left-radius:4px;'}">
                             <div style="font-size:0.9rem;">${msg.message}</div>
                             <div style="font-size:0.7rem;opacity:0.7;margin-top:0.25rem;text-align:right;">${new Date(msg.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
                         </div>
