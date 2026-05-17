@@ -1,6 +1,6 @@
 {
   "name": "tenandsee-backend",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Ten&See Property Booking Platform Backend",
   "main": "server.js",
   "scripts": {
@@ -15,7 +15,9 @@
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
     "socket.io": "^4.7.2",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "nodemailer": "^6.9.4",
+    "node-cron": "^3.0.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
