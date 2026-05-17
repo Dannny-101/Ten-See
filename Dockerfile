@@ -2,9 +2,13 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy package files
-COPY backend/package*.json ./
+# Copy backend package files and install IN the backend directory
+COPY backend/package*.json ./backend/
+WORKDIR /app/backend
 RUN npm install --production
+
+# Go back to /app to copy everything else
+WORKDIR /app
 
 # Copy application files
 COPY backend/ ./backend/
