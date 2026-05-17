@@ -7,36 +7,67 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animate On Scroll -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #f59e0b;
-            --accent: #10b981;
-            --dark: #0f172a;
-            --darker: #020617;
-            --light: #f8fafc;
-            --gray: #64748b;
-            --gray-light: #e2e8f0;
-            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-            --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            --color-primary: #1B2E4B;
+            --color-accent: #C9A84C;
+            --color-accent-light: #F0D9A0;
+            --color-bg: #F7F8FA;
+            --color-surface: #FFFFFF;
+            --color-text-main: #1A1A2E;
+            --color-text-muted: #6B7280;
+            --color-success: #10B981;
+            --color-border: #E5E7EB;
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-            --shadow-glow: 0 0 40px -10px rgba(99, 102, 241, 0.4);
         }
+
+        html { scroll-behavior: smooth; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--darker);
-            color: var(--light);
+            background: var(--color-bg);
+            color: var(--color-text-main);
             overflow-x: hidden;
             line-height: 1.6;
         }
 
         h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', sans-serif; }
+
+        /* Loading Screen */
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background: var(--color-primary);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        #loadingScreen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #loadingScreen .loading-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--color-accent);
+            margin-bottom: 0.5rem;
+        }
+        #loadingScreen .loading-tagline {
+            font-size: 1rem;
+            color: white;
+            opacity: 0.9;
+        }
 
         /* Navigation */
         .navbar {
@@ -44,15 +75,13 @@
             top: 0; left: 0; right: 0;
             z-index: 1000;
             padding: 1rem 2rem;
-            background: rgba(2, 6, 23, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: var(--color-primary);
             transition: all 0.3s ease;
         }
-
         .navbar.scrolled {
+            background: var(--color-primary);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15);
             padding: 0.75rem 2rem;
-            background: rgba(2, 6, 23, 0.95);
         }
 
         .nav-container {
@@ -67,15 +96,11 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.75rem;
             font-weight: 700;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--color-accent);
             text-decoration: none;
             letter-spacing: -0.02em;
         }
-
-        .logo span { font-weight: 300; }
+        .logo span { font-weight: 300; color: white; }
 
         .nav-links {
             display: flex;
@@ -85,24 +110,32 @@
         }
 
         .nav-links a {
-            color: var(--gray);
+            color: rgba(255,255,255,0.7);
             text-decoration: none;
             font-weight: 500;
             font-size: 0.95rem;
             transition: color 0.3s ease;
             position: relative;
         }
-
-        .nav-links a:hover { color: var(--light); }
+        .nav-links a:hover { color: var(--color-accent); }
         .nav-links a::after {
             content: '';
             position: absolute;
             bottom: -4px; left: 0;
             width: 0; height: 2px;
-            background: var(--gradient);
+            background: var(--color-accent);
             transition: width 0.3s ease;
         }
         .nav-links a:hover::after { width: 100%; }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
 
         .btn {
             display: inline-flex;
@@ -113,29 +146,35 @@
             font-weight: 600;
             font-size: 0.95rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             border: none;
             text-decoration: none;
         }
+        .btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+        }
 
         .btn-primary {
-            background: var(--gradient);
-            color: white;
-            box-shadow: var(--shadow-glow);
+            background: var(--color-accent);
+            color: var(--color-primary);
+            box-shadow: 0 4px 15px rgba(201, 168, 76, 0.3);
         }
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 60px -10px rgba(99, 102, 241, 0.6);
+            background: #D4B55D;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(201, 168, 76, 0.4);
         }
 
         .btn-outline {
             background: transparent;
-            color: var(--light);
-            border: 1.5px solid rgba(255,255,255,0.15);
+            color: white;
+            border: 1.5px solid rgba(255,255,255,0.25);
         }
         .btn-outline:hover {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--color-accent);
+            background: rgba(201, 168, 76, 0.1);
+            color: var(--color-accent);
         }
 
         .btn-whatsapp {
@@ -145,7 +184,7 @@
         }
         .btn-whatsapp:hover {
             background: #128c7e;
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
 
         /* Hero Section */
@@ -157,23 +196,24 @@
             position: relative;
             padding: 8rem 2rem 4rem;
             overflow: hidden;
+            background: var(--color-primary);
         }
 
         .hero-bg {
             position: absolute;
             inset: 0;
-            background: 
-                radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 80%, rgba(245, 158, 11, 0.08) 0%, transparent 50%);
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(201, 168, 76, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(201, 168, 76, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(27, 46, 75, 0.5) 0%, transparent 50%);
         }
 
         .hero-grid {
             position: absolute;
             inset: 0;
-            background-image: 
-                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-image:
+                linear-gradient(rgba(201, 168, 76, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201, 168, 76, 0.03) 1px, transparent 1px);
             background-size: 60px 60px;
             mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
         }
@@ -190,11 +230,11 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 1rem;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.2);
+            background: rgba(201, 168, 76, 0.15);
+            border: 1px solid rgba(201, 168, 76, 0.3);
             border-radius: 100px;
             font-size: 0.875rem;
-            color: var(--primary);
+            color: var(--color-accent-light);
             margin-bottom: 2rem;
             animation: fadeInUp 0.6s ease;
         }
@@ -205,19 +245,16 @@
             line-height: 1.1;
             margin-bottom: 1.5rem;
             animation: fadeInUp 0.6s ease 0.1s both;
+            color: white;
         }
-
-        .hero h1 .gradient-text {
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .hero h1 .accent-text {
+            color: var(--color-accent);
         }
 
         .hero p {
             font-size: 1.25rem;
-            color: var(--gray);
-            max-width: 600px;
+            color: rgba(255,255,255,0.7);
+            max-width: 650px;
             margin: 0 auto 2.5rem;
             animation: fadeInUp 0.6s ease 0.2s both;
         }
@@ -230,31 +267,29 @@
             animation: fadeInUp 0.6s ease 0.3s both;
         }
 
-        .hero-stats {
+        /* Feature Badges (replacing fake stats) */
+        .hero-feature-badges {
             display: flex;
             justify-content: center;
-            gap: 3rem;
-            margin-top: 4rem;
+            gap: 1rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
             animation: fadeInUp 0.6s ease 0.4s both;
         }
-
-        .stat-item {
-            text-align: center;
+        .hero-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--color-accent-light);
+            color: var(--color-primary);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
-
-        .stat-number {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--gray);
-            margin-top: 0.25rem;
+        .hero-badge-pill i {
+            color: var(--color-primary);
+            font-size: 1rem;
         }
 
         /* Floating Cards */
@@ -268,9 +303,9 @@
 
         .float-card {
             position: absolute;
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid var(--color-border);
             border-radius: 16px;
             padding: 1rem 1.25rem;
             display: flex;
@@ -289,10 +324,11 @@
         .float-card-info h4 {
             font-size: 0.875rem;
             font-weight: 600;
+            color: var(--color-text-main);
         }
         .float-card-info p {
             font-size: 0.75rem;
-            color: var(--gray);
+            color: var(--color-text-muted);
         }
 
         .float-card:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
@@ -302,7 +338,7 @@
         /* Features Section */
         .features {
             padding: 6rem 2rem;
-            background: var(--dark);
+            background: var(--color-bg);
         }
 
         .container {
@@ -318,10 +354,12 @@
         .section-header h2 {
             font-size: clamp(2rem, 4vw, 3rem);
             margin-bottom: 1rem;
+            color: var(--color-primary);
         }
+        .section-header h2 .accent-text { color: var(--color-accent); }
 
         .section-header p {
-            color: var(--gray);
+            color: var(--color-text-muted);
             font-size: 1.125rem;
             max-width: 600px;
             margin: 0 auto;
@@ -334,69 +372,99 @@
         }
 
         .feature-card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255,255,255,0.05);
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
             border-radius: 20px;
             padding: 2rem;
-            transition: all 0.4s ease;
+            transition: all 0.25s ease;
             position: relative;
             overflow: hidden;
         }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: var(--gradient);
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
-        }
-
         .feature-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(99, 102, 241, 0.2);
-            box-shadow: var(--shadow-glow);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px -10px rgba(27, 46, 75, 0.15);
+            border-color: var(--color-accent);
         }
-
-        .feature-card:hover::before { transform: scaleX(1); }
 
         .feature-icon {
             width: 56px; height: 56px;
             border-radius: 14px;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.2);
+            background: rgba(201, 168, 76, 0.1);
+            border: 1px solid rgba(201, 168, 76, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            color: var(--primary);
+            color: var(--color-accent);
             margin-bottom: 1.25rem;
         }
 
         .feature-card h3 {
             font-size: 1.25rem;
             margin-bottom: 0.75rem;
+            color: var(--color-primary);
         }
 
         .feature-card p {
-            color: var(--gray);
+            color: var(--color-text-muted);
             font-size: 0.95rem;
             line-height: 1.7;
         }
+
+        /* Universities Section */
+        .universities-section {
+            padding: 4rem 2rem;
+            background: var(--color-bg);
+        }
+        .universities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .university-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+        .university-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px -8px rgba(27, 46, 75, 0.12);
+            border-color: var(--color-accent);
+        }
+        .university-card h4 {
+            font-size: 1.1rem;
+            color: var(--color-primary);
+            margin-bottom: 0.75rem;
+        }
+        .university-card a {
+            color: var(--color-accent);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .university-card a:hover { text-decoration: underline; }
 
         /* CTA Section */
         .cta-section {
             padding: 6rem 2rem;
             position: relative;
             overflow: hidden;
+            background: var(--color-primary);
         }
 
         .cta-bg {
             position: absolute;
             inset: 0;
-            background: var(--gradient);
-            opacity: 0.05;
+            background: radial-gradient(ellipse at center, rgba(201, 168, 76, 0.08) 0%, transparent 70%);
         }
 
         .cta-content {
@@ -410,185 +478,79 @@
         .cta-content h2 {
             font-size: clamp(2rem, 4vw, 3rem);
             margin-bottom: 1rem;
+            color: white;
         }
+        .cta-content h2 .accent-text { color: var(--color-accent); }
 
         .cta-content p {
-            color: var(--gray);
+            color: rgba(255,255,255,0.7);
             font-size: 1.125rem;
             margin-bottom: 2rem;
         }
 
         /* Footer */
         .footer {
-            padding: 3rem 2rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            text-align: center;
-            color: var(--gray);
-            font-size: 0.875rem;
+            background: var(--color-primary);
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
         }
-
-        .footer a {
-            color: var(--primary);
-            text-decoration: none;
+        .footer-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
         }
-
-        /* Chat Widget */
-        .chat-widget {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 999;
-        }
-
-        .chat-toggle {
-            width: 60px; height: 60px;
-            border-radius: 50%;
-            background: var(--gradient);
-            border: none;
-            color: white;
+        .footer-col h4 {
+            font-family: 'Space Grotesk', sans-serif;
             font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: var(--shadow-glow);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: var(--color-accent);
+            margin-bottom: 0.75rem;
         }
-
-        .chat-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .chat-panel {
-            position: absolute;
-            bottom: 75px;
-            right: 0;
-            width: 380px;
-            max-height: 500px;
-            background: rgba(15, 23, 42, 0.98);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            overflow: hidden;
-            display: none;
-            flex-direction: column;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-        }
-
-        .chat-panel.active { display: flex; }
-
-        .chat-header {
-            padding: 1.25rem;
-            background: var(--gradient);
-            color: white;
-        }
-
-        .chat-header h4 {
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .chat-header p {
-            font-size: 0.8rem;
-            opacity: 0.9;
-            margin-top: 0.25rem;
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 1rem;
-            overflow-y: auto;
-            max-height: 300px;
-        }
-
-        .chat-message {
-            margin-bottom: 1rem;
-            max-width: 80%;
-        }
-
-        .chat-message.user { margin-left: auto; }
-        .chat-message.admin { margin-right: auto; }
-
-        .chat-bubble {
-            padding: 0.75rem 1rem;
-            border-radius: 16px;
+        .footer-col h4 span { font-weight: 300; color: white; }
+        .footer-col p {
+            color: rgba(255,255,255,0.6);
             font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .chat-message.user .chat-bubble {
-            background: var(--gradient);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .chat-message.admin .chat-bubble {
-            background: rgba(255,255,255,0.08);
-            color: var(--light);
-            border-bottom-left-radius: 4px;
-        }
-
-        .chat-time {
-            font-size: 0.7rem;
-            color: var(--gray);
-            margin-top: 0.25rem;
-            text-align: right;
-        }
-
-        .chat-input-area {
-            padding: 1rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .chat-input {
-            flex: 1;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 0.75rem 1rem;
-            color: var(--light);
-            font-size: 0.9rem;
-            outline: none;
-        }
-
-        .chat-input:focus {
-            border-color: var(--primary);
-        }
-
-        .chat-send {
-            width: 44px; height: 44px;
-            border-radius: 12px;
-            background: var(--gradient);
-            border: none;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .chat-send:hover { transform: scale(1.05); }
-
-        .chat-form {
-            padding: 1rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .chat-form input {
-            width: 100%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            padding: 0.6rem 0.875rem;
-            color: var(--light);
-            font-size: 0.85rem;
+            line-height: 1.6;
             margin-bottom: 0.5rem;
-            outline: none;
         }
-
-        .chat-form input:focus { border-color: var(--primary); }
+        .footer-col h5 {
+            color: var(--color-accent-light);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .footer-col a {
+            display: block;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover { color: var(--color-accent); }
+        .footer-col .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .footer-col .contact-item i {
+            color: var(--color-accent);
+            width: 18px;
+        }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.85rem;
+        }
 
         /* Animations */
         @keyframes fadeInUp {
@@ -603,24 +565,43 @@
 
         /* Mobile */
         @media (max-width: 768px) {
-            .nav-links { display: none; }
-            .hero-stats { flex-direction: column; gap: 1.5rem; }
-            .chat-panel { width: calc(100vw - 2rem); right: -1rem; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0; right: 0;
+                background: var(--color-primary);
+                flex-direction: column;
+                padding: 1rem 2rem;
+                gap: 1rem;
+                border-top: 1px solid rgba(255,255,255,0.1);
+            }
+            .nav-links.active { display: flex; }
+            .hamburger { display: block; }
+            .hero-feature-badges { flex-direction: column; align-items: center; }
             .float-card { display: none; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
         }
     </style>
+<base target="_blank">
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <div class="loading-logo">Ten<span>&</span>See</div>
+        <div class="loading-tagline">Finding your home.</div>
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="/" class="logo">Ten<span>&</span>See</a>
-            <ul class="nav-links">
+            <button class="hamburger" onclick="toggleMobileNav()">☰</button>
+            <ul class="nav-links" id="navLinks">
                 <li><a href="/">Home</a></li>
                 <li><a href="/listings.html">Listings</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#contact">Contact</a></li>
-                <li><a href="/admin" class="btn btn-outline">Admin</a></li>
             </ul>
         </div>
     </nav>
@@ -632,24 +613,24 @@
 
         <div class="floating-cards">
             <div class="float-card">
-                <i class="fas fa-home" style="font-size:1.5rem;color:var(--primary)"></i>
+                <i class="fas fa-home" style="font-size:1.5rem;color:var(--color-accent)"></i>
                 <div class="float-card-info">
-                    <h4>Modern Studio</h4>
-                    <p>Near University • $450/mo</p>
+                    <h4>Studio Near Taylor's</h4>
+                    <p>Subang Jaya • RM 850/mo</p>
                 </div>
             </div>
             <div class="float-card">
-                <i class="fas fa-building" style="font-size:1.5rem;color:var(--secondary)"></i>
+                <i class="fas fa-building" style="font-size:1.5rem;color:var(--color-accent)"></i>
                 <div class="float-card-info">
-                    <h4>Shared Apartment</h4>
-                    <p>City Center • $320/mo</p>
+                    <h4>Shared Unit Sunway</h4>
+                    <p>Bandar Sunway • RM 550/mo</p>
                 </div>
             </div>
             <div class="float-card">
-                <i class="fas fa-bed" style="font-size:1.5rem;color:var(--accent)"></i>
+                <i class="fas fa-bed" style="font-size:1.5rem;color:var(--color-accent)"></i>
                 <div class="float-card-info">
-                    <h4>Private Room</h4>
-                    <p>Campus Area • $280/mo</p>
+                    <h4>Private Room Monash</h4>
+                    <p>Cyberjaya • RM 720/mo</p>
                 </div>
             </div>
         </div>
@@ -657,38 +638,38 @@
         <div class="hero-content">
             <div class="hero-badge">
                 <i class="fas fa-sparkles"></i>
-                Trusted by 2,000+ students worldwide
+                The trusted housing partner for international students in Malaysia.
             </div>
             <h1>
-                Find Your Perfect<br>
-                <span class="gradient-text">Student Home</span>
+                Find Your Home Near Campus —<br>
+                <span class="accent-text">Before You Even Land.</span>
             </h1>
             <p>
-                Discover verified student housing near your university. 
-                Safe, affordable, and designed for student life.
+                Ten&See guides international and local students through every step of renting in Malaysia. Verified listings, zero agent stress, full support from search to move-in.
             </p>
             <div class="hero-buttons">
                 <a href="/listings.html" class="btn btn-primary">
                     <i class="fas fa-compass"></i>
                     View Listings
                 </a>
-                <a href="https://wa.me/+966503874798" class="btn btn-whatsapp" id="whatsappBtn" target="_blank">
+                <!-- REPLACE WITH REAL WHATSAPP NUMBER -->
+                <a href="https://wa.me/60XXXXXXXXX" class="btn btn-whatsapp" id="whatsappBtn" target="_blank">
                     <i class="fab fa-whatsapp"></i>
                     Chat on WhatsApp
                 </a>
             </div>
-            <div class="hero-stats">
-                <div class="stat-item">
-                    <div class="stat-number">500+</div>
-                    <div class="stat-label">Verified Listings</div>
+            <div class="hero-feature-badges">
+                <div class="hero-badge-pill">
+                    <i class="fas fa-shield-check"></i>
+                    Every listing personally verified by our team
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">50+</div>
-                    <div class="stat-label">Universities</div>
+                <div class="hero-badge-pill">
+                    <i class="fas fa-map-pin"></i>
+                    Serving Taylor's, Sunway, Monash & more in Klang Valley
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">98%</div>
-                    <div class="stat-label">Satisfaction</div>
+                <div class="hero-badge-pill">
+                    <i class="fas fa-message-circle"></i>
+                    Live support in English, Mandarin, Tamil & Bahasa
                 </div>
             </div>
         </div>
@@ -697,69 +678,98 @@
     <!-- Features Section -->
     <section class="features" id="features">
         <div class="container">
-            <div class="section-header">
-                <h2>Why Choose <span class="gradient-text">Ten&See</span></h2>
+            <div class="section-header" data-aos="fade-up">
+                <h2>Why Choose <span class="accent-text">Ten&See</span></h2>
                 <p>Everything you need to find and secure your ideal student accommodation</p>
             </div>
             <div class="features-grid">
-                <div class="feature-card">
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3>Zero Agent Exposure</h3>
+                    <p>Students never see agent names or numbers. All enquiries go through Ten&See.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon">
+                        <i class="fas fa-plane-arrival"></i>
+                    </div>
+                    <h3>Pre-Arrival Search</h3>
+                    <p>Find and secure your room before you arrive in Malaysia. No last-minute panic.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h3>University-Specific Listings</h3>
+                    <p>Every listing tagged to your exact campus. Filter by Taylor's, Sunway, Monash and more.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <h3>Multilingual Support</h3>
+                    <p>Our team communicates in English, Mandarin, Tamil and Bahasa Malaysia.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
                     <div class="feature-icon">
                         <i class="fas fa-shield-alt"></i>
                     </div>
-                    <h3>Verified Properties</h3>
-                    <p>Every listing is personally verified by our team. No scams, no surprises. Just safe, quality housing options.</p>
+                    <h3>Verified & Safe</h3>
+                    <p>Every property is checked before it appears. No scams, no surprises.</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
                     <div class="feature-icon">
-                        <i class="fas fa-map-marker-alt"></i>
+                        <i class="fas fa-sync-alt"></i>
                     </div>
-                    <h3>Near Universities</h3>
-                    <p>Find housing within walking distance or a short commute to your campus. Location is everything.</p>
+                    <h3>Retention Support</h3>
+                    <p>Already a student? We proactively help you find your next place before your lease ends.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-wallet"></i>
-                    </div>
-                    <h3>Student Budgets</h3>
-                    <p>Transparent pricing with no hidden fees. Filter by your budget and find options that work for you.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Universities Section -->
+    <section class="universities-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Our <span class="accent-text">Universities</span></h2>
+                <p>Find verified housing near your campus</p>
+            </div>
+            <div class="universities-grid">
+                <div class="university-card" data-aos="fade-up">
+                    <h4>Taylor's University</h4>
+                    <a href="#">View listings near Taylor's →</a>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                    <h3>Instant Support</h3>
-                    <p>Chat with us live or reach out via WhatsApp. Our team is here to help you every step of the way.</p>
+                <div class="university-card" data-aos="fade-up" data-aos-delay="100">
+                    <h4>Sunway University</h4>
+                    <a href="#">View listings near Sunway →</a>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-images"></i>
-                    </div>
-                    <h3>Virtual Tours</h3>
-                    <p>Explore properties from your couch with detailed photos, floor plans, and video walkthroughs.</p>
+                <div class="university-card" data-aos="fade-up" data-aos-delay="200">
+                    <h4>Monash University Malaysia</h4>
+                    <a href="#">View listings near Monash →</a>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-handshake"></i>
-                    </div>
-                    <h3>Easy Booking</h3>
-                    <p>Reserve your spot with a simple booking process. Secure your housing before it's gone.</p>
+                <div class="university-card" data-aos="fade-up" data-aos-delay="300">
+                    <h4>INTI International University</h4>
+                    <a href="#">View listings near INTI →</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="cta-section" id="contact">
+    <section class="cta-section" id="contact" data-aos="fade-up">
         <div class="cta-bg"></div>
         <div class="cta-content">
-            <h2>Ready to Find Your Home?</h2>
-            <p>Join thousands of students who found their perfect accommodation through Ten&See</p>
+            <h2>Your next home is one <span class="accent-text">message</span> away.</h2>
+            <p>Tell us your university, budget, and move-in date — we'll handle the rest.</p>
             <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
                 <a href="/listings.html" class="btn btn-primary">
                     <i class="fas fa-search"></i>
                     Browse Listings
                 </a>
-                <a href="https://wa.me/1234567890" class="btn btn-whatsapp" id="whatsappBtn2" target="_blank">
+                <!-- REPLACE WITH REAL WHATSAPP NUMBER -->
+                <a href="https://wa.me/60XXXXXXXXX" class="btn btn-whatsapp" id="whatsappBtn2" target="_blank">
                     <i class="fab fa-whatsapp"></i>
                     Get Help on WhatsApp
                 </a>
@@ -769,41 +779,76 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <p>© 2026 Ten&See. All rights reserved. Built for students, by students.</p>
-    </footer>
-
-    <!-- Chat Widget -->
-    <div class="chat-widget">
-        <div class="chat-panel" id="chatPanel">
-            <div class="chat-header">
-                <h4><i class="fas fa-headset"></i> Ten&See Support</h4>
-                <p>We typically reply within minutes</p>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>Ten<span>&</span>See</h4>
+                <p>The trusted student housing platform in Malaysia.</p>
+                <p>Registered in Malaysia.</p>
             </div>
-            <div class="chat-messages" id="chatMessages"></div>
-            <div class="chat-form" id="chatForm">
-                <input type="text" id="chatName" placeholder="Your name" required>
-                <input type="email" id="chatEmail" placeholder="Your email" required>
-                <button class="btn btn-primary" style="width:100%;margin-top:0.5rem;" onclick="startChat()">
-                    Start Chat
-                </button>
+            <div class="footer-col">
+                <h5>Links</h5>
+                <a href="/">Home</a>
+                <a href="/listings.html">Listings</a>
+                <a href="#contact">Contact</a>
             </div>
-            <div class="chat-input-area" id="chatInputArea" style="display:none;">
-                <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter')sendMessage()">
-                <button class="chat-send" onclick="sendMessage()">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+            <div class="footer-col">
+                <h5>Contact</h5>
+                <div class="contact-item">
+                    <i class="fab fa-whatsapp"></i>
+                    <!-- REAL NUMBER HERE -->
+                    <span>+60 XX-XXXX XXXX</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>hello@tenandsee.homes</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fab fa-instagram"></i>
+                    <span>@tenseeofficial</span>
+                </div>
             </div>
         </div>
-        <button class="chat-toggle" id="chatToggle" onclick="toggleChat()">
-            <i class="fas fa-comment-dots"></i>
-        </button>
-    </div>
+        <div class="footer-bottom">
+            <p>© 2026 Ten&See. All rights reserved.</p>
+        </div>
+    </footer>
 
+    <!-- Tawk.to Chat Widget -->
+    <!-- Start of Tawk.to Script -->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/YOUR_TAWKTO_PROPERTY_ID/default';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!-- End of Tawk.to Script -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
+        // Loading screen fade out
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 1500);
+        });
+
+        // AOS Init
+        AOS.init({ duration: 600, once: true });
+
         // Navbar scroll effect
         window.addEventListener('scroll', () => {
             document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
         });
+
+        // Mobile hamburger toggle
+        function toggleMobileNav() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
 
         // WhatsApp tracking
         document.querySelectorAll('[id^="whatsappBtn"]').forEach(btn => {
@@ -822,93 +867,6 @@
                 } catch(e) { console.log('Lead tracking:', e); }
             });
         });
-
-        // Chat functionality
-        let chatSessionId = localStorage.getItem('chatSessionId');
-        let chatStarted = false;
-
-        function toggleChat() {
-            const panel = document.getElementById('chatPanel');
-            panel.classList.toggle('active');
-            if (panel.classList.contains('active') && chatSessionId) {
-                loadChatHistory();
-            }
-        }
-
-        async function startChat() {
-            const name = document.getElementById('chatName').value;
-            const email = document.getElementById('chatEmail').value;
-            if (!name || !email) return alert('Please fill in all fields');
-
-            try {
-                const res = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, message: 'Chat started', isAdmin: false })
-                });
-                const data = await res.json();
-                chatSessionId = data.sessionId;
-                localStorage.setItem('chatSessionId', chatSessionId);
-
-                document.getElementById('chatForm').style.display = 'none';
-                document.getElementById('chatInputArea').style.display = 'flex';
-                chatStarted = true;
-
-                addMessage('admin', 'Hi there! Welcome to Ten&See. How can we help you find your perfect student home today?');
-
-                // Track as lead
-                await fetch('/api/leads', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, source: 'chat', message: 'Started live chat' })
-                });
-            } catch(e) { console.error(e); }
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            if (!message) return;
-
-            addMessage('user', message);
-            input.value = '';
-
-            try {
-                await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ sessionId: chatSessionId, message, isAdmin: false })
-                });
-            } catch(e) { console.error(e); }
-        }
-
-        function addMessage(sender, text) {
-            const container = document.getElementById('chatMessages');
-            const div = document.createElement('div');
-            div.className = `chat-message ${sender}`;
-            div.innerHTML = `
-                <div class="chat-bubble">${text}</div>
-                <div class="chat-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-            `;
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        async function loadChatHistory() {
-            if (!chatSessionId) return;
-            try {
-                const res = await fetch(`/api/chat/${chatSessionId}`);
-                const data = await res.json();
-                document.getElementById('chatMessages').innerHTML = '';
-                data.data.forEach(msg => {
-                    if (msg.message !== 'Chat started') {
-                        addMessage(msg.isAdmin ? 'admin' : 'user', msg.message);
-                    }
-                });
-                document.getElementById('chatForm').style.display = 'none';
-                document.getElementById('chatInputArea').style.display = 'flex';
-            } catch(e) { console.error(e); }
-        }
     </script>
 </body>
 </html>
