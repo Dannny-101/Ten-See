@@ -1,1227 +1,1749 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Ten&See</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #1B2E4B;
-            --primary-dark: #152238;
-            --accent: #C9A84C;
-            --accent-light: #F0D9A0;
-            --success: #10B981;
-            --danger: #ef4444;
-            --dark: #0f172a;
-            --darker: #020617;
-            --light: #f8fafc;
-            --gray: #64748b;
-            --gray-light: #e2e8f0;
-            --gradient: linear-gradient(135deg, #C9A84C 0%, #F0D9A0 100%);
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ten&See — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0c0e12;
+      --surface: #13161d;
+      --surface2: #1a1e28;
+      --border: rgba(255,255,255,0.06);
+      --border-accent: rgba(201,168,76,0.3);
+      --gold: #C9A84C;
+      --gold-light: #e8c97a;
+      --gold-dim: rgba(201,168,76,0.12);
+      --text: #e8eaf0;
+      --text-muted: #6b7280;
+      --text-dim: #9ca3af;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --navy: #1B2E4B;
+      --radius: 12px;
+      --radius-lg: 18px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.4);
+      --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+    }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--darker);
-            color: var(--light);
-            line-height: 1.6;
-        }
-        h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', sans-serif; }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-        /* Layout */
-        .admin-layout {
-            display: flex;
-            min-height: 100vh;
-        }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background: var(--primary);
-            border-right: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            z-index: 100;
-        }
+    /* ── LAYOUT ── */
+    .layout { display: flex; min-height: 100vh; }
 
-        .sidebar-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 240px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 200;
+      transition: transform var(--transition);
+    }
 
-        .sidebar-logo {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.5rem; font-weight: 700;
-            color: var(--accent);
-        }
-        .sidebar-logo span { font-weight: 300; color: white; }
+    .sidebar-logo {
+      padding: 1.5rem 1.25rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--gold);
+      letter-spacing: -0.5px;
+    }
+    .logo-sub { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; }
 
-        .sidebar-nav {
-            flex: 1;
-            padding: 1rem 0;
-            overflow-y: auto;
-        }
+    .sidebar-nav { flex: 1; padding: 0.75rem 0; overflow-y: auto; }
 
-        .nav-item {
-            display: flex; align-items: center; gap: 0.875rem;
-            padding: 0.875rem 1.5rem;
-            color: rgba(255,255,255,0.6);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-left: 3px solid transparent;
-        }
+    .nav-section-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      padding: 0.75rem 1.25rem 0.25rem;
+    }
 
-        .nav-item:hover, .nav-item.active {
-            color: var(--light);
-            background: rgba(201, 168, 76, 0.08);
-            border-left-color: var(--accent);
-        }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 1.25rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      border-left: 3px solid transparent;
+      font-size: 0.875rem;
+      font-weight: 500;
+      user-select: none;
+      position: relative;
+    }
+    .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+    .nav-item.active { color: var(--gold); background: var(--gold-dim); border-left-color: var(--gold); }
+    .nav-item i { width: 18px; text-align: center; font-size: 0.85rem; }
+    .nav-badge {
+      margin-left: auto;
+      background: var(--danger);
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 100px;
+      min-width: 18px;
+      text-align: center;
+    }
 
-        .nav-item i { width: 20px; text-align: center; }
+    .sidebar-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+    .admin-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .admin-avatar {
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.8rem;
+      color: var(--navy);
+      flex-shrink: 0;
+    }
+    .admin-name { font-size: 0.85rem; font-weight: 600; }
+    .admin-role { font-size: 0.7rem; color: var(--text-muted); }
+    .btn-logout {
+      margin-left: auto;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.35rem 0.6rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all var(--transition);
+      flex-shrink: 0;
+    }
+    .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
 
-        .sidebar-footer {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
+    /* ── MAIN ── */
+    .main { flex: 1; margin-left: 240px; display: flex; flex-direction: column; min-height: 100vh; }
 
-        .user-info {
-            display: flex; align-items: center; gap: 0.75rem;
-        }
+    /* ── TOP BAR ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(12,14,18,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.875rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .topbar-title { font-size: 1.1rem; font-weight: 600; }
+    .topbar-subtitle { font-size: 0.8rem; color: var(--text-muted); }
+    .topbar-actions { display: flex; align-items: center; gap: 0.75rem; }
 
-        .user-avatar {
-            width: 36px; height: 36px;
-            border-radius: 10px;
-            background: var(--gradient);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 600; font-size: 0.875rem;
-            color: var(--primary);
-        }
+    .notif-btn {
+      position: relative;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-size: 0.85rem;
+    }
+    .notif-btn:hover { color: var(--gold); border-color: var(--border-accent); }
+    .notif-dot {
+      position: absolute;
+      top: 6px; right: 6px;
+      width: 8px; height: 8px;
+      background: var(--danger);
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+      display: none;
+    }
+    .notif-dot.visible { display: block; }
 
-        .user-details { flex: 1; }
-        .user-name { font-size: 0.875rem; font-weight: 600; }
-        .user-role { font-size: 0.75rem; color: var(--gray); }
+    /* ── CONTENT ── */
+    .content { flex: 1; padding: 2rem; }
 
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 260px;
-            padding: 2rem;
-        }
+    .section { display: none; }
+    .section.active { display: block; }
 
-        .page-title {
-            font-size: 1.75rem;
-            margin-bottom: 0.25rem;
-        }
-        .page-subtitle {
-            color: var(--gray);
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-        }
+    /* ── STATS GRID ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      transition: all var(--transition);
+      cursor: default;
+    }
+    .stat-card:hover { border-color: var(--border-accent); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .stat-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+    .stat-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+    }
+    .si-gold { background: var(--gold-dim); color: var(--gold); }
+    .si-blue { background: rgba(59,130,246,0.12); color: var(--info); }
+    .si-green { background: rgba(34,197,94,0.12); color: var(--success); }
+    .si-red { background: rgba(239,68,68,0.12); color: var(--danger); }
+    .si-orange { background: rgba(245,158,11,0.12); color: var(--warning); }
+    .si-purple { background: rgba(168,85,247,0.12); color: #a855f7; }
 
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
+    .stat-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 100px;
+    }
+    .badge-up { background: rgba(34,197,94,0.12); color: var(--success); }
+    .badge-down { background: rgba(239,68,68,0.12); color: var(--danger); }
+    .badge-neutral { background: rgba(107,114,128,0.15); color: var(--text-muted); }
 
-        .stat-card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: all 0.3s;
-        }
-        .stat-card:hover {
-            border-color: rgba(201, 168, 76, 0.2);
-            transform: translateY(-2px);
-        }
+    .stat-value {
+      font-family: 'DM Mono', monospace;
+      font-size: 1.75rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    .stat-label { font-size: 0.8rem; color: var(--text-muted); }
 
-        .stat-header {
-            display: flex; justify-content: space-between; align-items: flex-start;
-            margin-bottom: 1rem;
-        }
+    /* ── GRID ── */
+    .two-col { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
 
-        .stat-icon {
-            width: 44px; height: 44px;
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem;
-        }
-        .stat-icon.purple { background: rgba(201, 168, 76, 0.1); color: var(--accent); }
-        .stat-icon.orange { background: rgba(245, 158, 11, 0.1); color: var(--secondary); }
-        .stat-icon.green { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .stat-icon.red { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .card-title { font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+    .card-title i { color: var(--gold); font-size: 0.85rem; }
+    .card-body { padding: 1.25rem; }
+    .card-body.no-pad { padding: 0; }
 
-        .stat-change {
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-        }
-        .stat-change.up { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .stat-change.down { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+    /* ── TABLE ── */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th {
+      text-align: left;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: 0.875rem 1.25rem;
+      font-size: 0.85rem;
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+      vertical-align: middle;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(255,255,255,0.015); }
 
-        .stat-value {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-            color: var(--accent);
-        }
-        .stat-label { color: var(--gray); font-size: 0.9rem; }
+    .cell-primary { font-weight: 600; }
+    .cell-muted { color: var(--text-muted); font-size: 0.78rem; margin-top: 2px; }
 
-        /* Content Cards */
-        .content-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
+    /* ── BADGES ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 9px;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-new { background: rgba(59,130,246,0.12); color: var(--info); }
+    .badge-contacted { background: rgba(245,158,11,0.12); color: var(--warning); }
+    .badge-converted { background: rgba(34,197,94,0.12); color: var(--success); }
+    .badge-closed { background: rgba(107,114,128,0.12); color: var(--text-muted); }
+    .badge-viewing { background: rgba(168,85,247,0.12); color: #a855f7; }
+    .badge-pending { background: rgba(245,158,11,0.12); color: var(--warning); }
+    .badge-confirmed { background: rgba(34,197,94,0.12); color: var(--success); }
+    .badge-cancelled { background: rgba(239,68,68,0.12); color: var(--danger); }
+    .badge-completed { background: rgba(59,130,246,0.12); color: var(--info); }
+    .badge-active { background: rgba(34,197,94,0.12); color: var(--success); }
+    .badge-inactive { background: rgba(107,114,128,0.12); color: var(--text-muted); }
+    .badge-deposit_paid { background: rgba(168,85,247,0.12); color: #a855f7; }
+    .badge-fully_paid { background: rgba(34,197,94,0.2); color: var(--success); }
 
-        .card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 16px;
-            overflow: hidden;
-        }
-        .card-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .card-header h3 { font-size: 1.1rem; }
-        .card-body { padding: 1rem 0; }
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      font-weight: 600; font-size: 0.825rem;
+      cursor: pointer; border: none;
+      transition: all var(--transition);
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--navy); }
+    .btn-gold:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-ghost { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--border-accent); color: var(--gold); }
+    .btn-danger-ghost { background: rgba(239,68,68,0.08); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
+    .btn-danger-ghost:hover { background: rgba(239,68,68,0.15); }
+    .btn-success-ghost { background: rgba(34,197,94,0.08); color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
+    .btn-success-ghost:hover { background: rgba(34,197,94,0.15); }
+    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.78rem; }
+    .btn-icon { padding: 0.35rem; width: 30px; height: 30px; justify-content: center; }
 
-        /* Table */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .data-table th {
-            text-align: left;
-            padding: 0.875rem 1.5rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--gray);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .data-table td {
-            padding: 1rem 1.5rem;
-            font-size: 0.9rem;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-        }
-        .data-table tr:hover td {
-            background: rgba(201, 168, 76, 0.03);
-        }
+    /* ── FORMS ── */
+    .form-group { margin-bottom: 1rem; }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim); margin-bottom: 0.4rem; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.625rem 0.875rem;
+      color: var(--text);
+      font-size: 0.875rem;
+      outline: none;
+      font-family: inherit;
+      transition: border-color var(--transition);
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--border-accent); }
+    .form-select option { background: var(--surface2); }
+    .form-textarea { min-height: 80px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.875rem; }
+    .form-check { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.875rem; }
+    .form-check input { accent-color: var(--gold); width: 16px; height: 16px; cursor: pointer; }
 
-        .status-badge {
-            display: inline-flex; align-items: center; gap: 0.35rem;
-            padding: 0.35rem 0.75rem;
-            border-radius: 100px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .status-new { background: rgba(99, 102, 241, 0.1); color: #818cf8; }
-        .status-contacted { background: rgba(245, 158, 11, 0.1); color: var(--secondary); }
-        .status-converted { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .status-closed { background: rgba(100, 116, 139, 0.1); color: var(--gray); }
+    /* ── SEARCH ── */
+    .search-box {
+      display: flex; align-items: center; gap: 0.625rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.5rem 0.875rem;
+      transition: border-color var(--transition);
+    }
+    .search-box:focus-within { border-color: var(--border-accent); }
+    .search-box i { color: var(--text-muted); font-size: 0.85rem; }
+    .search-box input { background: none; border: none; color: var(--text); font-size: 0.875rem; outline: none; flex: 1; font-family: inherit; }
+    .search-box input::placeholder { color: var(--text-muted); }
 
-        .source-badge {
-            display: inline-flex; align-items: center; gap: 0.35rem;
-            font-size: 0.8rem;
-            color: var(--gray);
-        }
+    /* ── TABS ── */
+    .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+    .tab {
+      padding: 0.7rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.825rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
 
-        /* Tabs */
-        .tabs {
-            display: flex; gap: 0.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding: 0 1.5rem;
-            margin-bottom: 1rem;
-        }
-        .tab {
-            padding: 0.875rem 1.25rem;
-            color: var(--gray);
-            font-weight: 500;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s;
-        }
-        .tab:hover { color: var(--light); }
-        .tab.active {
-            color: var(--accent);
-            border-bottom-color: var(--accent);
-        }
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none; align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      width: 100%; max-width: 680px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+    }
+    .modal-sm { max-width: 440px; }
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; background: var(--surface); z-index: 1;
+    }
+    .modal-title { font-size: 1rem; font-weight: 700; }
+    .modal-close {
+      background: none; border: none; color: var(--text-muted);
+      font-size: 1.25rem; cursor: pointer; width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 8px; transition: all var(--transition);
+    }
+    .modal-close:hover { background: var(--surface2); color: var(--text); }
+    .modal-body { padding: 1.5rem; }
 
-        /* Buttons */
-        .btn {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.625rem 1.25rem;
-            border-radius: 10px;
-            font-weight: 600; font-size: 0.875rem;
-            cursor: pointer; transition: all 0.3s;
-            border: none; text-decoration: none;
-        }
-        .btn-primary {
-            background: var(--gradient);
-            color: var(--primary);
-        }
-        .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.05); }
-        .btn-outline { background: transparent; color: var(--light); border: 1px solid rgba(255,255,255,0.15); }
-        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-        .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
-        .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
-        .btn-sm { padding: 0.4rem 0.875rem; font-size: 0.8rem; }
+    /* ── NOTIFICATIONS PANEL ── */
+    .notif-panel {
+      position: fixed; top: 60px; right: 1.5rem;
+      width: 340px; max-height: 480px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      z-index: 500;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .notif-panel.active { display: flex; }
+    .notif-panel-header {
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .notif-panel-title { font-size: 0.875rem; font-weight: 700; }
+    .notif-list { flex: 1; overflow-y: auto; }
+    .notif-item {
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+      cursor: pointer;
+      transition: background var(--transition);
+      display: flex; gap: 0.75rem; align-items: flex-start;
+    }
+    .notif-item:hover { background: rgba(255,255,255,0.02); }
+    .notif-item.unread { background: var(--gold-dim); }
+    .notif-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; flex-shrink: 0;
+    }
+    .notif-content { flex: 1; min-width: 0; }
+    .notif-title-text { font-size: 0.825rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .notif-msg { font-size: 0.775rem; color: var(--text-muted); margin-top: 2px; }
+    .notif-time { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; }
 
-        /* Forms */
-        .form-group { margin-bottom: 1.25rem; }
-        .form-group label {
-            display: block; margin-bottom: 0.5rem;
-            font-size: 0.9rem; font-weight: 500;
-        }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            color: var(--light);
-            font-size: 0.9rem;
-            outline: none; font-family: inherit;
-        }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-            border-color: var(--accent);
-        }
-        .form-group textarea { min-height: 80px; resize: vertical; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    /* ── CHART BAR ── */
+    .bar-chart { display: flex; flex-direction: column; gap: 0.625rem; }
+    .bar-row { display: flex; align-items: center; gap: 0.75rem; }
+    .bar-label { font-size: 0.78rem; color: var(--text-dim); min-width: 100px; text-transform: capitalize; }
+    .bar-track { flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+    .bar-count { font-size: 0.78rem; font-family: 'DM Mono', monospace; color: var(--text-muted); min-width: 30px; text-align: right; }
 
-        /* Modal */
-        .modal-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-            z-index: 2000;
-            display: none; align-items: center; justify-content: center;
-            padding: 2rem;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal {
-            background: var(--dark);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            max-width: 700px; width: 100%;
-            max-height: 90vh; overflow-y: auto;
-        }
-        .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .modal-body { padding: 1.5rem; }
-        .modal-close {
-            background: none; border: none; color: var(--gray);
-            font-size: 1.5rem; cursor: pointer;
-        }
+    /* ── FUNNEL ── */
+    .funnel-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .funnel-row {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.625rem 0.875rem;
+      background: var(--surface2);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .funnel-stage { font-size: 0.8rem; color: var(--text-dim); flex: 1; }
+    .funnel-count { font-family: 'DM Mono', monospace; font-size: 0.875rem; font-weight: 500; min-width: 40px; text-align: right; }
+    .funnel-rate { font-size: 0.72rem; color: var(--text-muted); min-width: 60px; text-align: right; }
 
-        /* Search */
-        .search-bar {
-            display: flex; align-items: center; gap: 0.75rem;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            padding: 0.5rem 1rem;
-            margin-bottom: 1rem;
-        }
-        .search-bar input {
-            flex: 1; background: none; border: none;
-            color: var(--light); font-size: 0.9rem; outline: none;
-        }
-        .search-bar i { color: var(--gray); }
+    /* ── CHAT ── */
+    .chat-layout { display: grid; grid-template-columns: 280px 1fr; height: 560px; }
+    .chat-sessions { border-right: 1px solid var(--border); overflow-y: auto; }
+    .chat-session-item {
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+      cursor: pointer;
+      transition: background var(--transition);
+      display: flex; gap: 0.75rem; align-items: flex-start;
+    }
+    .chat-session-item:hover { background: rgba(255,255,255,0.02); }
+    .chat-session-item.active { background: var(--gold-dim); }
+    .session-avatar {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.875rem; font-weight: 600;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+    .session-info { flex: 1; min-width: 0; }
+    .session-name { font-size: 0.85rem; font-weight: 600; }
+    .session-preview { font-size: 0.75rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .session-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .session-time { font-size: 0.7rem; color: var(--text-muted); }
+    .unread-count {
+      background: var(--danger); color: white;
+      font-size: 0.65rem; font-weight: 700;
+      padding: 1px 5px; border-radius: 100px;
+      min-width: 16px; text-align: center;
+    }
 
-        /* Section hidden */
-        .section { display: none; }
-        .section.active { display: block; }
+    .chat-main { display: flex; flex-direction: column; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .chat-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); gap: 0.75rem; }
+    .chat-empty i { font-size: 2rem; opacity: 0.4; }
 
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
-            .sidebar.open { transform: translateX(0); }
-            .main-content { margin-left: 0; }
-            .content-grid { grid-template-columns: 1fr; }
-        }
-    </style>
-<base target="_blank">
+    .msg-bubble { display: flex; gap: 0.5rem; max-width: 70%; }
+    .msg-bubble.admin { align-self: flex-end; flex-direction: row-reverse; }
+    .msg-content {
+      padding: 0.625rem 0.875rem;
+      border-radius: 14px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+    .msg-bubble:not(.admin) .msg-content { background: var(--surface2); border-bottom-left-radius: 4px; }
+    .msg-bubble.admin .msg-content { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--navy); font-weight: 500; border-bottom-right-radius: 4px; }
+    .msg-time { font-size: 0.65rem; color: var(--text-muted); align-self: flex-end; margin-bottom: 2px; }
+
+    .chat-input-area {
+      padding: 0.875rem;
+      border-top: 1px solid var(--border);
+      display: flex; gap: 0.625rem;
+    }
+
+    /* ── BOOKING CARD ── */
+    .booking-row-detail { padding: 0.75rem 1.25rem; background: var(--surface2); border-radius: var(--radius); margin-bottom: 0.5rem; }
+    .booking-row-detail .label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; }
+    .booking-row-detail .value { font-size: 0.875rem; font-weight: 600; }
+
+    /* ── AUDIT LOG ── */
+    .audit-item {
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+      display: flex; align-items: flex-start; gap: 0.75rem;
+    }
+    .audit-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+    .audit-content { flex: 1; }
+    .audit-action { font-size: 0.825rem; font-weight: 600; }
+    .audit-detail { font-size: 0.775rem; color: var(--text-muted); }
+    .audit-time { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { padding: 3rem; text-align: center; color: var(--text-muted); }
+    .empty-state i { font-size: 2rem; margin-bottom: 0.75rem; opacity: 0.35; display: block; }
+    .empty-state p { font-size: 0.875rem; }
+
+    /* ── LOADING ── */
+    .loading { display: flex; align-items: center; justify-content: center; padding: 3rem; }
+    .spinner { width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── TOOLBAR ── */
+    .toolbar { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .toolbar .search-box { flex: 1; min-width: 200px; }
+
+    /* ── TOAST ── */
+    .toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
+    .toast {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      display: flex; align-items: center; gap: 0.75rem;
+      font-size: 0.85rem; min-width: 260px;
+      animation: slideIn 0.3s ease; box-shadow: var(--shadow);
+    }
+    .toast.success { border-color: rgba(34,197,94,0.3); }
+    .toast.error { border-color: rgba(239,68,68,0.3); }
+    .toast i { font-size: 1rem; }
+    .toast.success i { color: var(--success); }
+    .toast.error i { color: var(--danger); }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: none; opacity: 1; } }
+
+    /* ── LOGIN PAGE ── */
+    .login-page {
+      min-height: 100vh;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      width: 100%; max-width: 380px;
+      box-shadow: var(--shadow);
+    }
+    .login-logo { text-align: center; margin-bottom: 2rem; }
+    .login-logo .logo-text { font-size: 2rem; }
+    .login-logo p { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+    .login-error { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius); padding: 0.625rem 0.875rem; font-size: 0.825rem; color: var(--danger); margin-bottom: 1rem; display: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) { .two-col { grid-template-columns: 1fr; } .three-col { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: none; }
+      .main { margin-left: 0; }
+      .chat-layout { grid-template-columns: 1fr; height: auto; }
+    }
+    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: 1fr 1fr; } .three-col { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
-    <div class="admin-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">Ten<span>&</span>See Admin</div>
-            </div>
-            <nav class="sidebar-nav">
-                <a class="nav-item active" onclick="showSection('dashboard')">
-                    <i class="fas fa-chart-line"></i> Dashboard
-                </a>
-                <a class="nav-item" onclick="showSection('listings')">
-                    <i class="fas fa-home"></i> Listings
-                </a>
-                <a class="nav-item" onclick="showSection('leads')">
-                    <i class="fas fa-users"></i> Leads
-                </a>
-                <a class="nav-item" onclick="showSection('chat')">
-                    <i class="fas fa-comments"></i> Live Chat
-                </a>
-                <a class="nav-item" onclick="showSection('analytics')">
-                    <i class="fas fa-chart-bar"></i> Analytics
-                </a>
-            </nav>
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="user-avatar">A</div>
-                    <div class="user-details">
-                        <div class="user-name">Admin</div>
-                        <div class="user-role">Administrator</div>
-                    </div>
-                    <button class="btn btn-sm btn-outline" onclick="logout()">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
-                </div>
-            </div>
-        </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Dashboard Section -->
-            <div id="dashboard-section" class="section active">
-                <h1 class="page-title">Dashboard</h1>
-                <p class="page-subtitle">Overview of your platform performance</p>
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
 
-                <div class="stats-grid" id="statsGrid">
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon purple"><i class="fas fa-users"></i></div>
-                            <span class="stat-change up"><i class="fas fa-arrow-up"></i> 12%</span>
-                        </div>
-                        <div class="stat-value" id="statTotalLeads">-</div>
-                        <div class="stat-label">Total Leads</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon orange"><i class="fas fa-envelope"></i></div>
-                            <span class="stat-change up"><i class="fas fa-arrow-up"></i> 8%</span>
-                        </div>
-                        <div class="stat-value" id="statNewLeads">-</div>
-                        <div class="stat-label">New Leads</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon green"><i class="fas fa-home"></i></div>
-                            <span class="stat-change up"><i class="fas fa-arrow-up"></i> 5%</span>
-                        </div>
-                        <div class="stat-value" id="statTotalListings">-</div>
-                        <div class="stat-label">Active Listings</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon red"><i class="fas fa-eye"></i></div>
-                            <span class="stat-change up"><i class="fas fa-arrow-up"></i> 23%</span>
-                        </div>
-                        <div class="stat-value" id="statTotalViews">-</div>
-                        <div class="stat-label">Total Views</div>
-                    </div>
-                </div>
+<!-- Notification Panel -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-panel-header">
+    <span class="notif-panel-title">Notifications</span>
+    <button class="btn btn-ghost btn-sm" onclick="markAllRead()">Mark all read</button>
+  </div>
+  <div class="notif-list" id="notifList">
+    <div class="loading"><div class="spinner"></div></div>
+  </div>
+</div>
 
-                <div class="content-grid">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-clock" style="color:var(--accent)"></i> Recent Leads</h3>
-                            <a class="btn btn-sm btn-outline" onclick="showSection('leads')">View All</a>
-                        </div>
-                        <div class="card-body">
-                            <table class="data-table" id="recentLeadsTable">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Source</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-chart-pie" style="color:var(--secondary)"></i> Lead Sources</h3>
-                        </div>
-                        <div class="card-body" id="leadSourcesChart" style="padding:1.5rem;">
-                            <!-- Simple bar chart rendered via JS -->
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!-- ── MODALS ── -->
 
-            <!-- Listings Section -->
-            <div id="listings-section" class="section">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-                    <div>
-                        <h1 class="page-title">Listings</h1>
-                        <p class="page-subtitle">Manage your property listings</p>
-                    </div>
-                    <button class="btn btn-primary" onclick="openListingModal()">
-                        <i class="fas fa-plus"></i> Add Listing
-                    </button>
-                </div>
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="listingSearch" placeholder="Search listings..." oninput="filterListings()">
-                </div>
-                <div class="card">
-                    <div class="card-body" style="padding:0;">
-                        <table class="data-table" id="listingsTable">
-                            <thead>
-                                <tr>
-                                    <th>Property</th>
-                                    <th>Type</th>
-                                    <th>Price</th>
-                                    <th>Location</th>
-                                    <th>Views</th>
-                                    <th>Inquiries</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Leads Section -->
-            <div id="leads-section" class="section">
-                <h1 class="page-title">Leads</h1>
-                <p class="page-subtitle">Track and manage customer inquiries</p>
-                <div class="tabs">
-                    <div class="tab active" onclick="filterLeadsByStatus('all')">All</div>
-                    <div class="tab" onclick="filterLeadsByStatus('new')">New</div>
-                    <div class="tab" onclick="filterLeadsByStatus('contacted')">Contacted</div>
-                    <div class="tab" onclick="filterLeadsByStatus('converted')">Converted</div>
-                </div>
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="leadSearch" placeholder="Search leads..." oninput="filterLeads()">
-                </div>
-                <div class="card">
-                    <div class="card-body" style="padding:0;">
-                        <table class="data-table" id="leadsTable">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Contact</th>
-                                    <th>Source</th>
-                                    <th>Listing</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chat Section -->
-            <div id="chat-section" class="section">
-                <h1 class="page-title">Live Chat</h1>
-                <p class="page-subtitle">Manage customer conversations</p>
-                <div class="content-grid" style="grid-template-columns: 1fr 2fr;">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Conversations</h3>
-                        </div>
-                        <div class="card-body" id="chatSessions" style="padding:0;max-height:500px;overflow-y:auto;">
-                            <!-- Chat sessions list -->
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 id="chatSessionTitle">Select a conversation</h3>
-                        </div>
-                        <div class="card-body" id="adminChatMessages" style="height:400px;overflow-y:auto;padding:1rem;">
-                            <div style="text-align:center;color:var(--gray);padding-top:150px;">
-                                <i class="fas fa-comments" style="font-size:3rem;margin-bottom:1rem;display:block;"></i>
-                                Select a conversation to view messages
-                            </div>
-                        </div>
-                        <div style="padding:1rem;border-top:1px solid rgba(255,255,255,0.05);display:flex;gap:0.5rem;" id="chatInputContainer" style="display:none;">
-                            <input type="text" id="adminChatInput" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.75rem 1rem;color:var(--light);outline:none;" placeholder="Type your reply..." onkeypress="if(event.key==='Enter')sendAdminReply()">
-                            <button class="btn btn-primary" onclick="sendAdminReply()">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Analytics Section -->
-            <div id="analytics-section" class="section">
-                <h1 class="page-title">Analytics</h1>
-                <p class="page-subtitle">Detailed performance insights</p>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon purple"><i class="fas fa-mouse-pointer"></i></div>
-                        </div>
-                        <div class="stat-value" id="statInquiries">-</div>
-                        <div class="stat-label">Total Inquiries</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon orange"><i class="fas fa-calendar-week"></i></div>
-                        </div>
-                        <div class="stat-value" id="statWeeklyLeads">-</div>
-                        <div class="stat-label">This Week</div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-chart-area" style="color:var(--accent)"></i> Lead Trends (Last 30 Days)</h3>
-                    </div>
-                    <div class="card-body" id="trendsChart" style="padding:2rem;height:300px;">
-                        <!-- Trend chart rendered via JS -->
-                    </div>
-                </div>
-            </div>
-        </main>
+<!-- Listing Modal -->
+<div class="modal-overlay" id="listingModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="listingModalTitle">Add Listing</span>
+      <button class="modal-close" onclick="closeModal('listingModal')">&times;</button>
     </div>
-
-    <!-- Add/Edit Listing Modal -->
-    <div class="modal-overlay" id="listingModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="listingModalTitle">Add New Listing</h3>
-                <button class="modal-close" onclick="closeListingModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="listingForm" onsubmit="saveListing(event)">
-                    <input type="hidden" id="listingId">
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input type="text" id="listingTitle" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea id="listingDescription" required></textarea>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Price</label>
-                            <input type="number" id="listingPrice" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Period</label>
-                            <select id="listingPeriod">
-                                <option value="month">Per Month</option>
-                                <option value="week">Per Week</option>
-                                <option value="day">Per Day</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Property Type</label>
-                            <select id="listingType">
-                                <option value="apartment">Apartment</option>
-                                <option value="studio">Studio</option>
-                                <option value="shared_room">Shared Room</option>
-                                <option value="private_room">Private Room</option>
-                                <option value="house">House</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>City</label>
-                            <input type="text" id="listingCity" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>University</label>
-                            <input type="text" id="listingUniversity">
-                        </div>
-                        <div class="form-group">
-                            <label>Address</label>
-                            <input type="text" id="listingAddress">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Bedrooms</label>
-                            <input type="number" id="listingBedrooms" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label>Bathrooms</label>
-                            <input type="number" id="listingBathrooms" min="0" step="0.5">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Max Occupants</label>
-                            <input type="number" id="listingOccupants" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label>WhatsApp Number</label>
-                            <input type="text" id="listingWhatsapp">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Amenities (comma separated)</label>
-                        <input type="text" id="listingAmenities" placeholder="WiFi, Laundry, Parking, Gym...">
-                    </div>
-                    <div class="form-group">
-                        <label>Image URLs (comma separated)</label>
-                        <input type="text" id="listingImages" placeholder="https://...">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Available From</label>
-                            <input type="date" id="listingFrom">
-                        </div>
-                        <div class="form-group">
-                            <label>Available Until</label>
-                            <input type="date" id="listingUntil">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label><input type="checkbox" id="listingActive" checked> Active</label>
-                        </div>
-                        <div class="form-group">
-                            <label><input type="checkbox" id="listingFeatured"> Featured</label>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width:100%;">
-                        <i class="fas fa-save"></i> Save Listing
-                    </button>
-                </form>
-            </div>
+    <div class="modal-body">
+      <input type="hidden" id="listingId">
+      <div class="form-row">
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Title *</label>
+          <input class="form-input" id="lTitle" required>
         </div>
-    </div>
-
-    <!-- Lead Detail Modal -->
-    <div class="modal-overlay" id="leadModal">
-        <div class="modal" style="max-width:500px;">
-            <div class="modal-header">
-                <h3>Lead Details</h3>
-                <button class="modal-close" onclick="closeLeadModal()">&times;</button>
-            </div>
-            <div class="modal-body" id="leadModalBody">
-                <!-- Lead details -->
-            </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Description *</label>
+          <textarea class="form-textarea" id="lDesc" required></textarea>
         </div>
+        <div class="form-group">
+          <label class="form-label">Price (RM) *</label>
+          <input class="form-input" type="number" id="lPrice" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Period</label>
+          <select class="form-select" id="lPeriod">
+            <option value="month">Per Month</option>
+            <option value="week">Per Week</option>
+            <option value="day">Per Day</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Property Type *</label>
+          <select class="form-select" id="lType">
+            <option value="apartment">Apartment</option>
+            <option value="studio">Studio</option>
+            <option value="shared_room">Shared Room</option>
+            <option value="private_room">Private Room</option>
+            <option value="house">House</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">City *</label>
+          <input class="form-input" id="lCity" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">University</label>
+          <input class="form-input" id="lUniversity">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <input class="form-input" id="lAddress">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bedrooms</label>
+          <input class="form-input" type="number" id="lBedrooms" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bathrooms</label>
+          <input class="form-input" type="number" id="lBathrooms" min="0" step="0.5">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Max Occupants</label>
+          <input class="form-input" type="number" id="lOccupants" min="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp Number</label>
+          <input class="form-input" id="lWhatsapp" placeholder="+601x...">
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Amenities (comma separated)</label>
+          <input class="form-input" id="lAmenities" placeholder="WiFi, Parking, Gym, Laundry...">
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Image URLs (comma separated)</label>
+          <input class="form-input" id="lImages" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Available From</label>
+          <input class="form-input" type="date" id="lFrom">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Available Until</label>
+          <input class="form-input" type="date" id="lUntil">
+        </div>
+        <div class="form-group">
+          <label class="form-check"><input type="checkbox" id="lActive" checked> Active</label>
+        </div>
+        <div class="form-group">
+          <label class="form-check"><input type="checkbox" id="lFeatured"> Featured</label>
+        </div>
+      </div>
+      <button class="btn btn-gold" style="width:100%;margin-top:0.5rem;" onclick="saveListing()">
+        <i class="fas fa-save"></i> Save Listing
+      </button>
     </div>
+  </div>
+</div>
 
-    <script>
-        let currentSection = 'dashboard';
-        let allListings = [];
-        let allLeads = [];
-        let currentChatSession = null;
-        let leadStatusFilter = 'all';
-        let chatRefreshInterval;
+<!-- Lead Modal -->
+<div class="modal-overlay" id="leadModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">Lead Details</span>
+      <button class="modal-close" onclick="closeModal('leadModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="leadModalBody"></div>
+  </div>
+</div>
 
-        // Check auth
-        const token = localStorage.getItem('adminToken');
-        if (!token) {
-            // Simple login prompt
-            document.body.innerHTML = `
-                <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--darker);">
-                    <div style="background:var(--dark);padding:2.5rem;border-radius:20px;border:1px solid rgba(255,255,255,0.1);width:100%;max-width:400px;">
-                        <div class="sidebar-logo" style="text-align:center;margin-bottom:2rem;font-size:2rem;">Ten<span>&</span>See Admin</div>
-                        <form onsubmit="login(event)">
-                            <div class="form-group">
-                                <label>Username</label>
-                                <input type="text" id="loginUser" required style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.75rem 1rem;color:var(--light);outline:none;">
-                            </div>
-                            <div class="form-group">
-                                <label>Password</label>
-                                <input type="password" id="loginPass" required style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.75rem 1rem;color:var(--light);outline:none;">
-                            </div>
-                            <button type="submit" class="btn btn-primary" style="width:100%;">Login</button>
-                        </form>
-                    </div>
+<!-- Booking Modal -->
+<div class="modal-overlay" id="bookingModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">Booking Details</span>
+      <button class="modal-close" onclick="closeModal('bookingModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="bookingModalBody"></div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app"></div>
+
+<script>
+// ── STATE ──
+const S = {
+  token: localStorage.getItem('adminToken'),
+  section: 'dashboard',
+  listings: [], leads: [], bookings: [], notifications: [],
+  chatSessions: [], currentSession: null,
+  chatInterval: null,
+  notifInterval: null,
+  leadFilter: 'all', bookingFilter: 'all',
+  adminName: localStorage.getItem('adminName') || 'Admin'
+};
+
+// ── API ──
+async function api(path, opts = {}) {
+  const res = await fetch(path, {
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${S.token}`, ...opts.headers },
+    ...opts
+  });
+  return res.json();
+}
+
+// ── TOAST ──
+function toast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i><span>${msg}</span>`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ── LOGIN PAGE ──
+function renderLogin() {
+  document.getElementById('app').innerHTML = `
+    <div class="login-page">
+      <div class="login-card">
+        <div class="login-logo">
+          <div class="logo-text">Ten&See</div>
+          <p>Admin Dashboard</p>
+        </div>
+        <div class="login-error" id="loginError"></div>
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input class="form-input" id="loginUser" placeholder="admin" onkeydown="if(event.key==='Enter')login()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
+        </div>
+        <button class="btn btn-gold" style="width:100%;margin-top:0.5rem;" onclick="login()">
+          <i class="fas fa-sign-in-alt"></i> Sign In
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+async function login() {
+  const u = document.getElementById('loginUser').value;
+  const p = document.getElementById('loginPass').value;
+  try {
+    const data = await api('/api/admin/login', { method: 'POST', body: JSON.stringify({ username: u, password: p }) });
+    if (data.success) {
+      localStorage.setItem('adminToken', data.token);
+      S.token = data.token;
+      S.adminName = u.charAt(0).toUpperCase() + u.slice(1);
+      localStorage.setItem('adminName', S.adminName);
+      renderApp();
+    } else {
+      document.getElementById('loginError').style.display = 'block';
+      document.getElementById('loginError').textContent = 'Invalid credentials. Please try again.';
+    }
+  } catch { toast('Connection error', 'error'); }
+}
+
+function logout() {
+  localStorage.removeItem('adminToken');
+  localStorage.removeItem('adminName');
+  S.token = null;
+  clearInterval(S.chatInterval);
+  clearInterval(S.notifInterval);
+  renderLogin();
+}
+
+// ── MAIN APP ──
+function renderApp() {
+  document.getElementById('app').innerHTML = `
+    <div class="layout">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+          <div class="logo-text">Ten&See</div>
+          <div class="logo-sub">Admin Panel</div>
+        </div>
+        <nav class="sidebar-nav">
+          <div class="nav-section-label">Overview</div>
+          <div class="nav-item active" id="nav-dashboard" onclick="showSection('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</div>
+          <div class="nav-section-label">Manage</div>
+          <div class="nav-item" id="nav-listings" onclick="showSection('listings')"><i class="fas fa-building"></i> Listings</div>
+          <div class="nav-item" id="nav-leads" onclick="showSection('leads')"><i class="fas fa-users"></i> Leads</div>
+          <div class="nav-item" id="nav-bookings" onclick="showSection('bookings')"><i class="fas fa-calendar-check"></i> Bookings</div>
+          <div class="nav-item" id="nav-chat" onclick="showSection('chat')"><i class="fas fa-comments"></i> Live Chat <span class="nav-badge" id="chatBadge" style="display:none">0</span></div>
+          <div class="nav-section-label">Insights</div>
+          <div class="nav-item" id="nav-analytics" onclick="showSection('analytics')"><i class="fas fa-chart-bar"></i> Analytics</div>
+          <div class="nav-item" id="nav-reports" onclick="showSection('reports')"><i class="fas fa-file-alt"></i> Reports</div>
+          <div class="nav-item" id="nav-audit" onclick="showSection('audit')"><i class="fas fa-shield-alt"></i> Audit Log</div>
+        </nav>
+        <div class="sidebar-footer">
+          <div class="admin-profile">
+            <div class="admin-avatar">${S.adminName.charAt(0)}</div>
+            <div>
+              <div class="admin-name">${S.adminName}</div>
+              <div class="admin-role">Administrator</div>
+            </div>
+            <button class="btn-logout" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+          </div>
+        </div>
+      </aside>
+      <div class="main">
+        <header class="topbar">
+          <div>
+            <div class="topbar-title" id="topbarTitle">Dashboard</div>
+            <div class="topbar-subtitle" id="topbarSub">Welcome back, ${S.adminName}</div>
+          </div>
+          <div class="topbar-actions">
+            <button class="notif-btn" onclick="toggleNotifPanel()" title="Notifications">
+              <i class="fas fa-bell"></i>
+              <span class="notif-dot" id="notifDot"></span>
+            </button>
+          </div>
+        </header>
+        <div class="content">
+          <div class="section active" id="sec-dashboard"></div>
+          <div class="section" id="sec-listings"></div>
+          <div class="section" id="sec-leads"></div>
+          <div class="section" id="sec-bookings"></div>
+          <div class="section" id="sec-chat"></div>
+          <div class="section" id="sec-analytics"></div>
+          <div class="section" id="sec-reports"></div>
+          <div class="section" id="sec-audit"></div>
+        </div>
+      </div>
+    </div>
+  `;
+  loadDashboard();
+  pollNotifications();
+  S.notifInterval = setInterval(pollNotifications, 30000);
+}
+
+// ── NAVIGATION ──
+const TITLES = {
+  dashboard: ['Dashboard', 'Platform overview'],
+  listings: ['Listings', 'Manage property listings'],
+  leads: ['Leads', 'Track customer inquiries'],
+  bookings: ['Bookings', 'Manage booking requests'],
+  chat: ['Live Chat', 'Customer conversations'],
+  analytics: ['Analytics', 'Performance insights'],
+  reports: ['Reports', 'Detailed data reports'],
+  audit: ['Audit Log', 'Admin activity history']
+};
+
+function showSection(sec) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('nav-' + sec)?.classList.add('active');
+  document.getElementById('sec-' + sec).classList.add('active');
+  document.getElementById('topbarTitle').textContent = TITLES[sec][0];
+  document.getElementById('topbarSub').textContent = TITLES[sec][1];
+  S.section = sec;
+
+  clearInterval(S.chatInterval);
+
+  const loaders = {
+    dashboard: loadDashboard, listings: loadListings, leads: loadLeads,
+    bookings: loadBookings, chat: () => { loadChat(); S.chatInterval = setInterval(() => { loadChatSessions(); if (S.currentSession) loadMessages(S.currentSession); }, 5000); },
+    analytics: loadAnalytics, reports: loadReports, audit: loadAudit
+  };
+  loaders[sec]?.();
+
+  // Close notif panel
+  document.getElementById('notifPanel').classList.remove('active');
+}
+
+// ── DASHBOARD ──
+async function loadDashboard() {
+  const sec = document.getElementById('sec-dashboard');
+  sec.innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
+  try {
+    const [dash, comp] = await Promise.all([
+      api('/api/analytics/dashboard'),
+      api('/api/reports/comparison')
+    ]);
+    const d = dash.data; const c = comp.data;
+
+    sec.innerHTML = `
+      <div class="stats-grid">
+        ${statCard('fa-users', 'si-gold', d.totalLeads, 'Total Leads', c?.changes?.leads, '%')}
+        ${statCard('fa-star', 'si-blue', d.newLeads, 'New Leads (7d)', null)}
+        ${statCard('fa-building', 'si-green', d.totalListings, 'Active Listings', null)}
+        ${statCard('fa-eye', 'si-orange', (d.totalViews||0).toLocaleString(), 'Total Views', c?.changes?.views, '%')}
+        ${statCard('fa-calendar-check', 'si-purple', d.totalBookings ?? '-', 'Total Bookings', c?.changes?.bookings, '%')}
+        ${statCard('fa-comments', 'si-gold', d.totalChats ?? '-', 'Chat Sessions', null)}
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><i class="fas fa-clock"></i> Recent Leads</span>
+            <button class="btn btn-ghost btn-sm" onclick="showSection('leads')">View All</button>
+          </div>
+          <div class="card-body no-pad">
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>Source</th><th>Status</th><th>Date</th></tr></thead>
+              <tbody>
+                ${(d.recentLeads||[]).map(l => `
+                  <tr>
+                    <td><div class="cell-primary">${l.name}</div><div class="cell-muted">${l.email}</div></td>
+                    <td><span style="font-size:0.8rem;color:var(--text-muted);text-transform:capitalize;">${l.source?.replace('_',' ')}</span></td>
+                    <td>${statusBadge(l.status)}</td>
+                    <td style="color:var(--text-muted);font-size:0.8rem;">${fmtDate(l.createdAt)}</td>
+                  </tr>
+                `).join('') || '<tr><td colspan="4" class="empty-state"><i class="fas fa-inbox"></i><p>No leads yet</p></td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="fas fa-chart-pie"></i> Lead Sources</span></div>
+          <div class="card-body">
+            <div class="bar-chart" id="sourceChart">
+              ${renderBarChart(d.leadsBySource || [], 'count')}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><i class="fas fa-calendar-check"></i> Recent Bookings</span>
+            <button class="btn btn-ghost btn-sm" onclick="showSection('bookings')">View All</button>
+          </div>
+          <div class="card-body no-pad">
+            <table class="data-table">
+              <thead><tr><th>Student</th><th>Property</th><th>Amount</th><th>Status</th></tr></thead>
+              <tbody id="dashBookings"><tr><td colspan="4"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="fas fa-bell"></i> Recent Activity</span></div>
+          <div class="card-body no-pad" id="dashActivity"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+    `;
+
+    // Load bookings for dashboard
+    api('/api/bookings?limit=5').then(r => {
+      const tbody = document.getElementById('dashBookings');
+      if (!tbody) return;
+      tbody.innerHTML = (r.data||[]).map(b => `
+        <tr>
+          <td><div class="cell-primary">${b.studentName||b.leadId?.name||'-'}</div></td>
+          <td style="font-size:0.8rem;color:var(--text-muted);">${b.listingId?.title||'-'}</td>
+          <td style="font-family:'DM Mono',monospace;font-size:0.82rem;">RM ${(b.totalAmount||0).toLocaleString()}</td>
+          <td>${statusBadge(b.status)}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="4"><div class="empty-state"><i class="fas fa-calendar"></i><p>No bookings yet</p></div></td></tr>';
+    });
+
+    // Load notifications for activity
+    api('/api/notifications/recent').then(r => {
+      const el = document.getElementById('dashActivity');
+      if (!el) return;
+      el.innerHTML = (r.data||[]).slice(0,5).map(n => `
+        <div class="audit-item">
+          <div class="audit-dot" style="background:var(--gold)"></div>
+          <div class="audit-content">
+            <div class="audit-action">${n.title}</div>
+            <div class="audit-detail">${n.message}</div>
+          </div>
+          <div class="audit-time">${timeAgo(n.createdAt)}</div>
+        </div>
+      `).join('') || '<div class="empty-state"><i class="fas fa-bell-slash"></i><p>No activity yet</p></div>';
+    });
+
+  } catch(e) { sec.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load dashboard</p></div>`; }
+}
+
+function statCard(icon, iconClass, value, label, change, unit='') {
+  let badge = '';
+  if (change !== null && change !== undefined) {
+    const n = parseFloat(change);
+    const dir = n >= 0 ? 'up' : 'down';
+    badge = `<span class="stat-badge badge-${dir}"><i class="fas fa-arrow-${dir}"></i> ${Math.abs(n)}${unit}</span>`;
+  }
+  return `
+    <div class="stat-card">
+      <div class="stat-row">
+        <div class="stat-icon ${iconClass}"><i class="fas ${icon}"></i></div>
+        ${badge}
+      </div>
+      <div class="stat-value">${value ?? '-'}</div>
+      <div class="stat-label">${label}</div>
+    </div>
+  `;
+}
+
+// ── LISTINGS ──
+async function loadListings() {
+  const sec = document.getElementById('sec-listings');
+  sec.innerHTML = `
+    <div class="toolbar" style="margin-bottom:1rem;">
+      <div class="search-box"><i class="fas fa-search"></i><input placeholder="Search listings..." oninput="filterListings(this.value)" id="listingSearch"></div>
+      <select class="form-select" style="width:160px;" onchange="filterListings()">
+        <option value="">All Types</option>
+        <option value="apartment">Apartment</option>
+        <option value="studio">Studio</option>
+        <option value="shared_room">Shared Room</option>
+        <option value="private_room">Private Room</option>
+        <option value="house">House</option>
+      </select>
+      <button class="btn btn-gold" onclick="openListingModal()"><i class="fas fa-plus"></i> Add Listing</button>
+    </div>
+    <div class="card">
+      <div class="card-body no-pad">
+        <table class="data-table">
+          <thead><tr><th>Property</th><th>Type</th><th>Price</th><th>Location</th><th>Views</th><th>Inquiries</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="listingsBody"><tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  const data = await api('/api/listings?isActive=true');
+  S.listings = data.data || [];
+  renderListingsBody(S.listings);
+}
+
+function renderListingsBody(list) {
+  const tbody = document.getElementById('listingsBody');
+  if (!tbody) return;
+  if (!list.length) { tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-building"></i><p>No listings found</p></div></td></tr>`; return; }
+  tbody.innerHTML = list.map(l => `
+    <tr>
+      <td><div class="cell-primary">${l.title}</div><div class="cell-muted">${l.agentName||''}</div></td>
+      <td><span style="text-transform:capitalize;font-size:0.8rem;color:var(--text-dim);">${l.propertyType?.replace('_',' ')}</span></td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.82rem;">RM ${l.price}/${l.pricePeriod}</td>
+      <td style="font-size:0.82rem;color:var(--text-muted);">${l.location?.city||'-'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.82rem;">${l.views}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.82rem;">${l.inquiries}</td>
+      <td>${l.isActive ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-inactive">Inactive</span>'}</td>
+      <td>
+        <div style="display:flex;gap:4px;">
+          <button class="btn btn-ghost btn-sm btn-icon" onclick="editListing('${l._id}')" title="Edit"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-danger-ghost btn-sm btn-icon" onclick="deleteListing('${l._id}')" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterListings(search) {
+  const q = (search || document.getElementById('listingSearch')?.value || '').toLowerCase();
+  renderListingsBody(S.listings.filter(l => !q || l.title?.toLowerCase().includes(q) || l.location?.city?.toLowerCase().includes(q)));
+}
+
+function openListingModal(l = null) {
+  document.getElementById('listingModalTitle').textContent = l ? 'Edit Listing' : 'Add Listing';
+  document.getElementById('listingId').value = l?._id || '';
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v ?? ''; };
+  set('lTitle', l?.title); set('lDesc', l?.description); set('lPrice', l?.price);
+  set('lPeriod', l?.pricePeriod || 'month'); set('lType', l?.propertyType || 'apartment');
+  set('lCity', l?.location?.city); set('lUniversity', l?.location?.university);
+  set('lAddress', l?.location?.address); set('lBedrooms', l?.bedrooms);
+  set('lBathrooms', l?.bathrooms); set('lOccupants', l?.maxOccupants);
+  set('lWhatsapp', l?.whatsappNumber);
+  set('lAmenities', (l?.amenities || []).join(', '));
+  set('lImages', (l?.images || []).join(', '));
+  set('lFrom', l?.availableFrom?.split('T')[0]); set('lUntil', l?.availableUntil?.split('T')[0]);
+  document.getElementById('lActive').checked = l ? l.isActive : true;
+  document.getElementById('lFeatured').checked = l?.isFeatured || false;
+  openModal('listingModal');
+}
+
+function editListing(id) { openListingModal(S.listings.find(l => l._id === id)); }
+
+async function saveListing() {
+  const id = document.getElementById('listingId').value;
+  const body = {
+    title: document.getElementById('lTitle').value,
+    description: document.getElementById('lDesc').value,
+    price: parseInt(document.getElementById('lPrice').value),
+    pricePeriod: document.getElementById('lPeriod').value,
+    propertyType: document.getElementById('lType').value,
+    location: { city: document.getElementById('lCity').value, university: document.getElementById('lUniversity').value, address: document.getElementById('lAddress').value },
+    bedrooms: parseInt(document.getElementById('lBedrooms').value)||0,
+    bathrooms: parseFloat(document.getElementById('lBathrooms').value)||0,
+    maxOccupants: parseInt(document.getElementById('lOccupants').value)||1,
+    whatsappNumber: document.getElementById('lWhatsapp').value,
+    amenities: document.getElementById('lAmenities').value.split(',').map(s=>s.trim()).filter(Boolean),
+    images: document.getElementById('lImages').value.split(',').map(s=>s.trim()).filter(Boolean),
+    availableFrom: document.getElementById('lFrom').value,
+    availableUntil: document.getElementById('lUntil').value,
+    isActive: document.getElementById('lActive').checked,
+    isFeatured: document.getElementById('lFeatured').checked
+  };
+  try {
+    const r = await api(id ? `/api/listings/${id}` : '/api/listings', { method: id ? 'PUT' : 'POST', body: JSON.stringify(body) });
+    if (r.success) { closeModal('listingModal'); toast('Listing saved!'); loadListings(); }
+    else toast(r.error || 'Error saving listing', 'error');
+  } catch { toast('Error saving listing', 'error'); }
+}
+
+async function deleteListing(id) {
+  if (!confirm('Delete this listing? This cannot be undone.')) return;
+  const r = await api(`/api/listings/${id}`, { method: 'DELETE' });
+  if (r.success) { toast('Listing deleted'); loadListings(); }
+  else toast('Error deleting listing', 'error');
+}
+
+// ── LEADS ──
+async function loadLeads() {
+  const sec = document.getElementById('sec-leads');
+  sec.innerHTML = `
+    <div class="tabs" style="margin-bottom:1rem;">
+      ${['all','new','contacted','viewing_scheduled','converted','closed'].map(s =>
+        `<div class="tab ${S.leadFilter===s?'active':''}" onclick="setLeadFilter('${s}')">${s==='viewing_scheduled'?'Viewing':cap(s)}</div>`
+      ).join('')}
+    </div>
+    <div class="toolbar">
+      <div class="search-box"><i class="fas fa-search"></i><input placeholder="Search leads..." oninput="filterLeads(this.value)" id="leadSearch"></div>
+    </div>
+    <div class="card">
+      <div class="card-body no-pad">
+        <table class="data-table">
+          <thead><tr><th>Name</th><th>Contact</th><th>Source</th><th>Listing</th><th>Status</th><th>Date</th><th></th></tr></thead>
+          <tbody id="leadsBody"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  const data = await api('/api/leads');
+  S.leads = data.data || [];
+  renderLeadsBody();
+}
+
+function setLeadFilter(f) { S.leadFilter = f; loadLeads(); }
+
+function renderLeadsBody() {
+  const tbody = document.getElementById('leadsBody');
+  if (!tbody) return;
+  const q = document.getElementById('leadSearch')?.value?.toLowerCase() || '';
+  let list = S.leads;
+  if (S.leadFilter !== 'all') list = list.filter(l => l.status === S.leadFilter);
+  if (q) list = list.filter(l => l.name?.toLowerCase().includes(q) || l.email?.toLowerCase().includes(q));
+  if (!list.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-users"></i><p>No leads found</p></div></td></tr>`; return; }
+  tbody.innerHTML = list.map(l => `
+    <tr>
+      <td><div class="cell-primary">${l.name}</div><div class="cell-muted">${l.email}</div></td>
+      <td style="font-size:0.82rem;">${l.phone||'-'}</td>
+      <td><span style="font-size:0.78rem;color:var(--text-muted);text-transform:capitalize;">${l.source?.replace(/_/g,' ')}</span></td>
+      <td style="font-size:0.8rem;color:var(--text-muted);">${l.listingTitle||'-'}</td>
+      <td>${statusBadge(l.status)}</td>
+      <td style="font-size:0.78rem;color:var(--text-muted);">${fmtDate(l.createdAt)}</td>
+      <td><button class="btn btn-ghost btn-sm btn-icon" onclick="viewLead('${l._id}')" title="View"><i class="fas fa-eye"></i></button></td>
+    </tr>
+  `).join('');
+}
+
+function filterLeads() { renderLeadsBody(); }
+
+function viewLead(id) {
+  const l = S.leads.find(x => x._id === id);
+  if (!l) return;
+  document.getElementById('leadModalBody').innerHTML = `
+    <div style="margin-bottom:1.25rem;">
+      <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;">${l.name}</div>
+      <div style="color:var(--text-muted);font-size:0.85rem;display:flex;flex-direction:column;gap:4px;">
+        <span><i class="fas fa-envelope" style="width:16px;"></i> ${l.email}</span>
+        ${l.phone?`<span><i class="fas fa-phone" style="width:16px;"></i> ${l.phone}</span>`:''}
+        ${l.university?`<span><i class="fas fa-graduation-cap" style="width:16px;"></i> ${l.university}</span>`:''}
+        <span><i class="fas fa-tag" style="width:16px;"></i> Source: ${l.source?.replace(/_/g,' ')}</span>
+      </div>
+    </div>
+    ${l.message?`<div style="background:var(--surface2);padding:0.875rem;border-radius:var(--radius);margin-bottom:1.25rem;font-size:0.85rem;">${l.message}</div>`:''}
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select class="form-select" id="lStatusSel">
+        ${['new','contacted','viewing_scheduled','converted','closed'].map(s=>`<option value="${s}"${l.status===s?' selected':''}>${cap(s)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes</label>
+      <textarea class="form-textarea" id="lNotesTa">${l.notes||''}</textarea>
+    </div>
+    <button class="btn btn-gold" style="width:100%;" onclick="updateLead('${l._id}')">
+      <i class="fas fa-save"></i> Update Lead
+    </button>
+  `;
+  openModal('leadModal');
+}
+
+async function updateLead(id) {
+  const status = document.getElementById('lStatusSel').value;
+  const notes = document.getElementById('lNotesTa').value;
+  const r = await api(`/api/leads/${id}`, { method: 'PUT', body: JSON.stringify({ status, notes }) });
+  if (r.success) { closeModal('leadModal'); toast('Lead updated'); loadLeads(); }
+  else toast('Error updating lead', 'error');
+}
+
+// ── BOOKINGS ──
+async function loadBookings() {
+  const sec = document.getElementById('sec-bookings');
+  sec.innerHTML = `
+    <div class="tabs" style="margin-bottom:1rem;">
+      ${['all','pending','confirmed','deposit_paid','fully_paid','cancelled','completed'].map(s =>
+        `<div class="tab ${S.bookingFilter===s?'active':''}" onclick="setBookingFilter('${s}')">${cap(s)}</div>`
+      ).join('')}
+    </div>
+    <div class="card">
+      <div class="card-body no-pad">
+        <table class="data-table">
+          <thead><tr><th>Student</th><th>Property</th><th>Check-in</th><th>Check-out</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+          <tbody id="bookingsBody"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  const q = S.bookingFilter !== 'all' ? `?status=${S.bookingFilter}` : '';
+  const data = await api(`/api/bookings${q}`);
+  S.bookings = data.data || [];
+  renderBookingsBody();
+}
+
+function setBookingFilter(f) { S.bookingFilter = f; loadBookings(); }
+
+function renderBookingsBody() {
+  const tbody = document.getElementById('bookingsBody');
+  if (!tbody) return;
+  if (!S.bookings.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-calendar"></i><p>No bookings found</p></div></td></tr>`; return; }
+  tbody.innerHTML = S.bookings.map(b => `
+    <tr>
+      <td><div class="cell-primary">${b.studentName||'-'}</div><div class="cell-muted">${b.studentEmail||''}</div></td>
+      <td style="font-size:0.82rem;color:var(--text-muted);">${b.listingId?.title||'-'}</td>
+      <td style="font-size:0.82rem;">${fmtDate(b.checkInDate)}</td>
+      <td style="font-size:0.82rem;">${fmtDate(b.checkOutDate)}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.82rem;">RM ${(b.totalAmount||0).toLocaleString()}</td>
+      <td>${statusBadge(b.status)}</td>
+      <td><button class="btn btn-ghost btn-sm btn-icon" onclick="viewBooking('${b._id}')" title="View"><i class="fas fa-eye"></i></button></td>
+    </tr>
+  `).join('');
+}
+
+function viewBooking(id) {
+  const b = S.bookings.find(x => x._id === id);
+  if (!b) return;
+  const nights = Math.ceil((new Date(b.checkOutDate) - new Date(b.checkInDate)) / 86400000);
+  document.getElementById('bookingModalBody').innerHTML = `
+    <div class="form-row">
+      <div class="booking-row-detail"><div class="label">Student</div><div class="value">${b.studentName}</div></div>
+      <div class="booking-row-detail"><div class="label">Email</div><div class="value" style="font-size:0.8rem;">${b.studentEmail}</div></div>
+      <div class="booking-row-detail"><div class="label">Property</div><div class="value" style="font-size:0.82rem;">${b.listingId?.title||'-'}</div></div>
+      <div class="booking-row-detail"><div class="label">Occupants</div><div class="value">${b.numberOfOccupants}</div></div>
+      <div class="booking-row-detail"><div class="label">Check-in</div><div class="value">${fmtDate(b.checkInDate)}</div></div>
+      <div class="booking-row-detail"><div class="label">Check-out</div><div class="value">${fmtDate(b.checkOutDate)}</div></div>
+      <div class="booking-row-detail"><div class="label">Nights</div><div class="value">${nights}</div></div>
+      <div class="booking-row-detail"><div class="label">Total (MYR)</div><div class="value" style="color:var(--gold);">RM ${(b.totalAmount||0).toLocaleString()}</div></div>
+      <div class="booking-row-detail"><div class="label">Deposit (30%)</div><div class="value">RM ${(b.depositAmount||0).toLocaleString()}</div></div>
+      <div class="booking-row-detail"><div class="label">Remaining</div><div class="value">RM ${(b.remainingAmount||0).toLocaleString()}</div></div>
+    </div>
+    ${b.adminNotes?`<div style="background:var(--surface2);padding:0.875rem;border-radius:var(--radius);margin:0.75rem 0;font-size:0.85rem;"><strong>Notes:</strong> ${b.adminNotes}</div>`:''}
+    <div class="form-group" style="margin-top:1rem;">
+      <label class="form-label">Update Status</label>
+      <select class="form-select" id="bStatusSel">
+        ${['pending','confirmed','deposit_paid','fully_paid','cancelled','completed'].map(s=>`<option value="${s}"${b.status===s?' selected':''}>${cap(s)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Admin Notes</label>
+      <textarea class="form-textarea" id="bNotesTa">${b.adminNotes||''}</textarea>
+    </div>
+    <button class="btn btn-gold" style="width:100%;" onclick="updateBooking('${b._id}')">
+      <i class="fas fa-save"></i> Update Booking
+    </button>
+  `;
+  openModal('bookingModal');
+}
+
+async function updateBooking(id) {
+  const status = document.getElementById('bStatusSel').value;
+  const adminNotes = document.getElementById('bNotesTa').value;
+  const r = await api(`/api/bookings/${id}/status`, { method: 'PUT', body: JSON.stringify({ status, adminNotes }) });
+  if (r.success) { closeModal('bookingModal'); toast('Booking updated'); loadBookings(); }
+  else toast('Error updating booking', 'error');
+}
+
+// ── CHAT ──
+async function loadChat() {
+  const sec = document.getElementById('sec-chat');
+  sec.innerHTML = `
+    <div class="card" style="height:600px;">
+      <div class="chat-layout">
+        <div class="chat-sessions" id="chatSessions"><div class="loading"><div class="spinner"></div></div></div>
+        <div class="chat-main">
+          <div class="card-header" id="chatHeader">
+            <span class="card-title"><i class="fas fa-comments"></i> <span id="chatHeaderName">Select a conversation</span></span>
+          </div>
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-empty">
+              <i class="fas fa-comments"></i>
+              <span>Select a conversation to begin</span>
+            </div>
+          </div>
+          <div class="chat-input-area" id="chatInputArea" style="display:none;">
+            <input class="form-input" id="chatInput" placeholder="Type a reply..." onkeydown="if(event.key==='Enter')sendReply()">
+            <button class="btn btn-gold" onclick="sendReply()"><i class="fas fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  await loadChatSessions();
+}
+
+async function loadChatSessions() {
+  const data = await api('/api/chat/admin/sessions');
+  const sessions = data.data || [];
+  const container = document.getElementById('chatSessions');
+  if (!container) return;
+
+  const totalUnread = sessions.reduce((a, s) => a + (s.unreadCount || 0), 0);
+  const badge = document.getElementById('chatBadge');
+  if (badge) { badge.textContent = totalUnread; badge.style.display = totalUnread > 0 ? '' : 'none'; }
+
+  if (!sessions.length) { container.innerHTML = `<div class="empty-state"><i class="fas fa-comments"></i><p>No conversations yet</p></div>`; return; }
+  container.innerHTML = sessions.map(s => `
+    <div class="chat-session-item ${S.currentSession===s._id?'active':''}" onclick="openSession('${s._id}','${(s.name||'Anonymous').replace(/'/g,"\\'")}')">
+      <div class="session-avatar">${(s.name||'A').charAt(0).toUpperCase()}</div>
+      <div class="session-info">
+        <div class="session-name">${s.name||'Anonymous'}</div>
+        <div class="session-preview">${s.lastMessage||'...'}</div>
+      </div>
+      <div class="session-meta">
+        <div class="session-time">${fmtTime(s.lastMessageAt)}</div>
+        ${s.unreadCount>0?`<div class="unread-count">${s.unreadCount}</div>`:''}
+      </div>
+    </div>
+  `).join('');
+}
+
+async function openSession(id, name) {
+  S.currentSession = id;
+  document.getElementById('chatHeaderName').textContent = name;
+  document.getElementById('chatInputArea').style.display = 'flex';
+  await loadMessages(id);
+  await api(`/api/chat/read/${id}`, { method: 'PUT' });
+  loadChatSessions();
+}
+
+async function loadMessages(sessionId) {
+  const data = await api(`/api/chat/${sessionId}`);
+  const container = document.getElementById('chatMessages');
+  if (!container) return;
+  const msgs = data.data || [];
+  if (!msgs.length) { container.innerHTML = `<div class="chat-empty"><i class="fas fa-comment-slash"></i><span>No messages yet</span></div>`; return; }
+  container.innerHTML = msgs.map(m => `
+    <div class="msg-bubble ${m.isAdmin?'admin':''}">
+      <div class="msg-content">${m.message}</div>
+      <div class="msg-time">${fmtTime(m.createdAt)}</div>
+    </div>
+  `).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+async function sendReply() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg || !S.currentSession) return;
+  input.value = '';
+  await api('/api/chat', { method: 'POST', body: JSON.stringify({ sessionId: S.currentSession, message: msg, isAdmin: true }) });
+  await loadMessages(S.currentSession);
+}
+
+// ── ANALYTICS ──
+async function loadAnalytics() {
+  const sec = document.getElementById('sec-analytics');
+  sec.innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
+  try {
+    const [dash, trends, geo, peaks] = await Promise.all([
+      api('/api/analytics/dashboard'),
+      api('/api/analytics/trends'),
+      api('/api/reports/geographic'),
+      api('/api/reports/peak-times')
+    ]);
+    const d = dash.data;
+    sec.innerHTML = `
+      <div class="stats-grid" style="margin-bottom:1.5rem;">
+        ${statCard('fa-mouse-pointer','si-gold', d.totalInquiries??'-', 'Total Inquiries', null)}
+        ${statCard('fa-calendar-week','si-blue', d.weeklyLeads??'-', 'Leads This Week', null)}
+        ${statCard('fa-chart-line','si-green', d.conversionRate??'-', 'Conversion Rate', null)}
+        ${statCard('fa-eye','si-orange', (d.totalViews||0).toLocaleString(), 'Total Views', null)}
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="fas fa-chart-area"></i> Lead Trends (30 Days)</span></div>
+          <div class="card-body">
+            <div id="trendsViz" style="height:180px;display:flex;align-items:flex-end;gap:3px;padding-top:20px;">
+              ${renderTrendBars(trends.data||[])}
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="fas fa-map-marker-alt"></i> Leads by City</span></div>
+          <div class="card-body">
+            <div class="bar-chart">${renderBarChart(geo.data?.leadsByCity||[], 'leadCount')}</div>
+          </div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="fas fa-clock"></i> Peak Days</span></div>
+          <div class="card-body">
+            <div class="bar-chart">${renderBarChart(peaks.data?.leadsByDay||[], 'count', 'day')}</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="fas fa-graduation-cap"></i> Leads by University</span></div>
+          <div class="card-body">
+            <div class="bar-chart">${renderBarChart((geo.data?.leadsByUniversity||[]).slice(0,6), 'leadCount')}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  } catch { sec.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load analytics</p></div>`; }
+}
+
+// ── REPORTS ──
+async function loadReports() {
+  const sec = document.getElementById('sec-reports');
+  sec.innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
+  try {
+    const [funnel, rev] = await Promise.all([
+      api('/api/reports/funnel'),
+      api('/api/reports/revenue')
+    ]);
+    sec.innerHTML = `
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><i class="fas fa-filter"></i> Conversion Funnel</span>
+          </div>
+          <div class="card-body">
+            <div class="funnel-list">
+              ${(funnel.data||[]).map(f => `
+                <div class="funnel-row">
+                  <span class="funnel-stage">${f.stage}</span>
+                  <span class="funnel-count">${f.count.toLocaleString()}</span>
+                  <span class="funnel-rate">${f.conversionRate}%</span>
                 </div>
-            `;
-        } else {
-            initDashboard();
-        }
+              `).join('')}
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><i class="fas fa-coins"></i> Revenue Summary</span>
+            <select class="form-select" style="width:120px;" onchange="loadRevenuePeriod(this.value)">
+              <option value="monthly">Monthly</option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+          <div class="card-body" id="revContent">
+            ${renderRevenueContent(rev.data)}
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:1rem;">
+        <div class="card-header">
+          <span class="card-title"><i class="fas fa-download"></i> Export Leads</span>
+        </div>
+        <div class="card-body" style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;">
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">From</label>
+            <input class="form-input" type="date" id="exportFrom">
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">To</label>
+            <input class="form-input" type="date" id="exportTo">
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="exportStatus">
+              <option value="">All</option>
+              ${['new','contacted','converted','closed'].map(s=>`<option value="${s}">${cap(s)}</option>`).join('')}
+            </select>
+          </div>
+          <button class="btn btn-gold" onclick="exportLeads()"><i class="fas fa-file-csv"></i> Export CSV</button>
+        </div>
+      </div>
+    `;
+  } catch { sec.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load reports</p></div>`; }
+}
 
-        async function login(e) {
-            e.preventDefault();
-            const username = document.getElementById('loginUser').value;
-            const password = document.getElementById('loginPass').value;
-            try {
-                const res = await fetch('/api/admin/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    localStorage.setItem('adminToken', data.token);
-                    location.reload();
-                } else {
-                    alert('Invalid credentials');
-                }
-            } catch(e) { alert('Login failed'); }
-        }
+function renderRevenueContent(data) {
+  if (!data) return '<div class="empty-state"><p>No revenue data</p></div>';
+  return `
+    <div class="form-row" style="margin-bottom:1rem;">
+      <div class="booking-row-detail"><div class="label">Total Revenue</div><div class="value" style="color:var(--gold);">RM ${(data.summary?.totalRevenue||0).toLocaleString()}</div></div>
+      <div class="booking-row-detail"><div class="label">Avg. Booking Value</div><div class="value">RM ${(data.summary?.averageBookingValue||0).toLocaleString()}</div></div>
+      <div class="booking-row-detail"><div class="label">Total Bookings</div><div class="value">${data.summary?.totalBookings||0}</div></div>
+    </div>
+    <div class="bar-chart">${(data.bookingRevenue||[]).slice(-8).map(r => {
+      const max = Math.max(...(data.bookingRevenue||[]).map(x=>x.revenue), 1);
+      return `<div class="bar-row"><span class="bar-label" style="font-size:0.7rem;">${r._id}</span><div class="bar-track"><div class="bar-fill" style="width:${(r.revenue/max)*100}%"></div></div><span class="bar-count">RM ${r.revenue.toLocaleString()}</span></div>`;
+    }).join('')}</div>
+  `;
+}
 
-        function logout() {
-            localStorage.removeItem('adminToken');
-            location.reload();
-        }
+async function loadRevenuePeriod(period) {
+  const data = await api(`/api/reports/revenue?period=${period}`);
+  document.getElementById('revContent').innerHTML = renderRevenueContent(data.data);
+}
 
-        function showSection(section) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(section + '-section').classList.add('active');
-            event.target.closest('.nav-item').classList.add('active');
-            currentSection = section;
+async function exportLeads() {
+  const from = document.getElementById('exportFrom').value;
+  const to = document.getElementById('exportTo').value;
+  const status = document.getElementById('exportStatus').value;
+  let url = '/api/reports/export/leads?';
+  if (from) url += `startDate=${from}&`;
+  if (to) url += `endDate=${to}&`;
+  if (status) url += `status=${status}`;
+  const data = await api(url);
+  if (!data.data?.length) { toast('No data to export', 'error'); return; }
+  const keys = Object.keys(data.data[0]);
+  const csv = [keys.join(','), ...data.data.map(r => keys.map(k => JSON.stringify(r[k]??'')).join(','))].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = `leads-export-${Date.now()}.csv`;
+  a.click();
+  toast(`Exported ${data.count} leads`);
+}
 
-            if (section === 'dashboard') loadDashboard();
-            if (section === 'listings') loadListingsAdmin();
-            if (section === 'leads') loadLeads();
-            if (section === 'chat') { loadChatSessions(); startChatRefresh(); }
-            else { stopChatRefresh(); }
-            if (section === 'analytics') loadAnalytics();
-        }
+// ── AUDIT ──
+async function loadAudit() {
+  const sec = document.getElementById('sec-audit');
+  sec.innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
+  const data = await api('/api/audit?limit=50');
+  const logs = data.data || [];
+  sec.innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-shield-alt"></i> Audit Log</span>
+        <span style="font-size:0.8rem;color:var(--text-muted);">${data.total||0} total entries</span>
+      </div>
+      <div class="card-body no-pad">
+        ${logs.length ? logs.map(l => `
+          <div class="audit-item">
+            <div class="audit-dot" style="background:${auditColor(l.action)}"></div>
+            <div class="audit-content">
+              <div class="audit-action">${l.action} — ${l.target?.entityType||'system'}</div>
+              <div class="audit-detail">by ${l.performedBy?.username||'system'}${l.target?.entityName?' on '+l.target.entityName:''}</div>
+            </div>
+            <div class="audit-time">${timeAgo(l.createdAt)}</div>
+          </div>
+        `).join('') : `<div class="empty-state"><i class="fas fa-shield-alt"></i><p>No audit logs yet</p></div>`}
+      </div>
+    </div>
+  `;
+}
 
-        async function initDashboard() {
-            loadDashboard();
-        }
+// ── NOTIFICATIONS ──
+async function pollNotifications() {
+  try {
+    const data = await api('/api/notifications/recent');
+    S.notifications = data.data || [];
+    const dot = document.getElementById('notifDot');
+    if (dot) dot.classList.toggle('visible', (data.unreadCount||0) > 0);
+    renderNotifPanel();
+  } catch {}
+}
 
-        async function loadDashboard() {
-            try {
-                const res = await fetch('/api/analytics/dashboard', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                if (!data.success) return;
+function renderNotifPanel() {
+  const list = document.getElementById('notifList');
+  if (!list) return;
+  if (!S.notifications.length) { list.innerHTML = `<div class="empty-state"><i class="fas fa-bell-slash"></i><p>No notifications</p></div>`; return; }
+  list.innerHTML = S.notifications.map(n => `
+    <div class="notif-item ${!n.isRead?'unread':''}" onclick="markRead('${n._id}')">
+      <div class="notif-icon si-gold" style="background:var(--gold-dim);color:var(--gold);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fas ${notifIcon(n.type)}" style="font-size:0.75rem;"></i>
+      </div>
+      <div class="notif-content">
+        <div class="notif-title-text">${n.title}</div>
+        <div class="notif-msg">${n.message}</div>
+      </div>
+      <div class="notif-time">${timeAgo(n.createdAt)}</div>
+    </div>
+  `).join('');
+}
 
-                const stats = data.data;
-                document.getElementById('statTotalLeads').textContent = stats.totalLeads;
-                document.getElementById('statNewLeads').textContent = stats.newLeads;
-                document.getElementById('statTotalListings').textContent = stats.totalListings;
-                document.getElementById('statTotalViews').textContent = stats.totalViews.toLocaleString();
+function toggleNotifPanel() {
+  document.getElementById('notifPanel').classList.toggle('active');
+}
 
-                // Recent leads
-                const tbody = document.querySelector('#recentLeadsTable tbody');
-                tbody.innerHTML = stats.recentLeads.map(lead => `
-                    <tr>
-                        <td><strong>${lead.name}</strong><br><small style="color:var(--gray)">${lead.email}</small></td>
-                        <td><span class="source-badge"><i class="fas fa-${getSourceIcon(lead.source)}"></i> ${lead.source}</span></td>
-                        <td><span class="status-badge status-${lead.status}">${lead.status}</span></td>
-                        <td style="color:var(--gray);font-size:0.85rem;">${new Date(lead.createdAt).toLocaleDateString()}</td>
-                    </tr>
-                `).join('');
+async function markRead(id) {
+  await api(`/api/notifications/${id}/read`, { method: 'PUT' });
+  pollNotifications();
+}
 
-                // Lead sources chart
-                const chartContainer = document.getElementById('leadSourcesChart');
-                const maxCount = Math.max(...stats.leadsBySource.map(s => s.count), 1);
-                chartContainer.innerHTML = stats.leadsBySource.map(source => `
-                    <div style="margin-bottom:0.75rem;">
-                        <div style="display:flex;justify-content:space-between;margin-bottom:0.25rem;font-size:0.85rem;">
-                            <span style="text-transform:capitalize;">${source._id.replace('_', ' ')}</span>
-                            <span style="font-weight:600;">${source.count}</span>
-                        </div>
-                        <div style="background:rgba(255,255,255,0.05);border-radius:6px;height:8px;overflow:hidden;">
-                            <div style="background:var(--gradient);height:100%;border-radius:6px;width:${(source.count/maxCount)*100}%;transition:width 0.5s;"></div>
-                        </div>
-                    </div>
-                `).join('');
-            } catch(e) { console.error(e); }
-        }
+async function markAllRead() {
+  await api('/api/notifications/mark-all-read', { method: 'PUT' });
+  pollNotifications();
+}
 
-        async function loadListingsAdmin() {
-            try {
-                const res = await fetch('/api/listings?isActive=true', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                allListings = data.data || [];
-                renderListingsTable(allListings);
-            } catch(e) { console.error(e); }
-        }
+// ── HELPERS ──
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
+  if (!e.target.closest('.notif-panel') && !e.target.closest('.notif-btn')) {
+    document.getElementById('notifPanel')?.classList.remove('active');
+  }
+});
 
-        function renderListingsTable(listings) {
-            const tbody = document.querySelector('#listingsTable tbody');
-            tbody.innerHTML = listings.map(l => `
-                <tr>
-                    <td><strong>${l.title}</strong></td>
-                    <td><span style="text-transform:capitalize;font-size:0.85rem;">${l.propertyType.replace('_', ' ')}</span></td>
-                    <td>RM ${l.price}/${l.pricePeriod}</td>
-                    <td>${l.location?.city || '-'}</td>
-                    <td>${l.views}</td>
-                    <td>${l.inquiries}</td>
-                    <td><span class="status-badge ${l.isActive ? 'status-converted' : 'status-closed'}">${l.isActive ? 'Active' : 'Inactive'}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-outline" onclick="editListing('${l._id}')" style="margin-right:0.5rem;">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteListing('${l._id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
+function cap(s) { return s ? s.replace(/_/g,' ').replace(/\b\w/g, c=>c.toUpperCase()) : ''; }
+function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-MY', { day:'2-digit', month:'short', year:'numeric' }) : '-'; }
+function fmtTime(d) { return d ? new Date(d).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }) : '-'; }
+function timeAgo(d) {
+  const diff = Date.now() - new Date(d).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return fmtDate(d);
+}
 
-        function filterListings() {
-            const search = document.getElementById('listingSearch').value.toLowerCase();
-            const filtered = allListings.filter(l =>
-                l.title.toLowerCase().includes(search) ||
-                l.location?.city?.toLowerCase().includes(search)
-            );
-            renderListingsTable(filtered);
-        }
+function statusBadge(s) {
+  const map = { new:'badge-new', contacted:'badge-contacted', converted:'badge-converted', closed:'badge-closed', viewing_scheduled:'badge-viewing', pending:'badge-pending', confirmed:'badge-confirmed', cancelled:'badge-cancelled', completed:'badge-completed', deposit_paid:'badge-deposit_paid', fully_paid:'badge-fully_paid' };
+  return `<span class="badge ${map[s]||'badge-neutral'}">${cap(s)}</span>`;
+}
 
-        function openListingModal() {
-            document.getElementById('listingModalTitle').textContent = 'Add New Listing';
-            document.getElementById('listingForm').reset();
-            document.getElementById('listingId').value = '';
-            document.getElementById('listingModal').classList.add('active');
-        }
+function renderBarChart(items, countKey, labelKey = '_id') {
+  if (!items.length) return '<div class="empty-state" style="padding:1rem;"><p>No data</p></div>';
+  const max = Math.max(...items.map(i => i[countKey]||0), 1);
+  return items.map(i => `
+    <div class="bar-row">
+      <span class="bar-label">${i[labelKey]||'Unknown'}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${((i[countKey]||0)/max)*100}%"></div></div>
+      <span class="bar-count">${i[countKey]||0}</span>
+    </div>
+  `).join('');
+}
 
-        function closeListingModal() {
-            document.getElementById('listingModal').classList.remove('active');
-        }
+function renderTrendBars(trends) {
+  if (!trends.length) return '<div style="color:var(--text-muted);font-size:0.85rem;padding:1rem;">No trend data</div>';
+  const max = Math.max(...trends.map(t => t.count), 1);
+  return trends.map(t => `
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;" title="${t._id}: ${t.count}">
+      <div style="font-size:0.6rem;color:var(--text-muted);">${t.count||''}</div>
+      <div style="width:100%;background:linear-gradient(180deg,var(--gold-light),var(--gold));border-radius:3px 3px 0 0;height:${Math.max((t.count/max)*140,2)}px;transition:height 0.5s;"></div>
+      <div style="font-size:0.55rem;color:var(--text-muted);transform:rotate(-45deg);margin-top:4px;">${(t._id||'').slice(5)}</div>
+    </div>
+  `).join('');
+}
 
-        async function editListing(id) {
-            const listing = allListings.find(l => l._id === id);
-            if (!listing) return;
+function auditColor(action) {
+  if (!action) return 'var(--text-muted)';
+  if (action.includes('DELETE') || action.includes('delete')) return 'var(--danger)';
+  if (action.includes('CREATE') || action.includes('create')) return 'var(--success)';
+  if (action.includes('UPDATE') || action.includes('update')) return 'var(--info)';
+  return 'var(--gold)';
+}
 
-            document.getElementById('listingModalTitle').textContent = 'Edit Listing';
-            document.getElementById('listingId').value = listing._id;
-            document.getElementById('listingTitle').value = listing.title;
-            document.getElementById('listingDescription').value = listing.description;
-            document.getElementById('listingPrice').value = listing.price;
-            document.getElementById('listingPeriod').value = listing.pricePeriod;
-            document.getElementById('listingType').value = listing.propertyType;
-            document.getElementById('listingCity').value = listing.location?.city || '';
-            document.getElementById('listingUniversity').value = listing.location?.university || '';
-            document.getElementById('listingAddress').value = listing.location?.address || '';
-            document.getElementById('listingBedrooms').value = listing.bedrooms || '';
-            document.getElementById('listingBathrooms').value = listing.bathrooms || '';
-            document.getElementById('listingOccupants').value = listing.maxOccupants || '';
-            document.getElementById('listingWhatsapp').value = listing.whatsappNumber || '';
-            document.getElementById('listingAmenities').value = (listing.amenities || []).join(', ');
-            document.getElementById('listingImages').value = (listing.images || []).join(', ');
-            document.getElementById('listingFrom').value = listing.availableFrom ? listing.availableFrom.split('T')[0] : '';
-            document.getElementById('listingUntil').value = listing.availableUntil ? listing.availableUntil.split('T')[0] : '';
-            document.getElementById('listingActive').checked = listing.isActive;
-            document.getElementById('listingFeatured').checked = listing.isFeatured;
+function notifIcon(type) {
+  const map = { new_booking:'calendar-plus', lead_status_change:'user-check', booking_status:'calendar-check', system:'cog' };
+  return map[type] || 'bell';
+}
 
-            document.getElementById('listingModal').classList.add('active');
-        }
-
-        async function saveListing(e) {
-            e.preventDefault();
-            const id = document.getElementById('listingId').value;
-            const data = {
-                title: document.getElementById('listingTitle').value,
-                description: document.getElementById('listingDescription').value,
-                price: parseInt(document.getElementById('listingPrice').value),
-                pricePeriod: document.getElementById('listingPeriod').value,
-                propertyType: document.getElementById('listingType').value,
-                location: {
-                    city: document.getElementById('listingCity').value,
-                    university: document.getElementById('listingUniversity').value,
-                    address: document.getElementById('listingAddress').value
-                },
-                bedrooms: parseInt(document.getElementById('listingBedrooms').value) || 0,
-                bathrooms: parseFloat(document.getElementById('listingBathrooms').value) || 0,
-                maxOccupants: parseInt(document.getElementById('listingOccupants').value) || 1,
-                whatsappNumber: document.getElementById('listingWhatsapp').value,
-                amenities: document.getElementById('listingAmenities').value.split(',').map(s => s.trim()).filter(Boolean),
-                images: document.getElementById('listingImages').value.split(',').map(s => s.trim()).filter(Boolean),
-                availableFrom: document.getElementById('listingFrom').value,
-                availableUntil: document.getElementById('listingUntil').value,
-                isActive: document.getElementById('listingActive').checked,
-                isFeatured: document.getElementById('listingFeatured').checked
-            };
-
-            try {
-                const url = id ? `/api/listings/${id}` : '/api/listings';
-                const method = id ? 'PUT' : 'POST';
-                const res = await fetch(url, {
-                    method,
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify(data)
-                });
-                if (res.ok) {
-                    closeListingModal();
-                    loadListingsAdmin();
-                }
-            } catch(e) { alert('Error saving listing'); }
-        }
-
-        async function deleteListing(id) {
-            if (!confirm('Are you sure you want to delete this listing?')) return;
-            try {
-                await fetch(`/api/listings/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                loadListingsAdmin();
-            } catch(e) { alert('Error deleting listing'); }
-        }
-
-        async function loadLeads() {
-            try {
-                const res = await fetch('/api/leads', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                allLeads = data.data || [];
-                renderLeadsTable(allLeads);
-            } catch(e) { console.error(e); }
-        }
-
-        function renderLeadsTable(leads) {
-            const tbody = document.querySelector('#leadsTable tbody');
-            tbody.innerHTML = leads.map(lead => `
-                <tr>
-                    <td><strong>${lead.name}</strong><br><small style="color:var(--gray)">${lead.email}</small></td>
-                    <td>${lead.phone || '-'}</td>
-                    <td><span class="source-badge"><i class="fas fa-${getSourceIcon(lead.source)}"></i> ${lead.source.replace('_', ' ')}</span></td>
-                    <td>${lead.listingTitle || '-'}</td>
-                    <td><span class="status-badge status-${lead.status}">${lead.status}</span></td>
-                    <td style="color:var(--gray);font-size:0.85rem;">${new Date(lead.createdAt).toLocaleDateString()}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline" onclick="viewLead('${lead._id}')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function filterLeadsByStatus(status) {
-            leadStatusFilter = status;
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            applyLeadFilters();
-        }
-
-        function filterLeads() {
-            applyLeadFilters();
-        }
-
-        function applyLeadFilters() {
-            const search = document.getElementById('leadSearch').value.toLowerCase();
-            let filtered = allLeads;
-            if (leadStatusFilter !== 'all') filtered = filtered.filter(l => l.status === leadStatusFilter);
-            if (search) filtered = filtered.filter(l =>
-                l.name.toLowerCase().includes(search) ||
-                l.email.toLowerCase().includes(search)
-            );
-            renderLeadsTable(filtered);
-        }
-
-        function viewLead(id) {
-            const lead = allLeads.find(l => l._id === id);
-            if (!lead) return;
-            document.getElementById('leadModalBody').innerHTML = `
-                <div style="margin-bottom:1.5rem;">
-                    <h4 style="margin-bottom:0.5rem;">${lead.name}</h4>
-                    <p style="color:var(--gray);"><i class="fas fa-envelope"></i> ${lead.email}</p>
-                    ${lead.phone ? `<p style="color:var(--gray);"><i class="fas fa-phone"></i> ${lead.phone}</p>` : ''}
-                    ${lead.university ? `<p style="color:var(--gray);"><i class="fas fa-graduation-cap"></i> ${lead.university}</p>` : ''}
-                </div>
-                <div style="background:rgba(255,255,255,0.03);padding:1rem;border-radius:12px;margin-bottom:1.5rem;">
-                    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.5rem;">Message:</p>
-                    <p>${lead.message || 'No message'}</p>
-                </div>
-                <div class="form-group">
-                    <label>Status</label>
-                    <select id="leadStatusUpdate" class="form-control" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.75rem 1rem;color:var(--light);">
-                        <option value="new" ${lead.status === 'new' ? 'selected' : ''}>New</option>
-                        <option value="contacted" ${lead.status === 'contacted' ? 'selected' : ''}>Contacted</option>
-                        <option value="viewing_scheduled" ${lead.status === 'viewing_scheduled' ? 'selected' : ''}>Viewing Scheduled</option>
-                        <option value="converted" ${lead.status === 'converted' ? 'selected' : ''}>Converted</option>
-                        <option value="closed" ${lead.status === 'closed' ? 'selected' : ''}>Closed</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Notes</label>
-                    <textarea id="leadNotesUpdate" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.75rem 1rem;color:var(--light);min-height:80px;">${lead.notes || ''}</textarea>
-                </div>
-                <button class="btn btn-primary" style="width:100%;" onclick="updateLead('${lead._id}')">
-                    <i class="fas fa-save"></i> Update Lead
-                </button>
-            `;
-            document.getElementById('leadModal').classList.add('active');
-        }
-
-        function closeLeadModal() {
-            document.getElementById('leadModal').classList.remove('active');
-        }
-
-        async function updateLead(id) {
-            const status = document.getElementById('leadStatusUpdate').value;
-            const notes = document.getElementById('leadNotesUpdate').value;
-            try {
-                await fetch(`/api/leads/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ status, notes })
-                });
-                closeLeadModal();
-                loadLeads();
-            } catch(e) { alert('Error updating lead'); }
-        }
-
-        async function loadChatSessions() {
-            try {
-                const res = await fetch('/api/chat/admin/sessions', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                const sessions = data.data || [];
-
-                const container = document.getElementById('chatSessions');
-                container.innerHTML = sessions.map(s => `
-                    <div class="nav-item" style="border-left:none;border-bottom:1px solid rgba(255,255,255,0.03);" onclick="openChatSession('${s._id}', '${s.name || 'Anonymous'}')">
-                        <div style="flex:1;">
-                            <div style="font-weight:600;font-size:0.9rem;">${s.name || 'Anonymous'}</div>
-                            <div style="font-size:0.8rem;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;">${s.lastMessage}</div>
-                        </div>
-                        ${s.unreadCount > 0 ? `<span style="background:var(--danger);color:white;padding:0.15rem 0.5rem;border-radius:100px;font-size:0.7rem;font-weight:600;">${s.unreadCount}</span>` : ''}
-                        <div style="font-size:0.7rem;color:var(--gray);margin-left:0.5rem;">${new Date(s.lastMessageAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
-                    </div>
-                `).join('');
-            } catch(e) { console.error(e); }
-        }
-
-        async function openChatSession(sessionId, name) {
-            currentChatSession = sessionId;
-            document.getElementById('chatSessionTitle').innerHTML = `<i class="fas fa-user-circle" style="color:var(--accent)"></i> ${name}`;
-            document.getElementById('chatInputContainer').style.display = 'flex';
-            await loadChatMessages(sessionId);
-
-            // Mark as read
-            await fetch(`/api/chat/read/${sessionId}`, {
-                method: 'PUT',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-        }
-
-        async function loadChatMessages(sessionId) {
-            try {
-                const res = await fetch(`/api/chat/${sessionId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                const container = document.getElementById('adminChatMessages');
-                container.innerHTML = data.data.map(msg => `
-                    <div style="margin-bottom:1rem;display:flex;${msg.isAdmin ? 'justify-content:flex-end' : ''}">
-                        <div style="max-width:70%;padding:0.75rem 1rem;border-radius:16px;${msg.isAdmin ? 'background:var(--gradient);color:var(--primary);border-bottom-right-radius:4px;' : 'background:rgba(255,255,255,0.05);border-bottom-left-radius:4px;'}">
-                            <div style="font-size:0.9rem;">${msg.message}</div>
-                            <div style="font-size:0.7rem;opacity:0.7;margin-top:0.25rem;text-align:right;">${new Date(msg.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
-                        </div>
-                    </div>
-                `).join('');
-                container.scrollTop = container.scrollHeight;
-            } catch(e) { console.error(e); }
-        }
-
-        async function sendAdminReply() {
-            const input = document.getElementById('adminChatInput');
-            const message = input.value.trim();
-            if (!message || !currentChatSession) return;
-
-            try {
-                await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ sessionId: currentChatSession, message, isAdmin: true })
-                });
-                input.value = '';
-                await loadChatMessages(currentChatSession);
-            } catch(e) { console.error(e); }
-        }
-
-        function startChatRefresh() {
-            chatRefreshInterval = setInterval(() => {
-                if (currentSection === 'chat') {
-                    loadChatSessions();
-                    if (currentChatSession) loadChatMessages(currentChatSession);
-                }
-            }, 5000);
-        }
-
-        function stopChatRefresh() {
-            clearInterval(chatRefreshInterval);
-        }
-
-        async function loadAnalytics() {
-            try {
-                const res = await fetch('/api/analytics/dashboard', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                const stats = data.data;
-                document.getElementById('statInquiries').textContent = stats.totalInquiries;
-                document.getElementById('statWeeklyLeads').textContent = stats.weeklyLeads;
-
-                // Load trends
-                const trendsRes = await fetch('/api/analytics/trends', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const trendsData = await trendsRes.json();
-                const trends = trendsData.data || [];
-
-                const chartContainer = document.getElementById('trendsChart');
-                const maxCount = Math.max(...trends.map(t => t.count), 1);
-                chartContainer.innerHTML = `
-                    <div style="display:flex;align-items:flex-end;gap:8px;height:200px;padding-top:20px;">
-                        ${trends.map(t => `
-                            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-                                <div style="font-size:0.7rem;color:var(--gray);">${t.count}</div>
-                                <div style="width:100%;background:var(--gradient);border-radius:4px 4px 0 0;transition:height 0.5s;" style="height:${(t.count/maxCount)*100}%;"></div>
-                                <div style="font-size:0.65rem;color:var(--gray);transform:rotate(-45deg);white-space:nowrap;">${t._id.slice(5)}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            } catch(e) { console.error(e); }
-        }
-
-        function getSourceIcon(source) {
-            const icons = {
-                chat: 'comments',
-                whatsapp: 'whatsapp',
-                booking_form: 'calendar-check',
-                contact_form: 'envelope',
-                view_listing: 'eye'
-            };
-            return icons[source] || 'circle';
-        }
-    </script>
+// ── INIT ──
+if (!S.token) {
+  renderLogin();
+} else {
+  renderApp();
+}
+</script>
 </body>
 </html>
