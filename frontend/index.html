@@ -652,15 +652,15 @@
     <!-- ── NAVBAR ── -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <a href="/" class="logo">Ten<span>&</span>See</a>
+            <a href="/" class="logo" target="_self">Ten<span>&</span>See</a>
             <button class="hamburger" onclick="toggleMobileNav()">☰</button>
             <ul class="nav-links" id="navLinks">
-                <li><a href="/">Home</a></li>
-                <li><a href="/listings.html">Listings</a></li>
-                <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="/listings.html" class="btn btn-primary btn-sm">Browse Rooms</a></li>
+                <li><a href="/" target="_self">Home</a></li>
+                <li><a href="/listings.html" target="_self">Listings</a></li>
+                <li><a href="#how-it-works" target="_self">How It Works</a></li>
+                <li><a href="#features" target="_self">Features</a></li>
+                <li><a href="#contact" target="_self">Contact</a></li>
+                <li><a href="/listings.html" class="btn btn-primary btn-sm" target="_self">Browse Rooms</a></li>
             </ul>
         </div>
     </nav>
@@ -679,17 +679,17 @@
                     Ten&See connects Malaysian students with verified, affordable accommodation close to their campus. No agent fees. No guesswork. Just a home.
                 </p>
                 <div class="hero-actions">
-                    <a href="/listings.html" class="btn btn-primary btn-lg">
+                    <a href="/listings.html" class="btn btn-primary btn-lg" target="_self">
                         <i class="fas fa-search"></i> Browse Listings
                     </a>
-                    <a href="#contact" class="btn btn-outline btn-lg">
+                    <a href="#contact" class="btn btn-outline btn-lg" target="_self">
                         <i class="fab fa-whatsapp"></i> WhatsApp Us
                     </a>
                 </div>
                 <div class="hero-stats">
                     <div>
-                        <div class="hero-stat-value" id="statListings">—</div>
-                        <div class="hero-stat-label">Rooms Available</div>
+                        <div class="hero-stat-value" id="statTotalRooms">—</div>
+                        <div class="hero-stat-label">Verified Rooms Available</div>
                     </div>
                     <div>
                         <div class="hero-stat-value">6</div>
@@ -821,7 +821,7 @@
                     <span class="section-label">Available Now</span>
                     <h2 class="section-title">Featured <span class="accent">Listings</span></h2>
                 </div>
-                <a href="/listings.html" class="btn btn-outline-dark">View All <i class="fas fa-arrow-right"></i></a>
+                <a href="/listings.html" class="btn btn-outline-dark" target="_self">View All <i class="fas fa-arrow-right"></i></a>
             </div>
             <div class="listings-grid" id="featuredGrid">
                 <!-- Loaded dynamically -->
@@ -953,8 +953,8 @@
                 </div>
                 <div class="why-visual" data-aos="fade-left">
                     <div class="wv-stat">
-                        <div class="wv-stat-num" id="wvListings">—</div>
-                        <div class="wv-stat-label">Verified rooms available right now</div>
+                        <div class="wv-stat-num" id="wvTotalRooms">—</div>
+                        <div class="wv-stat-label">Verified individual rooms available</div>
                     </div>
                     <div class="wv-row">
                         <div class="wv-stat">
@@ -983,7 +983,7 @@
                 <h2 class="section-title" style="margin-top:0.5rem;">Ready to Find Your Room?</h2>
                 <p class="section-desc">Browse our current listings or get in touch with us directly on WhatsApp. We'll help you find the right place.</p>
                 <div class="cta-actions">
-                    <a href="/listings.html" class="btn btn-primary btn-lg">
+                    <a href="/listings.html" class="btn btn-primary btn-lg" target="_self">
                         <i class="fas fa-search"></i> Browse All Listings
                     </a>
                     <a href="https://wa.me/601XXXXXXXXX" target="_blank" class="btn btn-whatsapp btn-lg">
@@ -1080,20 +1080,20 @@
             </div>
             <div class="footer-col">
                 <h5>Pages</h5>
-                <a href="/">Home</a>
-                <a href="/listings.html">Browse Listings</a>
-                <a href="#how-it-works">How It Works</a>
-                <a href="#features">Features</a>
-                <a href="#contact">Contact</a>
+                <a href="/" target="_self">Home</a>
+                <a href="/listings.html" target="_self">Browse Listings</a>
+                <a href="#how-it-works" target="_self">How It Works</a>
+                <a href="#features" target="_self">Features</a>
+                <a href="#contact" target="_self">Contact</a>
             </div>
             <div class="footer-col">
                 <h5>Universities</h5>
-                <a href="/listings.html?university=Taylor's University">Taylor's University</a>
-                <a href="/listings.html?university=Sunway University">Sunway University</a>
-                <a href="/listings.html?university=Monash University Malaysia">Monash Malaysia</a>
-                <a href="/listings.html?university=INTI International University">INTI University</a>
-                <a href="/listings.html?university=Help University">Help University</a>
-                <a href="/listings.html?university=SEGi University">SEGi University</a>
+                <a href="/listings.html?university=Taylor's University" target="_self">Taylor's University</a>
+                <a href="/listings.html?university=Sunway University" target="_self">Sunway University</a>
+                <a href="/listings.html?university=Monash University Malaysia" target="_self">Monash Malaysia</a>
+                <a href="/listings.html?university=INTI International University" target="_self">INTI University</a>
+                <a href="/listings.html?university=Help University" target="_self">Help University</a>
+                <a href="/listings.html?university=SEGi University" target="_self">SEGi University</a>
             </div>
             <div class="footer-col">
                 <h5>Contact</h5>
@@ -1171,10 +1171,10 @@
                     listings = allData.data || [];
                 }
 
-                // Update stat counters
-                const total = data.total || listings.length;
-                document.getElementById('statListings').textContent = total;
-                document.getElementById('wvListings').textContent = total;
+                // Calculate total individual rooms (sum of bedrooms across all properties)
+                const totalRooms = listings.reduce((sum, l) => sum + (l.bedrooms || 1), 0);
+                document.getElementById('statTotalRooms').textContent = totalRooms;
+                document.getElementById('wvTotalRooms').textContent = totalRooms;
 
                 const grid = document.getElementById('featuredGrid');
                 if (!listings.length) {
@@ -1205,7 +1205,7 @@
                                 <div class="listing-feature"><i class="fas fa-user-friends"></i> Max ${l.maxOccupants || 1}</div>
                             </div>
                             <div class="listing-actions">
-                                <a href="/listing.html?id=${l._id}" class="btn btn-primary btn-sm" style="flex:1;justify-content:center;">
+                                <a href="/listing.html?id=${l._id}" class="btn btn-primary btn-sm" style="flex:1;justify-content:center;" target="_self">
                                     <i class="fas fa-eye"></i> View & Enquire
                                 </a>
                             </div>
