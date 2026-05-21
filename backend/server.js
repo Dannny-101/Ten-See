@@ -52,6 +52,10 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/admin/index.html'));
 });
 
+app.get('/listing', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/listing.html'));
+});
+
 cron.schedule('0 9 * * 1', async () => {
   try {
     const emailService = require('./utils/email');
