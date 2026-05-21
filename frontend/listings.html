@@ -829,7 +829,7 @@
 
             grid.innerHTML = listings.map(listing => `
                 <div class="listing-card" data-id="${listing._id}" data-aos="fade-up">
-                    <div class="listing-image">
+                    <div class="listing-image" onclick="window.location='/listing.html?id=${listing._id}'" style="cursor:pointer;">
                         <img src="${listing.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600'}" alt="${listing.title}">
                         ${listing.isFeatured ? '<span class="listing-badge badge-featured">Featured</span>' : ''}
                         ${isNew(listing.createdAt) ? '<span class="listing-badge badge-new" style="left:auto;right:1rem;">New</span>' : ''}
