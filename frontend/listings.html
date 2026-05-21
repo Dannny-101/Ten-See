@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Listings - Ten&See</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animate On Scroll -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <style>
+        :root {
+            --color-primary: #2C3830;
+            --color-accent: #B8954A;
+            --color-accent-light: #F0D9A0;
+            --color-bg: #F7F8FA;
+            --color-surface: #FFFFFF;
+            --color-text-main: #1C2420;
+            --color-text-muted: #6B7280;
+            --color-success: #10B981;
+            --color-border: #E5E7EB;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text-main);
+            line-height: 1.6;
+        }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', sans-serif; }
+
+        /* Navbar */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 1000; padding: 1rem 2rem;
+            background: var(--color-primary);
+            transition: all 0.3s ease;
+        }
+        .navbar.scrolled {
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+            padding: 0.75rem 2rem;
+        }
+        .nav-container {
+            max-width: 1400px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem; font-weight: 700;
+            color: var(--color-accent);
+            text-decoration: none;
+        }
+        .logo span { font-weight: 300; color: white; }
+        .nav-links { display: flex; gap: 2.5rem; align-items: center; list-style: none; }
+        .nav-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none; font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--color-accent); }
+        .hamburger {
+            display: none;
+            background: none; border: none;
+            color: white; font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem 1.5rem; border-radius: 12px;
+            font-weight: 600; font-size: 0.95rem;
+            cursor: pointer; transition: all 0.2s ease;
+            border: none; text-decoration: none;
+        }
+        .btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+        .btn-primary {
+            background: var(--color-accent);
+            color: var(--color-primary);
+            box-shadow: 0 4px 15px rgba(201, 168, 76, 0.3);
+        }
+        .btn-primary:hover {
+            background: #D4B55D;
+            box-shadow: 0 6px 20px rgba(201, 168, 76, 0.4);
+        }
+        .btn-outline {
+            background: transparent; color: white;
+            border: 1.5px solid rgba(255,255,255,0.25);
+        }
+        .btn-outline:hover {
+            border-color: var(--color-accent);
+            background: rgba(201, 168, 76, 0.1);
+            color: var(--color-accent);
+        }
+        .btn-whatsapp { background: #25d366; color: white; }
+        .btn-whatsapp:hover { background: #128c7e; }
+        .btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; }
+
+        /* Page Header */
+        .page-header {
+            padding: 8rem 2rem 3rem;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(27,46,75,0.06) 0%, transparent 100%);
+        }
+        .page-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 0.75rem;
+            color: var(--color-primary);
+        }
+        .page-header h1 .accent-text { color: var(--color-accent); }
+        .page-header p { color: var(--color-text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+        /* Filters */
+        .filters-section {
+            padding: 0 2rem 2rem;
+            max-width: 1400px; margin: 0 auto;
+        }
+        .filters-bar {
+            display: flex; gap: 1rem; flex-wrap: wrap;
+            align-items: center; justify-content: center;
+        }
+        .filter-group { position: relative; }
+        .filter-group select, .filter-group input {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 0.75rem 2.5rem 0.75rem 1rem;
+            color: var(--color-text-main);
+            font-size: 0.9rem;
+            min-width: 180px;
+            cursor: pointer;
+            appearance: none;
+            outline: none;
+            font-family: inherit;
+        }
+        .filter-group input { min-width: 250px; cursor: text; }
+        .filter-group select:focus, .filter-group input:focus {
+            border-color: var(--color-accent);
+        }
+        .filter-group::after {
+            content: '\f107';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 1rem; top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-text-muted);
+            pointer-events: none;
+        }
+        .filter-group.input-group::after { content: '\f002'; }
+
+        .price-range {
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .price-range input {
+            width: 120px; min-width: 120px;
+            padding: 0.75rem 1rem;
+        }
+        .price-range span { color: var(--color-text-muted); font-size: 0.85rem; }
+
+        .active-filters {
+            display: flex; gap: 0.5rem; flex-wrap: wrap;
+            justify-content: center; margin-top: 1rem;
+        }
+        .filter-tag {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.4rem 0.875rem;
+            background: rgba(201, 168, 76, 0.1);
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            color: var(--color-accent);
+        }
+        .filter-tag button {
+            background: none; border: none; color: var(--color-accent);
+            cursor: pointer; font-size: 0.7rem;
+        }
+
+        /* Skeleton Loading */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+        .skeleton-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .skeleton-image {
+            height: 220px;
+            width: 100%;
+        }
+        .skeleton-content {
+            padding: 1.5rem;
+        }
+        .skeleton-line {
+            height: 16px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+        }
+        .skeleton-line.short { width: 40%; }
+        .skeleton-line.medium { width: 70%; }
+        .skeleton-line.long { width: 90%; }
+        .skeleton-actions {
+            display: flex; gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .skeleton-btn {
+            height: 36px;
+            flex: 1;
+            border-radius: 10px;
+        }
+
+        /* Listings Grid */
+        .listings-section {
+            padding: 2rem;
+            max-width: 1400px; margin: 0 auto;
+        }
+        .listings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .listing-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+        .listing-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px -10px rgba(27, 46, 75, 0.15);
+            border-color: var(--color-accent);
+        }
+
+        .listing-image {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+        }
+        .listing-image img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .listing-card:hover .listing-image img { transform: scale(1.05); }
+
+        .listing-badge {
+            position: absolute;
+            top: 1rem; left: 1rem;
+            padding: 0.4rem 0.875rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-featured { background: var(--color-accent); color: var(--color-primary); }
+        .badge-new { background: var(--color-success); color: white; }
+        .badge-verified {
+            background: var(--color-success);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .badge-university {
+            background: var(--color-accent-light);
+            color: var(--color-primary);
+        }
+
+        .listing-price {
+            position: absolute;
+            bottom: 1rem; right: 1rem;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+        }
+        .listing-price span {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .listing-content { padding: 1.5rem; }
+        .listing-meta {
+            display: flex; gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .listing-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(201, 168, 76, 0.1);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--color-accent);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .listing-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+            color: var(--color-primary);
+        }
+        .listing-location {
+            display: flex; align-items: center; gap: 0.4rem;
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .listing-features {
+            display: flex; gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+        .listing-feature {
+            display: flex; align-items: center; gap: 0.35rem;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+        .listing-feature i { color: var(--color-accent); font-size: 0.9rem; }
+
+        .listing-amenities {
+            display: flex; flex-wrap: wrap; gap: 0.4rem;
+            margin-bottom: 1.25rem;
+        }
+        .amenity-tag {
+            padding: 0.25rem 0.6rem;
+            background: var(--color-bg);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+        }
+
+        .listing-actions {
+            display: flex; gap: 0.75rem;
+        }
+        .listing-actions .btn { flex: 1; justify-content: center; }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center; padding: 4rem;
+            grid-column: 1 / -1;
+        }
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--color-text-muted);
+            margin-bottom: 1rem;
+        }
+        .empty-state h3 {
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+        }
+        .empty-state p { color: var(--color-text-muted); }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 24px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-header h3 { font-size: 1.25rem; color: var(--color-primary); }
+        .modal-close {
+            background: none; border: none; color: var(--color-text-muted);
+            font-size: 1.5rem; cursor: pointer;
+        }
+        .modal-body { padding: 1.5rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label {
+            display: block; margin-bottom: 0.5rem;
+            font-size: 0.9rem; font-weight: 500;
+            color: var(--color-text-main);
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 0.875rem 1rem;
+            color: var(--color-text-main);
+            font-size: 0.95rem;
+            outline: none; font-family: inherit;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            border-color: var(--color-accent);
+        }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+
+        /* Footer */
+        .footer {
+            background: var(--color-primary);
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            margin-top: 4rem;
+        }
+        .footer-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+        .footer-col h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            margin-bottom: 0.75rem;
+        }
+        .footer-col h4 span { font-weight: 300; color: white; }
+        .footer-col p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+        .footer-col h5 {
+            color: var(--color-accent-light);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .footer-col a {
+            display: block;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover { color: var(--color-accent); }
+        .footer-col .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .footer-col .contact-item i {
+            color: var(--color-accent);
+            width: 18px;
+        }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0; right: 0;
+                background: var(--color-primary);
+                flex-direction: column;
+                padding: 1rem 2rem;
+                gap: 1rem;
+                border-top: 1px solid rgba(255,255,255,0.1);
+            }
+            .nav-links.active { display: flex; }
+            .hamburger { display: block; }
+            .filters-bar { flex-direction: column; align-items: stretch; }
+            .filter-group select, .filter-group input { width: 100%; min-width: unset; }
+            .listings-grid { grid-template-columns: 1fr; }
+            .price-range { flex-direction: column; align-items: stretch; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">Ten<span>&</span>See</a>
+            <button class="hamburger" onclick="toggleMobileNav()">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/">Home</a></li>
+                <li><a href="/listings.html">Listings</a></li>
+                <li><a href="/index.html#features">Features</a></li>
+                <li><a href="/index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>Find Your <span class="accent-text">Perfect Home</span></h1>
+        <p>Browse our curated collection of student-friendly accommodations</p>
+    </div>
+
+    <div class="filters-section">
+        <div class="filters-bar">
+            <div class="filter-group input-group">
+                <input type="text" id="searchInput" placeholder="Search by location, university..." oninput="debouncedSearch()">
+            </div>
+            <div class="filter-group">
+                <select id="cityFilter" onchange="applyFilters()">
+                    <option value="">All Cities</option>
+                    <option value="Subang Jaya">Subang Jaya</option>
+                    <option value="Petaling Jaya">Petaling Jaya</option>
+                    <option value="Cheras">Cheras</option>
+                    <option value="Cyberjaya">Cyberjaya</option>
+                    <option value="Nilai">Nilai</option>
+                    <option value="Kuala Lumpur">Kuala Lumpur</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <select id="universityFilter" onchange="applyFilters()">
+                    <option value="">All Universities</option>
+                    <option value="Taylor's University">Taylor's University</option>
+                    <option value="Sunway University">Sunway University</option>
+                    <option value="Monash University Malaysia">Monash University Malaysia</option>
+                    <option value="INTI International University">INTI International University</option>
+                    <option value="Help University">Help University</option>
+                    <option value="SEGi University">SEGi University</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <select id="typeFilter" onchange="applyFilters()">
+                    <option value="">All Types</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="studio">Studio</option>
+                    <option value="shared_room">Shared Room</option>
+                    <option value="private_room">Private Room</option>
+                    <option value="house">House</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <select id="bedroomsFilter" onchange="applyFilters()">
+                    <option value="">Any Bedrooms</option>
+                    <option value="1">1 Bedroom</option>
+                    <option value="2">2 Bedrooms</option>
+                    <option value="3">3 Bedrooms</option>
+                    <option value="4">4+ Bedrooms</option>
+                </select>
+            </div>
+            <div class="price-range">
+                <input type="number" id="minPrice" placeholder="Min RM" onchange="applyFilters()">
+                <span>to</span>
+                <input type="number" id="maxPrice" placeholder="Max RM" onchange="applyFilters()">
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="clearFilters()">
+                <i class="fas fa-undo"></i> Reset
+            </button>
+        </div>
+        <div class="active-filters" id="activeFilters"></div>
+    </div>
+
+    <div class="listings-section">
+        <div class="listings-grid" id="listingsGrid">
+            <!-- Skeleton loading cards -->
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-line medium"></div>
+                    <div class="skeleton skeleton-line long"></div>
+                    <div class="skeleton-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-line medium"></div>
+                    <div class="skeleton skeleton-line long"></div>
+                    <div class="skeleton-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-line medium"></div>
+                    <div class="skeleton skeleton-line long"></div>
+                    <div class="skeleton-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-line medium"></div>
+                    <div class="skeleton skeleton-line long"></div>
+                    <div class="skeleton-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-line medium"></div>
+                    <div class="skeleton skeleton-line long"></div>
+                    <div class="skeleton-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-line medium"></div>
+                    <div class="skeleton skeleton-line long"></div>
+                    <div class="skeleton-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-check" style="color:var(--color-accent)"></i> Book a Viewing</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="bookingForm" onsubmit="submitBooking(event)">
+                    <input type="hidden" id="bookingListingId">
+                    <input type="hidden" id="bookingListingTitle">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="bookingName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="bookingEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="bookingPhone">
+                    </div>
+                    <div class="form-group">
+                        <label>University</label>
+                        <input type="text" id="bookingUniversity">
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Date</label>
+                        <input type="date" id="bookingDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea id="bookingMessage" placeholder="Any specific requirements..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">
+                        <i class="fas fa-paper-plane"></i> Submit Booking Request
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>Ten<span>&</span>See</h4>
+                <p>The trusted student housing platform in Malaysia.</p>
+                <p>Registered in Malaysia.</p>
+            </div>
+            <div class="footer-col">
+                <h5>Links</h5>
+                <a href="/">Home</a>
+                <a href="/listings.html">Listings</a>
+                <a href="/index.html#contact">Contact</a>
+            </div>
+            <div class="footer-col">
+                <h5>Contact</h5>
+                <div class="contact-item">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>+60 XX-XXXX XXXX</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>hello@tenandsee.homes</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fab fa-instagram"></i>
+                    <span>@tenseeofficial</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Ten&See. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        // AOS Init
+        AOS.init({ duration: 600, once: true });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Mobile hamburger toggle
+        function toggleMobileNav() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        let allListings = [];
+        let searchTimeout;
+
+        // Load listings on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadListings();
+            loadFilterOptions();
+        });
+
+        async function loadListings() {
+            try {
+                const res = await fetch('/api/listings');
+                const data = await res.json();
+                allListings = data.data || [];
+                renderListings(allListings);
+            } catch (e) {
+                console.error('Error loading listings:', e);
+                document.getElementById('listingsGrid').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3>No listings available right now.</h3>
+                        <p>Check back soon or contact us on WhatsApp.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadFilterOptions() {
+            try {
+                const res = await fetch('/api/listings/filters/options');
+                const data = await res.json();
+                const options = data.data;
+
+                const citySelect = document.getElementById('cityFilter');
+                // Keep hardcoded Malaysian cities, only add if not already present
+                options.cities.forEach(city => {
+                    if (city && !Array.from(citySelect.options).some(o => o.value === city)) {
+                        citySelect.innerHTML += `<option value="${city}">${city}</option>`;
+                    }
+                });
+
+                const uniSelect = document.getElementById('universityFilter');
+                options.universities.forEach(uni => {
+                    if (uni && !Array.from(uniSelect.options).some(o => o.value === uni)) {
+                        uniSelect.innerHTML += `<option value="${uni}">${uni}</option>`;
+                    }
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        function renderListings(listings) {
+            const grid = document.getElementById('listingsGrid');
+
+            if (listings.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>No listings match your filters.</h3>
+                        <p>Try adjusting your search or contact us directly.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = listings.map(listing => `
+                <div class="listing-card" data-id="${listing._id}" data-aos="fade-up">
+                    <div class="listing-image">
+                        <img src="${listing.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600'}" alt="${listing.title}">
+                        ${listing.isFeatured ? '<span class="listing-badge badge-featured">Featured</span>' : ''}
+                        ${isNew(listing.createdAt) ? '<span class="listing-badge badge-new" style="left:auto;right:1rem;">New</span>' : ''}
+                        <div class="listing-price">RM ${listing.price}<span>/${listing.pricePeriod}</span></div>
+                    </div>
+                    <div class="listing-content">
+                        <div class="listing-meta">
+                            <span class="listing-type">${listing.propertyType.replace('_', ' ')}</span>
+                            ${listing.location?.university ? `<span class="listing-badge badge-university">Near ${listing.location.university}</span>` : ''}
+                            <span class="listing-badge badge-verified"><i class="fas fa-check-circle"></i> Verified</span>
+                        </div>
+                        <h3 class="listing-title">${listing.title}</h3>
+                        <div class="listing-location">
+                            <i class="fas fa-map-marker-alt" style="color:var(--color-accent)"></i>
+                            ${listing.location?.address || ''}, ${listing.location?.city || ''}
+                        </div>
+                        <div class="listing-features">
+                            ${listing.bedrooms ? `<div class="listing-feature"><i class="fas fa-bed"></i> ${listing.bedrooms} BR</div>` : ''}
+                            ${listing.bathrooms ? `<div class="listing-feature"><i class="fas fa-bath"></i> ${listing.bathrooms} BA</div>` : ''}
+                            <div class="listing-feature"><i class="fas fa-user-friends"></i> Max ${listing.maxOccupants || 1}</div>
+                        </div>
+                        <div class="listing-amenities">
+                            ${(listing.amenities || []).slice(0, 4).map(a => `<span class="amenity-tag">${a}</span>`).join('')}
+                            ${(listing.amenities || []).length > 4 ? `<span class="amenity-tag">+${listing.amenities.length - 4} more</span>` : ''}
+                        </div>
+                        <div class="listing-actions">
+                            <button class="btn btn-primary btn-sm" onclick="openBooking('${listing._id}', '${listing.title.replace(/'/g, "\'")}')">
+                                <i class="fas fa-calendar"></i> Enquire via Ten&See
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Re-init AOS for dynamically added elements
+            if (window.AOS) AOS.refresh();
+        }
+
+        function isNew(date) {
+            const d = new Date(date);
+            const now = new Date();
+            return (now - d) / (1000 * 60 * 60 * 24) <= 7;
+        }
+
+        function debouncedSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(applyFilters, 300);
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value;
+            const city = document.getElementById('cityFilter').value;
+            const university = document.getElementById('universityFilter').value;
+            const type = document.getElementById('typeFilter').value;
+            const bedrooms = document.getElementById('bedroomsFilter').value;
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+
+            let filtered = allListings;
+
+            if (search) {
+                const s = search.toLowerCase();
+                filtered = filtered.filter(l =>
+                    l.title.toLowerCase().includes(s) ||
+                    l.description.toLowerCase().includes(s) ||
+                    l.location?.city?.toLowerCase().includes(s) ||
+                    l.location?.university?.toLowerCase().includes(s)
+                );
+            }
+            if (city) filtered = filtered.filter(l => l.location?.city === city);
+            if (university) filtered = filtered.filter(l => l.location?.university === university);
+            if (type) filtered = filtered.filter(l => l.propertyType === type);
+            if (bedrooms) filtered = filtered.filter(l => l.bedrooms >= parseInt(bedrooms));
+            if (minPrice) filtered = filtered.filter(l => l.price >= parseInt(minPrice));
+            if (maxPrice) filtered = filtered.filter(l => l.price <= parseInt(maxPrice));
+
+            renderListings(filtered);
+            updateActiveFilters({ search, city, university, type, bedrooms, minPrice, maxPrice });
+        }
+
+        function updateActiveFilters(filters) {
+            const container = document.getElementById('activeFilters');
+            const tags = [];
+
+            if (filters.search) tags.push({ label: `Search: "${filters.search}"`, key: 'search' });
+            if (filters.city) tags.push({ label: filters.city, key: 'city' });
+            if (filters.university) tags.push({ label: filters.university, key: 'university' });
+            if (filters.type) tags.push({ label: filters.type.replace('_', ' '), key: 'type' });
+            if (filters.bedrooms) tags.push({ label: `${filters.bedrooms}+ BR`, key: 'bedrooms' });
+            if (filters.minPrice || filters.maxPrice) {
+                tags.push({ label: `RM ${filters.minPrice || 0} - RM ${filters.maxPrice || '∞'}`, key: 'price' });
+            }
+
+            container.innerHTML = tags.map(tag => `
+                <span class="filter-tag">
+                    ${tag.label}
+                    <button onclick="removeFilter('${tag.key}')"><i class="fas fa-times"></i></button>
+                </span>
+            `).join('');
+        }
+
+        function removeFilter(key) {
+            if (key === 'search') document.getElementById('searchInput').value = '';
+            if (key === 'city') document.getElementById('cityFilter').value = '';
+            if (key === 'university') document.getElementById('universityFilter').value = '';
+            if (key === 'type') document.getElementById('typeFilter').value = '';
+            if (key === 'bedrooms') document.getElementById('bedroomsFilter').value = '';
+            if (key === 'price') {
+                document.getElementById('minPrice').value = '';
+                document.getElementById('maxPrice').value = '';
+            }
+            applyFilters();
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('cityFilter').value = '';
+            document.getElementById('universityFilter').value = '';
+            document.getElementById('typeFilter').value = '';
+            document.getElementById('bedroomsFilter').value = '';
+            document.getElementById('minPrice').value = '';
+            document.getElementById('maxPrice').value = '';
+            document.getElementById('activeFilters').innerHTML = '';
+            renderListings(allListings);
+        }
+
+        function openBooking(id, title) {
+            document.getElementById('bookingListingId').value = id;
+            document.getElementById('bookingListingTitle').value = title;
+            document.getElementById('bookingModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('bookingModal').classList.remove('active');
+            document.getElementById('bookingForm').reset();
+        }
+
+        async function submitBooking(e) {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('bookingName').value,
+                email: document.getElementById('bookingEmail').value,
+                phone: document.getElementById('bookingPhone').value,
+                university: document.getElementById('bookingUniversity').value,
+                message: `Booking request for ${document.getElementById('bookingListingTitle').value}. Preferred date: ${document.getElementById('bookingDate').value}. ${document.getElementById('bookingMessage').value}`,
+                source: 'booking_form',
+                listingId: document.getElementById('bookingListingId').value,
+                listingTitle: document.getElementById('bookingListingTitle').value
+            };
+
+            try {
+                const res = await fetch('/api/leads', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                    alert('Booking request submitted! We will contact you soon.');
+                    closeModal();
+                }
+            } catch (e) { alert('Error submitting booking. Please try again.'); }
+        }
+
+        // Close modal on overlay click
+        document.getElementById('bookingModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('bookingModal')) closeModal();
+        });
+    </script>
+</body>
+</html>
