@@ -455,29 +455,35 @@
     };
 
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+        
         const res = await fetch('/api/leads', { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
-            body: JSON.stringify(body)
+            body: JSON.stringify(body),
+            signal: controller.signal
         });
-
-        // Try to parse JSON, fall back to text
-        let data;
-        const contentType = res.headers.get('content-type');
         
-        if (contentType && contentType.includes('application/json')) {
+        clearTimeout(timeoutId);
+
+        // Parse JSON response
+        let data;
+        try {
             data = await res.json();
-        } else {
-            data = { raw: await res.text() };
+        } catch (parseError) {
+            console.error('JSON parse error:', parseError);
+            throw new Error('Invalid server response');
         }
 
-        console.log('Status:', res.status, 'Data:', data);
+        console.log('Response:', res.status, data);
 
-        // SUCCESS: HTTP 200-299 OR explicit success flag
-        if (res.ok || data.success === true || data.status === 'success') {
+        // Check HTTP status AND server success flag
+        if (res.ok && data.success === true) {
             setBtnState('success');
             showToast('Enquiry sent! We\'ll get back to you within 24 hours.');
             
+            // Clear form and close modal
             setTimeout(() => {
                 closeModal();
                 document.getElementById('eqName').value = '';
@@ -489,19 +495,22 @@
             }, 1500);
             
         } else {
-            // Server returned error (400, 500, etc.)
-            const errorMsg = data.message || data.error || `Server error ${res.status}`;
+            // Server returned error (400, 500, or success: false)
+            const errorMsg = data.error || data.message || `Server error (${res.status})`;
             console.error('Server error:', errorMsg);
-            setBtnState('error');
-            showToast(errorMsg, 'error');
-            resetBtn();
+            throw new Error(errorMsg);
         }
         
     } catch (err) {
-        // Network error, CORS, etc.
-        console.error('Network error:', err);
+        console.error('Submit error:', err);
         setBtnState('error');
-        showToast('Network error. Please try WhatsApp.', 'error');
+        
+        if (err.name === 'AbortError') {
+            showToast('Request timed out. Please try again.', 'error');
+        } else {
+            showToast(err.message || 'Something went wrong. Please try WhatsApp.', 'error');
+        }
+        
         resetBtn();
     }
 }
