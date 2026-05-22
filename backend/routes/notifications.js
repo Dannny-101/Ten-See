@@ -2,86 +2,68 @@ const express = require('express');
 const router = express.Router();
 const Notification = require('../models/Notification');
 
+// GET /api/notifications — Get all notifications (admin only)
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 20, unreadOnly = false } = req.query;
-    let query = {};
-    if (unreadOnly === 'true') query.isRead = false;
-
-    const notifications = await Notification.find(query)
+    const notifications = await Notification.find()
       .sort({ createdAt: -1 })
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
-
-    const total = await Notification.countDocuments(query);
-    const unreadCount = await Notification.countDocuments({ isRead: false });
-
-    res.json({
-      success: true, count: notifications.length, total, unreadCount,
-      totalPages: Math.ceil(total / limit), currentPage: page, data: notifications
-    });
+      .limit(50);
+    
+    res.json({ success: true, count: notifications.length, data: notifications });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
+// GET /api/notifications/unread-count — Get unread count
 router.get('/unread-count', async (req, res) => {
   try {
     const count = await Notification.countDocuments({ isRead: false });
-    res.json({ success: true, unreadCount: count });
+    res.json({ success: true, count });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-router.get('/recent', async (req, res) => {
-  try {
-    const notifications = await Notification.find().sort({ createdAt: -1 }).limit(10);
-    const unreadCount = await Notification.countDocuments({ isRead: false });
-    res.json({ success: true, unreadCount, data: notifications });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
+// PUT /api/notifications/:id/read — Mark single notification as read
 router.put('/:id/read', async (req, res) => {
   try {
-    const notification = await Notification.findByIdAndUpdate(
-      req.params.id, { isRead: true, readAt: new Date() }, { new: true }
+    await Notification.findByIdAndUpdate(req.params.id, { 
+      isRead: true, 
+      readAt: new Date() 
+    });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /api/notifications/read-all — Mark all as read
+router.put('/read-all', async (req, res) => {
+  try {
+    await Notification.updateMany(
+      { isRead: false }, 
+      { isRead: true, readAt: new Date() }
     );
-    if (!notification) return res.status(404).json({ success: false, error: 'Notification not found' });
-    res.json({ success: true, data: notification });
+    res.json({ success: true });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-router.put('/mark-all-read', async (req, res) => {
+// DELETE /api/notifications/cleanup — Delete old read notifications (keep last 100)
+router.delete('/cleanup', async (req, res) => {
   try {
-    await Notification.updateMany({ isRead: false }, { isRead: true, readAt: new Date() });
-    res.json({ success: true, message: 'All notifications marked as read' });
+    const count = await Notification.countDocuments();
+    if (count > 100) {
+      const old = await Notification.find().sort({ createdAt: -1 }).skip(100);
+      const ids = old.map(n => n._id);
+      await Notification.deleteMany({ _id: { $in: ids } });
+    }
+    res.json({ success: true });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-router.delete('/:id', async (req, res) => {
-  try {
-    const notification = await Notification.findByIdAndDelete(req.params.id);
-    if (!notification) return res.status(404).json({ success: false, error: 'Notification not found' });
-    res.json({ success: true, message: 'Notification deleted' });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-const createNotification = async (type, title, message, data = {}) => {
-  try {
-    return await Notification.create({ type, title, message, data, isRead: false });
-  } catch (error) {
-    console.error('Failed to create notification:', error);
-    return null;
-  }
-};
-
-module.exports = { router, createNotification };
+module.exports = router;
