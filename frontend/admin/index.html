@@ -1665,12 +1665,13 @@ async function pollNotifications() {
     renderNotifPanel();
   } catch {}
 }
+
 function renderNotifPanel() {
   const list = document.getElementById('notifList');
   if (!list) return;
   if (!S.notifications.length) { list.innerHTML = `<div class="empty-state"><i class="fas fa-bell-slash"></i><p>No notifications</p></div>`; return; }
   list.innerHTML = S.notifications.map(n => `
-    <div class="notif-item ${!n.isRead?'unread':''}" onclick="handleNotifClick('${n._id}', '${(n.leadId||'').toString().replace(/'/g, "\\'")}')">
+    <div class="notif-item ${!n.isRead?'unread':''}" onclick="handleNotifClick('${n._id}', '${(n.data?.leadId||'').toString().replace(/'/g, "\\'")}')">
       <div class="notif-icon si-gold" style="background:var(--gold-dim);color:var(--gold);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
         <i class="fas ${notifIcon(n.type)}" style="font-size:0.75rem;"></i>
       </div>
@@ -1687,7 +1688,7 @@ async function handleNotifClick(id, leadId) {
   // Mark as read first
   await markRead(id);
   
-  // If notification has a leadId, navigate to leads section and open that lead
+  // If notification has a leadId in data, navigate to leads section and open that lead
   if (leadId && leadId !== 'undefined' && leadId !== 'null') {
     // Close notification panel
     document.getElementById('notifPanel').classList.remove('active');
@@ -1781,7 +1782,7 @@ function auditColor(action) {
 }
 
 function notifIcon(type) {
-  const map = { new_booking:'calendar-plus', lead_status_change:'user-check', booking_status:'calendar-check', system:'cog' };
+  const map = { new_booking:'calendar-plus', lead_status_change:'user-check', booking_status:'calendar-check', system:'cog', new_lead:'user-plus', new_chat:'comment-dots', listing_view_milestone:'eye' };
   return map[type] || 'bell';
 }
 
