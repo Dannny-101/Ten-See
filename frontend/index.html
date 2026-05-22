@@ -1,1296 +1,1019 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ten&See — Student Housing in Malaysia</title>
-<link rel="icon" type="image/png" href="/assets/logo.png">
+    <meta name="color-scheme" content="light dark">
+    <title>Ten&See - Student Housing Made Simple</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-    <link rel="stylesheet" href="/cookie-consent.css">
     <style>
         :root {
-            --color-primary: #2C3830;
-            --color-accent: #B8954A;
-            --color-accent-light: #F0D9A0;
-            --color-bg: #F7F8FA;
-            --color-surface: #FFFFFF;
-            --color-text-main: #1C2420;
-            --color-text-muted: #6B7280;
-            --color-success: #10B981;
-            --color-border: #E5E7EB;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-glow: 0 0 40px -10px rgba(99, 102, 241, 0.4);
+            
+            /* Light mode (overridden by data-theme="light") */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --card-bg: rgba(248, 250, 252, 0.6);
+            --input-bg: rgba(15, 23, 42, 0.05);
         }
 
-        html { scroll-behavior: smooth; }
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --card-bg: rgba(248, 250, 252, 0.8);
+            --input-bg: rgba(15, 23, 42, 0.05);
+        }
+
+        /* Dark mode (default) */
+        html:not([data-theme="light"]) {
+            --bg-primary: #020617;
+            --bg-secondary: #0f172a;
+            --text-primary: #f8fafc;
+            --text-secondary: #64748b;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --card-bg: rgba(15, 23, 42, 0.6);
+            --input-bg: rgba(255, 255, 255, 0.05);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--color-bg);
-            color: var(--color-text-main);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
             line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
         }
+
         h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', sans-serif; }
 
-        /* ── NAVBAR ── */
+        /* Navigation */
         .navbar {
-            position: fixed; top: 0; left: 0; right: 0;
-            z-index: 1000; padding: 1rem 2rem;
-            background: var(--color-primary);
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(var(--bg-secondary-rgb), 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
             transition: all 0.3s ease;
         }
+
         .navbar.scrolled {
-            box-shadow: 0 2px 20px rgba(0,0,0,0.15);
             padding: 0.75rem 2rem;
+            background: rgba(var(--bg-secondary-rgb), 0.95);
         }
+
         .nav-container {
-            max-width: 1400px; margin: 0 auto;
-            display: flex; justify-content: space-between; align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
         .logo {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.75rem; font-weight: 700;
-            color: var(--color-accent);
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             text-decoration: none;
-            display: inline-flex; align-items: center;
-        }
-        .logo span { font-weight: 300; color: white; }
-        .logo img { width: 54px; height: 54px; object-fit: contain; display: block; border-radius: 10px; }
-        .nav-links { display: flex; gap: 2.5rem; align-items: center; list-style: none; }
-        .nav-links a {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none; font-weight: 500;
-            transition: color 0.3s;
-        }
-        .nav-links a:hover { color: var(--color-accent); }
-        .hamburger {
-            display: none;
-            background: none; border: none;
-            color: white; font-size: 1.5rem; cursor: pointer;
+            letter-spacing: -0.02em;
         }
 
-        /* ── BUTTONS ── */
-        .btn {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.75rem 1.5rem; border-radius: 12px;
-            font-weight: 600; font-size: 0.95rem;
-            cursor: pointer; transition: all 0.2s ease;
-            border: none; text-decoration: none;
+        .logo span { font-weight: 300; }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+            list-style: none;
         }
-        .btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0;
+            width: 0; height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            position: relative;
+            margin-left: 1rem;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .theme-toggle i {
+            position: absolute;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .theme-toggle i.fa-moon {
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+
+        .theme-toggle i.fa-sun {
+            opacity: 0;
+            transform: rotate(-180deg);
+        }
+
+        .theme-toggle.light-mode i.fa-moon {
+            opacity: 0;
+            transform: rotate(180deg);
+        }
+
+        .theme-toggle.light-mode i.fa-sun {
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+        }
+
         .btn-primary {
-            background: var(--color-accent);
-            color: var(--color-primary);
-            box-shadow: 0 4px 15px rgba(201, 168, 76, 0.3);
+            background: var(--gradient);
+            color: white;
+            box-shadow: var(--shadow-glow);
         }
         .btn-primary:hover {
-            background: #D4B55D;
-            box-shadow: 0 6px 20px rgba(201, 168, 76, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 0 60px -10px rgba(99, 102, 241, 0.6);
         }
+
         .btn-outline {
-            background: transparent; color: white;
-            border: 1.5px solid rgba(255,255,255,0.25);
+            background: transparent;
+            color: var(--text-primary);
+            border: 1.5px solid var(--border-color);
         }
         .btn-outline:hover {
-            border-color: var(--color-accent);
-            background: rgba(201, 168, 76, 0.1);
-            color: var(--color-accent);
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
         }
-        .btn-outline-dark {
-            background: transparent; color: var(--color-primary);
-            border: 1.5px solid var(--color-border);
-        }
-        .btn-outline-dark:hover {
-            border-color: var(--color-accent);
-            color: var(--color-accent);
-        }
-        .btn-whatsapp { background: #25d366; color: white; }
-        .btn-whatsapp:hover { background: #128c7e; }
-        .btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; }
-        .btn-lg { padding: 1rem 2rem; font-size: 1rem; border-radius: 14px; }
 
-        /* ── HERO ── */
+        .btn-whatsapp {
+            background: #25d366;
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+        .btn-whatsapp:hover {
+            background: #128c7e;
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
         .hero {
             min-height: 100vh;
-            background: var(--color-primary);
-            display: flex; align-items: center;
-            position: relative; overflow: hidden;
-            padding: 7rem 2rem 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 8rem 2rem 4rem;
+            overflow: hidden;
         }
-        .hero::before {
-            content: '';
-            position: absolute; inset: 0;
-            background: radial-gradient(ellipse at 70% 50%, rgba(201,168,76,0.08) 0%, transparent 65%),
-                        radial-gradient(ellipse at 10% 80%, rgba(201,168,76,0.05) 0%, transparent 50%);
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(245, 158, 11, 0.08) 0%, transparent 50%);
         }
+
         .hero-grid {
-            max-width: 1400px; margin: 0 auto; width: 100%;
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 4rem; align-items: center;
-            position: relative; z-index: 1;
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
         }
+
+        .hero-content {
+            max-width: 900px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
         .hero-badge {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            background: rgba(201,168,76,0.12);
-            border: 1px solid rgba(201,168,76,0.25);
-            padding: 0.4rem 1rem; border-radius: 100px;
-            font-size: 0.8rem; color: var(--color-accent);
-            font-weight: 600; margin-bottom: 1.5rem;
-            letter-spacing: 0.03em;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease;
         }
-        .hero-title {
-            font-size: clamp(2.4rem, 4vw, 3.5rem);
-            font-weight: 700; line-height: 1.15;
-            color: white; margin-bottom: 1.25rem;
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.6s ease 0.1s both;
+            color: var(--text-primary);
         }
-        .hero-title .accent { color: var(--color-accent); }
-        .hero-desc {
-            font-size: 1.1rem; color: rgba(255,255,255,0.65);
-            margin-bottom: 2.5rem; max-width: 500px; line-height: 1.7;
+
+        .hero h1 .gradient-text {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            animation: fadeInUp 0.6s ease 0.2s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.6s ease 0.3s both;
+        }
 
         .hero-stats {
-            display: flex; gap: 2rem; flex-wrap: wrap;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 4rem;
+            animation: fadeInUp 0.6s ease 0.4s both;
         }
-        .hero-stat-value {
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.75rem; font-weight: 700;
-            color: var(--color-accent);
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .hero-stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
 
-        /* Hero visual */
-        .hero-visual {
-            position: relative; display: flex; justify-content: center; align-items: center;
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
         }
-        .hero-card-main {
-            background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 24px; padding: 1.5rem;
-            width: 100%; max-width: 420px;
-        }
-        .hc-img {
-            width: 100%; height: 220px;
-            border-radius: 16px; overflow: hidden;
-            margin-bottom: 1.25rem;
-            background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(27,46,75,0.5));
-            display: flex; align-items: center; justify-content: center;
-        }
-        .hc-img i { font-size: 4rem; color: rgba(201,168,76,0.4); }
-        .hc-badge {
-            display: inline-flex; align-items: center; gap: 0.35rem;
-            background: var(--color-accent); color: var(--color-primary);
-            padding: 0.3rem 0.75rem; border-radius: 8px;
-            font-size: 0.72rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.05em;
-            margin-bottom: 0.75rem;
-        }
-        .hc-title { color: white; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.4rem; }
-        .hc-location { color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-bottom: 1rem; }
-        .hc-location i { color: var(--color-accent); margin-right: 4px; }
-        .hc-price { color: var(--color-accent); font-size: 1.4rem; font-weight: 700; }
-        .hc-price span { font-size: 0.8rem; font-weight: 400; color: rgba(255,255,255,0.4); }
 
-        .float-badge {
+        /* Floating Cards */
+        .floating-cards {
             position: absolute;
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 14px; padding: 0.75rem 1rem;
-            display: flex; align-items: center; gap: 0.6rem;
-            box-shadow: var(--shadow-lg);
-            font-size: 0.82rem;
-        }
-        .fb-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
-        .fb-icon.gold { background: rgba(201,168,76,0.1); color: var(--color-accent); }
-        .fb-icon.green { background: rgba(16,185,129,0.1); color: var(--color-success); }
-        .fb-top { top: -1rem; right: -1rem; }
-        .fb-bottom { bottom: 1rem; left: -2rem; }
-        .fb-label { font-weight: 600; color: var(--color-text-main); display: block; }
-        .fb-sub { color: var(--color-text-muted); font-size: 0.75rem; }
-
-        /* ── SEARCH BAR ── */
-        .search-section {
-            padding: 0 2rem;
-            margin-top: -2rem;
-            position: relative; z-index: 10;
-        }
-        .search-card {
-            max-width: 900px; margin: 0 auto;
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 20px;
-            padding: 1.5rem;
-            box-shadow: 0 20px 60px -10px rgba(27,46,75,0.2);
-        }
-        .search-card h3 {
-            font-size: 1rem; color: var(--color-primary);
-            margin-bottom: 1rem; font-weight: 600;
-        }
-        .search-row {
-            display: grid; grid-template-columns: 1fr 1fr 1fr auto;
-            gap: 0.75rem; align-items: end;
-        }
-        .search-field label {
-            display: block; font-size: 0.78rem; font-weight: 600;
-            color: var(--color-text-muted); margin-bottom: 0.4rem;
-            text-transform: uppercase; letter-spacing: 0.05em;
-        }
-        .search-field select, .search-field input {
             width: 100%;
-            background: var(--color-bg);
-            border: 1px solid var(--color-border);
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            color: var(--color-text-main);
-            font-size: 0.9rem;
-            outline: none; font-family: inherit;
-            appearance: none;
-        }
-        .search-field select:focus, .search-field input:focus {
-            border-color: var(--color-accent);
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
         }
 
-        /* ── SECTION COMMONS ── */
-        .section { padding: 5rem 2rem; }
-        .section-inner { max-width: 1400px; margin: 0 auto; }
-        .section-label {
-            display: inline-block;
-            background: rgba(201,168,76,0.1);
-            border: 1px solid rgba(201,168,76,0.2);
-            padding: 0.3rem 0.875rem; border-radius: 100px;
-            font-size: 0.75rem; font-weight: 600;
-            color: var(--color-accent); text-transform: uppercase;
-            letter-spacing: 0.06em; margin-bottom: 0.875rem;
-        }
-        .section-title {
-            font-size: clamp(1.8rem, 3vw, 2.5rem);
-            font-weight: 700; color: var(--color-primary);
-            margin-bottom: 0.875rem; line-height: 1.2;
-        }
-        .section-title .accent { color: var(--color-accent); }
-        .section-desc {
-            font-size: 1rem; color: var(--color-text-muted);
-            max-width: 560px; line-height: 1.7;
-        }
-        .section-header { margin-bottom: 3rem; }
-        .section-header-row {
-            display: flex; justify-content: space-between;
-            align-items: flex-end; gap: 2rem; margin-bottom: 3rem;
-        }
-
-        /* ── HOW IT WORKS ── */
-        .how-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;
-        }
-        .how-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 20px; padding: 2rem 1.5rem;
-            text-align: center; position: relative;
-            transition: all 0.25s ease;
-        }
-        .how-card:hover {
-            border-color: var(--color-accent);
-            transform: translateY(-3px);
+        .float-card {
+            position: absolute;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             box-shadow: var(--shadow-lg);
+            animation: float 6s ease-in-out infinite;
         }
-        .how-num {
-            width: 42px; height: 42px; border-radius: 12px;
-            background: rgba(201,168,76,0.1);
-            border: 1px solid rgba(201,168,76,0.2);
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700; font-size: 1rem;
-            color: var(--color-accent); margin: 0 auto 1.25rem;
-        }
-        .how-icon { font-size: 2rem; color: var(--color-accent); margin-bottom: 1rem; }
-        .how-card h3 { font-size: 1.05rem; color: var(--color-primary); margin-bottom: 0.5rem; }
-        .how-card p { font-size: 0.875rem; color: var(--color-text-muted); line-height: 1.6; }
 
-        /* ── FEATURES ── */
+        .float-card img {
+            width: 40px; height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .float-card-info h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .float-card-info p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .float-card:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .float-card:nth-child(2) { top: 30%; right: 10%; animation-delay: 1s; }
+        .float-card:nth-child(3) { bottom: 25%; left: 15%; animation-delay: 2s; }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 2rem;
+            background: var(--bg-secondary);
+            transition: background 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
         .features-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
-        }
-        .feature-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 20px; padding: 1.75rem;
-            transition: all 0.25s ease;
-        }
-        .feature-card:hover {
-            border-color: var(--color-accent);
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-2px);
-        }
-        .feature-icon {
-            width: 48px; height: 48px; border-radius: 14px;
-            background: rgba(201,168,76,0.08);
-            border: 1px solid rgba(201,168,76,0.15);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; color: var(--color-accent);
-            margin-bottom: 1.25rem;
-        }
-        .feature-card h3 { font-size: 1.05rem; color: var(--color-primary); margin-bottom: 0.5rem; }
-        .feature-card p { font-size: 0.875rem; color: var(--color-text-muted); line-height: 1.6; }
-
-        /* ── UNIVERSITIES ── */
-        .unis-section { background: var(--color-primary); }
-        .unis-section .section-title { color: white; }
-        .unis-section .section-desc { color: rgba(255,255,255,0.6); }
-        .unis-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;
-        }
-        .uni-card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px; padding: 1.25rem 1rem;
-            text-align: center; transition: all 0.25s ease;
-            cursor: default;
-        }
-        .uni-card:hover {
-            background: rgba(201,168,76,0.08);
-            border-color: rgba(201,168,76,0.25);
-            transform: translateY(-2px);
-        }
-        .uni-icon { font-size: 1.75rem; margin-bottom: 0.625rem; color: var(--color-accent); }
-        .uni-name { font-size: 0.85rem; font-weight: 600; color: white; margin-bottom: 0.25rem; }
-        .uni-city { font-size: 0.75rem; color: rgba(255,255,255,0.45); }
-
-        /* ── FEATURED LISTINGS ── */
-        .listings-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
         }
-        .listing-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 20px; overflow: hidden;
-            transition: all 0.25s ease; position: relative;
-        }
-        .listing-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px -10px rgba(27,46,75,0.15);
-            border-color: var(--color-accent);
-        }
-        .listing-image { position: relative; height: 220px; overflow: hidden; }
-        .listing-image img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        .listing-card:hover .listing-image img { transform: scale(1.05); }
-        .listing-badge {
-            position: absolute; top: 1rem; left: 1rem;
-            padding: 0.4rem 0.875rem; border-radius: 8px;
-            font-size: 0.75rem; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 0.05em;
-        }
-        .badge-featured { background: var(--color-accent); color: var(--color-primary); }
-        .badge-new { background: var(--color-success); color: white; }
-        .badge-university { background: var(--color-accent-light); color: var(--color-primary); }
-        .listing-price {
-            position: absolute; bottom: 1rem; right: 1rem;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
-            padding: 0.5rem 1rem; border-radius: 10px;
-            font-weight: 700; font-size: 1.1rem; color: white;
-        }
-        .listing-price span { font-size: 0.75rem; font-weight: 400; color: rgba(255,255,255,0.7); }
-        .listing-content { padding: 1.5rem; }
-        .listing-meta { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
-        .listing-type {
-            display: inline-block; padding: 0.25rem 0.75rem;
-            background: rgba(201,168,76,0.1); border-radius: 6px;
-            font-size: 0.75rem; color: var(--color-accent);
-            font-weight: 600; text-transform: uppercase;
-        }
-        .listing-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-primary); line-height: 1.3; }
-        .listing-location {
-            display: flex; align-items: center; gap: 0.4rem;
-            color: var(--color-text-muted); font-size: 0.875rem; margin-bottom: 1rem;
-        }
-        .listing-features { display: flex; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
-        .listing-feature {
-            display: flex; align-items: center; gap: 0.35rem;
-            font-size: 0.85rem; color: var(--color-text-muted);
-        }
-        .listing-feature i { color: var(--color-accent); }
-        .listing-actions { display: flex; gap: 0.75rem; }
-        .listing-actions .btn { flex: 1; justify-content: center; }
 
-        /* ── WHY US ── */
-        .why-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .why-list { display: flex; flex-direction: column; gap: 1.25rem; margin-top: 2rem; }
-        .why-item {
-            display: flex; gap: 1rem; align-items: flex-start;
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 16px; padding: 1.25rem;
-            transition: all 0.25s ease;
-        }
-        .why-item:hover { border-color: var(--color-accent); transform: translateX(4px); }
-        .why-icon {
-            width: 40px; height: 40px; flex-shrink: 0;
-            background: rgba(201,168,76,0.1);
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; color: var(--color-accent);
-        }
-        .why-content h4 { font-size: 0.95rem; font-weight: 600; color: var(--color-primary); margin-bottom: 0.25rem; }
-        .why-content p { font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.5; }
-        .why-visual {
-            background: var(--color-primary);
-            border-radius: 28px; padding: 2.5rem;
-            position: relative; overflow: hidden;
-        }
-        .why-visual::before {
+
+        .feature-card::before {
             content: '';
-            position: absolute; inset: 0;
-            background: radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.12) 0%, transparent 60%);
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--gradient);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
         }
-        .wv-stat {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px; padding: 1.25rem;
-            margin-bottom: 1rem; position: relative; z-index: 1;
-        }
-        .wv-stat-num {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 2rem; font-weight: 700;
-            color: var(--color-accent); line-height: 1;
-        }
-        .wv-stat-label { font-size: 0.82rem; color: rgba(255,255,255,0.55); margin-top: 4px; }
-        .wv-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; position: relative; z-index: 1; }
 
-        /* ── CTA ── */
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(99, 102, 241, 0.2);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .feature-card:hover::before { transform: scaleX(1); }
+
+        .feature-icon {
+            width: 56px; height: 56px;
+            border-radius: 14px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1.25rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* CTA Section */
         .cta-section {
-            background: var(--color-primary);
-            text-align: center; position: relative; overflow: hidden;
+            padding: 6rem 2rem;
+            position: relative;
+            overflow: hidden;
         }
-        .cta-section::before {
-            content: '';
-            position: absolute; inset: 0;
-            background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.1) 0%, transparent 60%);
-        }
-        .cta-section .section-inner { position: relative; z-index: 1; }
-        .cta-section .section-title { color: white; }
-        .cta-section .section-desc { color: rgba(255,255,255,0.6); margin: 0 auto 2.5rem; }
-        .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
-        /* ── CONTACT ── */
-        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
-        .contact-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 20px; padding: 1.25rem;
-            display: flex; align-items: flex-start; gap: 1rem;
-            margin-bottom: 1rem; transition: all 0.25s ease;
+        .cta-bg {
+            position: absolute;
+            inset: 0;
+            background: var(--gradient);
+            opacity: 0.05;
         }
-        .contact-card:hover { border-color: var(--color-accent); }
-        .contact-icon {
-            width: 44px; height: 44px; flex-shrink: 0;
-            background: rgba(201,168,76,0.1); border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; color: var(--color-accent);
-        }
-        .contact-label { font-size: 0.78rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
-        .contact-value { font-weight: 600; color: var(--color-text-main); font-size: 0.95rem; }
-        .contact-form-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 20px; padding: 2rem;
-        }
-        .contact-form-card h3 { font-size: 1.15rem; color: var(--color-primary); margin-bottom: 1.5rem; }
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--color-text-main); margin-bottom: 0.4rem; }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%;
-            background: var(--color-bg);
-            border: 1px solid var(--color-border);
-            border-radius: 10px; padding: 0.75rem 1rem;
-            color: var(--color-text-main); font-size: 0.9rem;
-            outline: none; font-family: inherit;
-        }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--color-accent); }
-        .form-group textarea { min-height: 100px; resize: vertical; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; }
 
-        /* ── FOOTER ── */
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-content h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .cta-content p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
         .footer {
-            background: var(--color-primary);
-            padding: 4rem 2rem 2rem;
-            border-top: 1px solid rgba(255,255,255,0.06);
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            transition: border-color 0.3s ease;
         }
-        .footer-grid {
-            max-width: 1200px; margin: 0 auto;
-            display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 3rem; margin-bottom: 3rem;
-        }
-        .footer-col h4 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.5rem; color: var(--color-accent); margin-bottom: 0.75rem;
-        }
-        .footer-col h4 span { font-weight: 300; color: white; }
-        .footer-logo img { width: 64px; height: 64px; object-fit: contain; display: block; border-radius: 12px; }
-        .footer-col p { color: rgba(255,255,255,0.55); font-size: 0.875rem; line-height: 1.7; margin-bottom: 0.5rem; }
-        .footer-col h5 { color: var(--color-accent-light); font-size: 0.875rem; margin-bottom: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-        .footer-col a {
-            display: block; color: rgba(255,255,255,0.55);
-            text-decoration: none; font-size: 0.875rem;
-            margin-bottom: 0.5rem; transition: color 0.2s;
-        }
-        .footer-col a:hover { color: var(--color-accent); }
-        .contact-item {
-            display: flex; align-items: center; gap: 0.6rem;
-            color: rgba(255,255,255,0.55); font-size: 0.875rem; margin-bottom: 0.625rem;
-        }
-        .contact-item i { color: var(--color-accent); width: 16px; }
-        .footer-bottom {
-            max-width: 1200px; margin: 0 auto;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.06);
-            display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap; gap: 1rem;
-        }
-        .footer-bottom p { color: rgba(255,255,255,0.35); font-size: 0.825rem; }
 
-        /* ── CHAT WIDGET ── */
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Chat Widget */
         .chat-widget {
-            position: fixed; bottom: 1.5rem; right: 1.5rem;
-            z-index: 500;
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 999;
         }
-        .chat-toggle {
-            width: 56px; height: 56px; border-radius: 50%;
-            background: var(--color-accent); color: var(--color-primary);
-            border: none; cursor: pointer; font-size: 1.25rem;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 20px rgba(201,168,76,0.4);
-            transition: all 0.2s;
-        }
-        .chat-toggle:hover { transform: scale(1.1); }
-        .chat-popup {
-            position: absolute; bottom: 70px; right: 0;
-            width: 300px;
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 20px; overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            display: none;
-        }
-        .chat-popup.active { display: block; }
-        .chat-popup-header {
-            background: var(--color-primary);
-            padding: 1rem 1.25rem;
-            display: flex; align-items: center; gap: 0.75rem;
-        }
-        .chat-avatar {
-            width: 36px; height: 36px; border-radius: 50%;
-            background: var(--color-accent);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; color: var(--color-primary); font-weight: 700;
-        }
-        .chat-popup-header h4 { color: white; font-size: 0.9rem; }
-        .chat-popup-header p { color: rgba(255,255,255,0.6); font-size: 0.75rem; }
-        .chat-online { width: 8px; height: 8px; background: var(--color-success); border-radius: 50%; margin-left: auto; }
-        .chat-messages-area { padding: 1rem; min-height: 120px; }
-        .chat-bubble {
-            background: var(--color-bg);
-            border-radius: 12px 12px 12px 4px;
-            padding: 0.625rem 0.875rem;
-            font-size: 0.85rem; color: var(--color-text-main);
-            margin-bottom: 0.5rem; max-width: 90%;
-        }
-        .chat-input-row { padding: 0.75rem; display: flex; gap: 0.5rem; border-top: 1px solid var(--color-border); }
-        .chat-input-row input {
-            flex: 1; background: var(--color-bg);
-            border: 1px solid var(--color-border); border-radius: 10px;
-            padding: 0.5rem 0.75rem; font-size: 0.85rem;
-            outline: none; font-family: inherit; color: var(--color-text-main);
-        }
-        .chat-send {
-            background: var(--color-accent); color: var(--color-primary);
-            border: none; border-radius: 10px; width: 36px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 0.85rem; transition: filter 0.2s;
-        }
-        .chat-send:hover { filter: brightness(1.1); }
 
-        /* ── RESPONSIVE ── */
-        @media (max-width: 1100px) {
-            .hero-grid { grid-template-columns: 1fr; }
-            .hero-visual { display: none; }
-            .why-grid { grid-template-columns: 1fr; }
-            .contact-grid { grid-template-columns: 1fr; }
-            .footer-grid { grid-template-columns: 1fr 1fr; }
+        .chat-toggle {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: var(--gradient);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-glow);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        @media (max-width: 900px) {
-            .how-grid { grid-template-columns: 1fr 1fr; }
-            .features-grid { grid-template-columns: 1fr 1fr; }
-            .search-row { grid-template-columns: 1fr 1fr; }
+
+        .chat-toggle:hover {
+            transform: scale(1.1);
         }
+
+        .chat-panel {
+            position: absolute;
+            bottom: 75px;
+            right: 0;
+            width: 380px;
+            max-height: 500px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        .chat-panel.active { display: flex; }
+
+        .chat-header {
+            padding: 1.25rem;
+            background: var(--gradient);
+            color: white;
+        }
+
+        .chat-header h4 {
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-header p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-top: 0.25rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .chat-message {
+            margin-bottom: 1rem;
+            max-width: 80%;
+        }
+
+        .chat-message.user { margin-left: auto; }
+        .chat-message.admin { margin-right: auto; }
+
+        .chat-bubble {
+            padding: 0.75rem 1rem;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .chat-message.user .chat-bubble {
+            background: var(--gradient);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.admin .chat-bubble {
+            background: var(--input-bg);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-time {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+            text-align: right;
+        }
+
+        .chat-input-area {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+        }
+
+        .chat-send {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            background: var(--gradient);
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-send:hover { transform: scale(1.05); }
+
+        .chat-form {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .chat-form input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.6rem 0.875rem;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .chat-form input:focus { border-color: var(--primary); }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Mobile */
         @media (max-width: 768px) {
-            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-primary); flex-direction: column; padding: 1rem 2rem; gap: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
-            .nav-links.active { display: flex; }
-            .hamburger { display: block; }
-            .how-grid { grid-template-columns: 1fr; }
-            .features-grid { grid-template-columns: 1fr; }
-            .search-row { grid-template-columns: 1fr; }
-            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
-            .form-row { grid-template-columns: 1fr; }
-            .listings-grid { grid-template-columns: 1fr; }
-            .hero-stats { gap: 1.5rem; }
-            .section-header-row { flex-direction: column; align-items: flex-start; }
+            .nav-links { display: none; }
+            .hero-stats { flex-direction: column; gap: 1.5rem; }
+            .chat-panel { width: calc(100vw - 2rem); right: -1rem; }
+            .float-card { display: none; }
+            .theme-toggle {
+                margin-left: 0.5rem;
+                width: 40px;
+                height: 40px;
+                font-size: 0.9rem;
+            }
+            .navbar {
+                padding: 0.75rem 1rem;
+            }
         }
     </style>
 </head>
 <body>
-
-    <!-- ── NAVBAR ── -->
+    <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <a href="/" class="logo" target="_self" aria-label="Ten&See home"><img src="/assets/logo.png" alt="Ten&See logo"></a>
-            <button class="hamburger" onclick="toggleMobileNav()">☰</button>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="/" target="_self">Home</a></li>
-                <li><a href="/listings.html" target="_self">Listings</a></li>
-                <li><a href="#how-it-works" target="_self">How It Works</a></li>
-                <li><a href="#features" target="_self">Features</a></li>
-                <li><a href="#contact" target="_self">Contact</a></li>
-                <li><a href="/listings.html" class="btn btn-primary btn-sm" target="_self">Browse Rooms</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- ── HERO ── -->
-    <section class="hero" id="home">
-        <div class="hero-grid">
-            <div data-aos="fade-right">
-                <div class="hero-badge">
-                    <i class="fas fa-map-marker-alt"></i> Built for International and Local Students
-                </div>
-                <h1 class="hero-title">
-                    Find Your <span class="accent">Perfect Room</span><br>Near Your University
-                </h1>
-                <p class="hero-desc">
-                    Ten&See connects International and Local students with verified, walking distance rooms to campus for univeriy students at affodable prices. No agent fees. No guesswork. Just a home.
-                </p>
-                <div class="hero-actions">
-                    <a href="/listings.html" class="btn btn-primary btn-lg" target="_self">
-                        <i class="fas fa-search"></i> Browse Listings
-                    </a>
-                    <a href="#contact" class="btn btn-outline btn-lg" target="_self">
-                        <i class="fab fa-whatsapp"></i> WhatsApp Us
-                    </a>
-                </div>
-                <div class="hero-stats">
-                    <div>
-                        <div class="hero-stat-value" id="statTotalRooms">—</div>
-                        <div class="hero-stat-label">Verified Rooms Available</div>
-                    </div>
-                    <div>
-                        <div class="hero-stat-value">6</div>
-                        <div class="hero-stat-label">Malaysian Universities</div>
-                    </div>
-                    <div>
-                        <div class="hero-stat-value">5</div>
-                        <div class="hero-stat-label">Cities Covered</div>
-                    </div>
-                </div>
-            </div>
-            <div class="hero-visual" data-aos="fade-left">
-                <div class="hero-card-main">
-                    <div class="hc-img">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <span class="hc-badge"><i class="fas fa-star"></i> Featured</span>
-                    <div class="hc-title">Studio near Taylor's University</div>
-                    <div class="hc-location"><i class="fas fa-map-marker-alt"></i> Subang Jaya, Selangor</div>
-                    <div class="hc-price">RM 900 <span>/ month</span></div>
-                </div>
-                <div class="float-badge fb-top" data-aos="fade-down" data-aos-delay="300">
-                    <div class="fb-icon gold"><i class="fas fa-shield-alt"></i></div>
-                    <div>
-                        <span class="fb-label">Verified Listing</span>
-                        <span class="fb-sub">Confirmed by Ten&See</span>
-                    </div>
-                </div>
-                <div class="float-badge fb-bottom" data-aos="fade-right" data-aos-delay="400">
-                    <div class="fb-icon green"><i class="fas fa-check-circle"></i></div>
-                    <div>
-                        <span class="fb-label">Booking Confirmed</span>
-                        <span class="fb-sub">Instant confirmation</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ── QUICK SEARCH ── -->
-    <div class="search-section">
-        <div class="search-card" data-aos="fade-up">
-            <h3><i class="fas fa-search" style="color:var(--color-accent);margin-right:0.5rem;"></i> Quick Search</h3>
-            <div class="search-row">
-                <div class="search-field">
-                    <label>City</label>
-                    <select id="qCity">
-                        <option value="">Any City</option>
-                        <option>Subang Jaya</option>
-                        <option>Petaling Jaya</option>
-                        <option>Cyberjaya</option>
-                        <option>Cheras</option>
-                        <option>Kuala Lumpur</option>
-                        <option>Nilai</option>
-                    </select>
-                </div>
-                <div class="search-field">
-                    <label>University</label>
-                    <select id="qUni">
-                        <option value="">Any University</option>
-                        <option>Taylor's University</option>
-                        <option>Sunway University</option>
-                        <option>Monash University Malaysia</option>
-                        <option>INTI International University</option>
-                        <option>Help University</option>
-                        <option>SEGi University</option>
-                    </select>
-                </div>
-                <div class="search-field">
-                    <label>Type</label>
-                    <select id="qType">
-                        <option value="">Any Type</option>
-                        <option value="studio">Studio</option>
-                        <option value="shared_room">Shared Room</option>
-                        <option value="private_room">Private Room</option>
-                        <option value="apartment">Apartment</option>
-                        <option value="house">House</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary" onclick="quickSearch()">
-                    <i class="fas fa-search"></i> Search
+            <a href="/" class="logo">Ten<span>&</span>See</a>
+            <div style="display: flex; align-items: center; gap: 2.5rem;">
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/listings.html">Listings</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="/admin" class="btn btn-outline">Admin</a></li>
+                </ul>
+                <button class="theme-toggle" id="themeToggle" onclick="themeManager.toggleTheme()" title="Toggle dark mode">
+                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-moon"></i>
                 </button>
             </div>
         </div>
-    </div>
+    </nav>
 
-    <!-- ── HOW IT WORKS ── -->
-    <section class="section" id="how-it-works" style="padding-top:6rem;">
-        <div class="section-inner">
-            <div class="section-header" data-aos="fade-up">
-                <span class="section-label">Simple Process</span>
-                <h2 class="section-title">How <span class="accent">Ten&See</span> Works</h2>
-                <p class="section-desc">Finding student accommodation in Malaysia has never been this easy. Four steps and you're home.</p>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-grid"></div>
+
+        <div class="floating-cards">
+            <div class="float-card">
+                <i class="fas fa-home" style="font-size:1.5rem;color:var(--primary)"></i>
+                <div class="float-card-info">
+                    <h4>Modern Studio</h4>
+                    <p>Near University • $450/mo</p>
+                </div>
             </div>
-            <div class="how-grid">
-                <div class="how-card" data-aos="fade-up" data-aos-delay="0">
-                    <div class="how-num">01</div>
-                    <div class="how-icon"><i class="fas fa-search"></i></div>
-                    <h3>Browse Listings</h3>
-                    <p>Search by city, university, property type, or price range to find rooms that match your needs.</p>
+            <div class="float-card">
+                <i class="fas fa-building" style="font-size:1.5rem;color:var(--secondary)"></i>
+                <div class="float-card-info">
+                    <h4>Shared Apartment</h4>
+                    <p>City Center • $320/mo</p>
                 </div>
-                <div class="how-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="how-num">02</div>
-                    <div class="how-icon"><i class="fas fa-comments"></i></div>
-                    <h3>Enquire Instantly</h3>
-                    <p>Send a booking enquiry or chat with us directly. We respond quickly and keep it simple.</p>
+            </div>
+            <div class="float-card">
+                <i class="fas fa-bed" style="font-size:1.5rem;color:var(--accent)"></i>
+                <div class="float-card-info">
+                    <h4>Private Room</h4>
+                    <p>Campus Area • $280/mo</p>
                 </div>
-                <div class="how-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="how-num">03</div>
-                    <div class="how-icon"><i class="fas fa-calendar-check"></i></div>
-                    <h3>Confirm & Secure</h3>
-                    <p>Lock in your room with a secure deposit. We handle the paperwork so you can focus on uni.</p>
+            </div>
+        </div>
+
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-sparkles"></i>
+                Trusted by 2,000+ students worldwide
+            </div>
+            <h1>
+                Find Your Perfect<br>
+                <span class="gradient-text">Student Home</span>
+            </h1>
+            <p>
+                Discover verified student housing near your university. 
+                Safe, affordable, and designed for student life.
+            </p>
+            <div class="hero-buttons">
+                <a href="/listings.html" class="btn btn-primary">
+                    <i class="fas fa-compass"></i>
+                    View Listings
+                </a>
+                <a href="https://wa.me/+966503874798" class="btn btn-whatsapp" id="whatsappBtn" target="_blank">
+                    <i class="fab fa-whatsapp"></i>
+                    Chat on WhatsApp
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Verified Listings</div>
                 </div>
-                <div class="how-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="how-num">04</div>
-                    <div class="how-icon"><i class="fas fa-home"></i></div>
-                    <h3>Move In</h3>
-                    <p>Get your keys and settle in. Our team is available if you need anything after you move.</p>
+                <div class="stat-item">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Universities</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Satisfaction</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ── FEATURED LISTINGS ── -->
-    <section class="section" id="listings" style="background:linear-gradient(180deg,var(--color-bg) 0%,white 100%);padding-top:0;">
-        <div class="section-inner">
-            <div class="section-header-row" data-aos="fade-up">
-                <div>
-                    <span class="section-label">Available Now</span>
-                    <h2 class="section-title">Featured <span class="accent">Listings</span></h2>
-                </div>
-                <a href="/listings.html" class="btn btn-outline-dark" target="_self">View All <i class="fas fa-arrow-right"></i></a>
-            </div>
-            <div class="listings-grid" id="featuredGrid">
-                <!-- Loaded dynamically -->
-                <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--color-text-muted);">
-                    <i class="fas fa-spinner fa-spin" style="font-size:1.5rem;margin-bottom:0.5rem;display:block;"></i>
-                    Loading listings...
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ── UNIVERSITIES ── -->
-    <section class="section unis-section" id="universities">
-        <div class="section-inner">
-            <div class="section-header" data-aos="fade-up" style="text-align:center;">
-                <span class="section-label" style="color:var(--color-accent);">Our Coverage</span>
-                <h2 class="section-title">We Serve Students At</h2>
-                <p class="section-desc" style="margin:0 auto;">Rooms available near these Malaysian universities, with more locations being added regularly.</p>
-            </div>
-            <div class="unis-grid">
-                <div class="uni-card" data-aos="fade-up" data-aos-delay="0">
-                    <div class="uni-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <div class="uni-name">Taylor's University</div>
-                    <div class="uni-city">Subang Jaya</div>
-                </div>
-                <div class="uni-card" data-aos="fade-up" data-aos-delay="60">
-                    <div class="uni-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <div class="uni-name">Sunway University</div>
-                    <div class="uni-city">Petaling Jaya</div>
-                </div>
-                <div class="uni-card" data-aos="fade-up" data-aos-delay="120">
-                    <div class="uni-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <div class="uni-name">Monash University Malaysia</div>
-                    <div class="uni-city">Subang Jaya</div>
-                </div>
-                <div class="uni-card" data-aos="fade-up" data-aos-delay="180">
-                    <div class="uni-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <div class="uni-name">INTI International University</div>
-                    <div class="uni-city">Nilai</div>
-                </div>
-                <div class="uni-card" data-aos="fade-up" data-aos-delay="240">
-                    <div class="uni-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <div class="uni-name">Help University</div>
-                    <div class="uni-city">Kuala Lumpur</div>
-                </div>
-                <div class="uni-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="uni-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <div class="uni-name">SEGi University</div>
-                    <div class="uni-city">Petaling Jaya</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ── FEATURES ── -->
-    <section class="section" id="features">
-        <div class="section-inner">
-            <div class="section-header" data-aos="fade-up">
-                <span class="section-label">Why Ten&See</span>
-                <h2 class="section-title">Built For <span class="accent">Malaysian Students</span></h2>
-                <p class="section-desc">Every feature is designed around the real challenges students face when finding accommodation here in Malaysia.</p>
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose <span class="gradient-text">Ten&See</span></h2>
+                <p>Everything you need to find and secure your ideal student accommodation</p>
             </div>
             <div class="features-grid">
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="0">
-                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                    <h3>Verified Listings Only</h3>
-                    <p>Every property is reviewed before going live. No fake listings, no misleading photos — what you see is what you get.</p>
-                </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="80">
-                    <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
-                    <h3>Near Your Campus</h3>
-                    <p>Filter by university to find rooms within commuting distance. We focus on areas around Malaysian student hubs.</p>
-                </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="160">
-                    <div class="feature-icon"><i class="fab fa-whatsapp"></i></div>
-                    <h3>WhatsApp Support</h3>
-                    <p>Reach our team directly on WhatsApp for quick answers. No call centres, no hold music — just a real person.</p>
-                </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="0">
-                    <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
-                    <h3>Premium Matching</h3>
-                    <p>Submit a booking enquiry in under a minute. Secure your room with a deposit and we handle the rest.</p>
-                </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="80">
-                    <div class="feature-icon"><i class="fas fa-comments"></i></div>
-                    <h3>Live Chat Support</h3>
-                    <p>Got questions? Our live chat is available directly on the platform so you never have to wait for answers.</p>
-                </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="160">
-                    <div class="feature-icon"><i class="fas fa-lock"></i></div>
-                    <h3>Secure Payments</h3>
-                    <p>Your deposit is handled safely. We use a transparent 30% deposit system with full receipts and records.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ── WHY US ── -->
-    <section class="section" style="background:white;">
-        <div class="section-inner">
-            <div class="why-grid">
-                <div data-aos="fade-right">
-                    <span class="section-label">Our Difference</span>
-                    <h2 class="section-title">A Platform That <span class="accent">Actually Helps</span></h2>
-                    <p class="section-desc">We started Ten&See because finding student housing in Malaysia is genuinely stressful. We're here to fix that.</p>
-                    <div class="why-list">
-                        <div class="why-item">
-                            <div class="why-icon"><i class="fas fa-user-check"></i></div>
-                            <div class="why-content">
-                                <h4>No Middlemen</h4>
-                                <p>You deal directly with us. No third-party agents inflating prices or adding hidden fees.</p>
-                            </div>
-                        </div>
-                        <div class="why-item">
-                            <div class="why-icon"><i class="fas fa-clock"></i></div>
-                            <div class="why-content">
-                                <h4>Fast Response Times</h4>
-                                <p>We aim to respond to every enquiry within the same business day — often much faster.</p>
-                            </div>
-                        </div>
-                        <div class="why-item">
-                            <div class="why-icon"><i class="fas fa-hand-holding-heart"></i></div>
-                            <div class="why-content">
-                                <h4>Student-First Approach</h4>
-                                <p>Flexible move-in dates, short-term options, and pricing that works for student budgets.</p>
-                            </div>
-                        </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
                     </div>
+                    <h3>Verified Properties</h3>
+                    <p>Every listing is personally verified by our team. No scams, no surprises. Just safe, quality housing options.</p>
                 </div>
-                <div class="why-visual" data-aos="fade-left">
-                    <div class="wv-stat">
-                        <div class="wv-stat-num" id="wvTotalRooms">—</div>
-                        <div class="wv-stat-label">Verified individual rooms available</div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marker-alt"></i>
                     </div>
-                    <div class="wv-row">
-                        <div class="wv-stat">
-                            <div class="wv-stat-num">6</div>
-                            <div class="wv-stat-label">Universities served</div>
-                        </div>
-                        <div class="wv-stat">
-                            <div class="wv-stat-num">5</div>
-                            <div class="wv-stat-label">Cities covered</div>
-                        </div>
+                    <h3>Near Universities</h3>
+                    <p>Find housing within walking distance or a short commute to your campus. Location is everything.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-wallet"></i>
                     </div>
-                    <div class="wv-stat" style="margin-bottom:0;background:rgba(201,168,76,0.08);border-color:rgba(201,168,76,0.2);">
-                        <div class="wv-stat-num" style="font-size:1.25rem;">🇲🇾 Malaysia Only</div>
-                        <div class="wv-stat-label">100% focused on the local student market</div>
+                    <h3>Student Budgets</h3>
+                    <p>Transparent pricing with no hidden fees. Filter by your budget and find options that work for you.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
                     </div>
+                    <h3>Instant Support</h3>
+                    <p>Chat with us live or reach out via WhatsApp. Our team is here to help you every step of the way.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <h3>Virtual Tours</h3>
+                    <p>Explore properties from your couch with detailed photos, floor plans, and video walkthroughs.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Easy Booking</h3>
+                    <p>Reserve your spot with a simple booking process. Secure your housing before it's gone.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ── CTA ── -->
-    <section class="section cta-section">
-        <div class="section-inner">
-            <div data-aos="fade-up">
-                <span class="section-label" style="background:rgba(201,168,76,0.15);border-color:rgba(201,168,76,0.3);">Get Started</span>
-                <h2 class="section-title" style="margin-top:0.5rem;">Ready to Find Your Room?</h2>
-                <p class="section-desc">Browse our current listings or get in touch with us directly on WhatsApp. We'll help you find the right place.</p>
-                <div class="cta-actions">
-                    <a href="/listings.html" class="btn btn-primary btn-lg" target="_self">
-                        <i class="fas fa-search"></i> Browse All Listings
-                    </a>
-                    <a href="https://wa.me/601XXXXXXXXX" target="_blank" class="btn btn-whatsapp btn-lg">
-                        <i class="fab fa-whatsapp"></i> Chat on WhatsApp
-                    </a>
-                </div>
+    <!-- CTA Section -->
+    <section class="cta-section" id="contact">
+        <div class="cta-bg"></div>
+        <div class="cta-content">
+            <h2>Ready to Find Your Home?</h2>
+            <p>Join thousands of students who found their perfect accommodation through Ten&See</p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+                <a href="/listings.html" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                    Browse Listings
+                </a>
+                <a href="https://wa.me/1234567890" class="btn btn-whatsapp" id="whatsappBtn2" target="_blank">
+                    <i class="fab fa-whatsapp"></i>
+                    Get Help on WhatsApp
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- ── CONTACT ── -->
-    <section class="section" id="contact">
-        <div class="section-inner">
-            <div class="section-header" data-aos="fade-up">
-                <span class="section-label">Get In Touch</span>
-                <h2 class="section-title">Contact <span class="accent">Ten&See</span></h2>
-                <p class="section-desc">Have a question or need help finding the right room? Send us a message and we'll get back to you promptly.</p>
-            </div>
-            <div class="contact-grid">
-                <div data-aos="fade-right">
-                    <div class="contact-card">
-                        <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
-                        <div>
-                            <div class="contact-label">WhatsApp</div>
-                            <div class="contact-value">+60 XX-XXXX XXXX</div>
-                        </div>
-                    </div>
-                    <div class="contact-card">
-                        <div class="contact-icon"><i class="fas fa-envelope"></i></div>
-                        <div>
-                            <div class="contact-label">Email</div>
-                            <div class="contact-value">hello@tenandsee.homes</div>
-                        </div>
-                    </div>
-                    <div class="contact-card">
-                        <div class="contact-icon"><i class="fab fa-instagram"></i></div>
-                        <div>
-                            <div class="contact-label">Instagram</div>
-                            <div class="contact-value">@tenseeofficial</div>
-                        </div>
-                    </div>
-                    <div class="contact-card">
-                        <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
-                        <div>
-                            <div class="contact-label">Based In</div>
-                            <div class="contact-value">Selangor, Malaysia</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="contact-form-card" data-aos="fade-left">
-                    <h3>Send us a message</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Full Name</label>
-                            <input type="text" id="cName" placeholder="Your name">
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" id="cEmail" placeholder="your@email.com">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>University</label>
-                        <select id="cUni">
-                            <option value="">Select your university</option>
-                            <option>Taylor's University</option>
-                            <option>Sunway University</option>
-                            <option>Monash University Malaysia</option>
-                            <option>INTI International University</option>
-                            <option>Help University</option>
-                            <option>SEGi University</option>
-                            <option>Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Message</label>
-                        <textarea id="cMsg" placeholder="Tell us what you're looking for..."></textarea>
-                    </div>
-                    <button class="btn btn-primary" style="width:100%;" onclick="submitContact()">
-                        <i class="fas fa-paper-plane"></i> Send Message
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ── FOOTER ── -->
+    <!-- Footer -->
     <footer class="footer">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <h4 class="footer-logo"><img src="/assets/logo.png" alt="Ten&See logo"></h4>
-                <p>Student housing made simple. We help Malaysian students find verified, affordable accommodation near their university.</p>
-                <p style="margin-top:0.5rem;">Registered in Malaysia.</p>
-            </div>
-            <div class="footer-col">
-                <h5>Pages</h5>
-                <a href="/" target="_self">Home</a>
-                <a href="/listings.html" target="_self">Browse Listings</a>
-                <a href="#how-it-works" target="_self">How It Works</a>
-                <a href="#features" target="_self">Features</a>
-                <a href="#contact" target="_self">Contact</a>
-            </div>
-            <div class="footer-col">
-                <h5>Universities</h5>
-                <a href="/listings.html?university=Taylor's University" target="_self">Taylor's University</a>
-                <a href="/listings.html?university=Sunway University" target="_self">Sunway University</a>
-                <a href="/listings.html?university=Monash University Malaysia" target="_self">Monash Malaysia</a>
-                <a href="/listings.html?university=INTI International University" target="_self">INTI University</a>
-                <a href="/listings.html?university=Help University" target="_self">Help University</a>
-                <a href="/listings.html?university=SEGi University" target="_self">SEGi University</a>
-            </div>
-            <div class="footer-col">
-                <h5>Contact</h5>
-                <div class="contact-item"><i class="fab fa-whatsapp"></i><span>+60 XX-XXXX XXXX</span></div>
-                <div class="contact-item"><i class="fas fa-envelope"></i><span>hello@tenandsee.homes</span></div>
-                <div class="contact-item"><i class="fab fa-instagram"></i><span>@tenseeofficial</span></div>
-                <div class="contact-item"><i class="fas fa-map-marker-alt"></i><span>Selangor, Malaysia</span></div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>© 2026 Ten&See. All rights reserved.</p>
-            <p>Built for students in Malaysia 🇲🇾</p>
-        </div>
+        <p>© 2026 Ten&See. All rights reserved. Built for students, by students.</p>
     </footer>
 
-    <!-- ── CHAT WIDGET ── -->
+    <!-- Chat Widget -->
     <div class="chat-widget">
-        <div class="chat-popup" id="chatPopup">
-            <div class="chat-popup-header">
-                <div class="chat-avatar">T</div>
-                <div>
-                    <h4>Ten&See Support</h4>
-                    <p>Usually replies within minutes</p>
-                </div>
-                <div class="chat-online"></div>
+        <div class="chat-panel" id="chatPanel">
+            <div class="chat-header">
+                <h4><i class="fas fa-headset"></i> Ten&See Support</h4>
+                <p>We typically reply within minutes</p>
             </div>
-            <div class="chat-messages-area">
-                <div class="chat-bubble">Hi! 👋 Looking for a room near your uni? Tell us your university and budget and we'll help you find something.</div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-form" id="chatForm">
+                <input type="text" id="chatName" placeholder="Your name" required>
+                <input type="email" id="chatEmail" placeholder="Your email" required>
+                <button class="btn btn-primary" style="width:100%;margin-top:0.5rem;" onclick="startChat()">
+                    Start Chat
+                </button>
             </div>
-            <div class="chat-input-row">
-                <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()">
-                <button class="chat-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+            <div class="chat-input-area" id="chatInputArea" style="display:none;">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter')sendMessage()">
+                <button class="chat-send" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
         </div>
-        <button class="chat-toggle" onclick="toggleChat()" id="chatToggle">
-            <i class="fas fa-comments" id="chatIcon"></i>
+        <button class="chat-toggle" id="chatToggle" onclick="toggleChat()">
+            <i class="fas fa-comment-dots"></i>
         </button>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="/dark-mode.js"></script>
     <script>
-        AOS.init({ duration: 600, once: true, offset: 60 });
-
-        // Navbar scroll
+        // Navbar scroll effect
         window.addEventListener('scroll', () => {
             document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
         });
 
-        // Mobile nav
-        function toggleMobileNav() {
-            document.getElementById('navLinks').classList.toggle('active');
-        }
+        // WhatsApp tracking
+        document.querySelectorAll('[id^="whatsappBtn"]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                try {
+                    await fetch('/api/leads', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: 'WhatsApp Visitor',
+                            email: 'whatsapp@visitor.com',
+                            source: 'whatsapp',
+                            message: 'Clicked WhatsApp link from homepage'
+                        })
+                    });
+                } catch(e) { console.log('Lead tracking:', e); }
+            });
+        });
 
-        // Quick search redirect
-        function quickSearch() {
-            const city = document.getElementById('qCity').value;
-            const uni = document.getElementById('qUni').value;
-            const type = document.getElementById('qType').value;
-            let params = new URLSearchParams();
-            if (city) params.set('city', city);
-            if (uni) params.set('university', uni);
-            if (type) params.set('type', type);
-            window.location.href = `/listings.html${params.toString() ? '?' + params : ''}`;
-        }
+        // Chat functionality
+        let chatSessionId = localStorage.getItem('chatSessionId');
+        let chatStarted = false;
 
-        // Load featured listings
-        async function loadFeatured() {
-            try {
-                const res = await fetch('/api/listings?limit=3&isFeatured=true');
-                const data = await res.json();
-                let listings = data.data || [];
-                if (!listings.length) {
-                    const all = await fetch('/api/listings?limit=3');
-                    const allData = await all.json();
-                    listings = allData.data || [];
-                }
-
-                // Calculate total individual rooms (sum of bedrooms across all properties)
-                const totalRooms = listings.reduce((sum, l) => sum + (l.bedrooms || 1), 0);
-                document.getElementById('statTotalRooms').textContent = totalRooms;
-                document.getElementById('wvTotalRooms').textContent = totalRooms;
-
-                const grid = document.getElementById('featuredGrid');
-                if (!listings.length) {
-                    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--color-text-muted);"><i class="fas fa-building" style="font-size:2rem;margin-bottom:0.75rem;display:block;opacity:0.3;"></i><p>No listings yet. Check back soon.</p></div>`;
-                    return;
-                }
-
-                grid.innerHTML = listings.map(l => `
-                    <div class="listing-card" data-aos="fade-up">
-                        <div class="listing-image">
-                            <img src="${l.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600'}" alt="${l.title}" loading="lazy">
-                            ${l.isFeatured ? '<span class="listing-badge badge-featured">Featured</span>' : ''}
-                            <div class="listing-price">RM ${l.price}<span>/${l.pricePeriod}</span></div>
-                        </div>
-                        <div class="listing-content">
-                            <div class="listing-meta">
-                                <span class="listing-type">${l.propertyType.replace('_',' ')}</span>
-                                ${l.location?.university ? `<span class="listing-badge badge-university" style="position:static;margin-left:4px;">Near ${l.location.university}</span>` : ''}
-                            </div>
-                            <h3 class="listing-title">${l.title}</h3>
-                            <div class="listing-location">
-                                <i class="fas fa-map-marker-alt" style="color:var(--color-accent)"></i>
-                                ${l.location?.city || ''}
-                            </div>
-                            <div class="listing-features">
-                                ${l.bedrooms ? `<div class="listing-feature"><i class="fas fa-bed"></i> ${l.bedrooms} BR</div>` : ''}
-                                ${l.bathrooms ? `<div class="listing-feature"><i class="fas fa-bath"></i> ${l.bathrooms} BA</div>` : ''}
-                                <div class="listing-feature"><i class="fas fa-user-friends"></i> Max ${l.maxOccupants || 1}</div>
-                            </div>
-                            <div class="listing-actions">
-                                <a href="/listing.html?id=${l._id}" class="btn btn-primary btn-sm" style="flex:1;justify-content:center;" target="_self">
-                                    <i class="fas fa-eye"></i> View & Enquire
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-
-                if (window.AOS) AOS.refresh();
-            } catch(e) {
-                document.getElementById('featuredGrid').innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--color-text-muted);"><p>Could not load listings right now.</p></div>`;
+        function toggleChat() {
+            const panel = document.getElementById('chatPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active') && chatSessionId) {
+                loadChatHistory();
             }
         }
 
-        // Contact form
-        async function submitContact() {
-            const name = document.getElementById('cName').value;
-            const email = document.getElementById('cEmail').value;
-            const university = document.getElementById('cUni').value;
-            const message = document.getElementById('cMsg').value;
-            if (!name || !email || !message) { alert('Please fill in all required fields.'); return; }
+        async function startChat() {
+            const name = document.getElementById('chatName').value;
+            const email = document.getElementById('chatEmail').value;
+            if (!name || !email) return alert('Please fill in all fields');
+
             try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, message: 'Chat started', isAdmin: false })
+                });
+                const data = await res.json();
+                chatSessionId = data.sessionId;
+                localStorage.setItem('chatSessionId', chatSessionId);
+
+                document.getElementById('chatForm').style.display = 'none';
+                document.getElementById('chatInputArea').style.display = 'flex';
+                chatStarted = true;
+
+                addMessage('admin', 'Hi there! Welcome to Ten&See. How can we help you find your perfect student home today?');
+
                 await fetch('/api/leads', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, university, message, source: 'contact_form' })
+                    body: JSON.stringify({ name, email, source: 'chat', message: 'Started live chat' })
                 });
-                alert('Message sent! We\'ll get back to you soon.');
-                document.getElementById('cName').value = '';
-                document.getElementById('cEmail').value = '';
-                document.getElementById('cMsg').value = '';
-            } catch { alert('Something went wrong. Please try WhatsApp instead.'); }
+            } catch(e) { console.error(e); }
         }
 
-        // Chat widget
-        let chatOpen = false;
-        let chatSessionId = null;
-
-        function toggleChat() {
-            chatOpen = !chatOpen;
-            document.getElementById('chatPopup').classList.toggle('active', chatOpen);
-            document.getElementById('chatIcon').className = chatOpen ? 'fas fa-times' : 'fas fa-comments';
-        }
-
-        async function sendChat() {
+        async function sendMessage() {
             const input = document.getElementById('chatInput');
-            const msg = input.value.trim();
-            if (!msg) return;
+            const message = input.value.trim();
+            if (!message) return;
+
+            addMessage('user', message);
             input.value = '';
 
-            const area = document.querySelector('.chat-messages-area');
-            const userBubble = document.createElement('div');
-            userBubble.className = 'chat-bubble';
-            userBubble.style.cssText = 'background:var(--color-accent);color:var(--color-primary);margin-left:auto;border-radius:12px 12px 4px 12px;font-weight:500;';
-            userBubble.textContent = msg;
-            area.appendChild(userBubble);
-
             try {
-                if (!chatSessionId) {
-                    const s = await fetch('/api/chat/session', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ source: 'landing_page' }) });
-                    const sd = await s.json();
-                    chatSessionId = sd.data?._id;
-                }
                 await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ sessionId: chatSessionId, message: msg, isAdmin: false })
+                    body: JSON.stringify({ sessionId: chatSessionId, message, isAdmin: false })
                 });
-                setTimeout(() => {
-                    const reply = document.createElement('div');
-                    reply.className = 'chat-bubble';
-                    reply.textContent = 'Thanks for your message! Our team will reply shortly. You can also reach us on WhatsApp for a faster response.';
-                    area.appendChild(reply);
-                    area.scrollTop = area.scrollHeight;
-                }, 800);
-            } catch { console.error('Chat error'); }
-
-            area.scrollTop = area.scrollHeight;
+            } catch(e) { console.error(e); }
         }
 
-        document.addEventListener('DOMContentLoaded', loadFeatured);
+        function addMessage(sender, text) {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = `chat-message ${sender}`;
+            div.innerHTML = `
+                <div class="chat-bubble">${text}</div>
+                <div class="chat-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function loadChatHistory() {
+            if (!chatSessionId) return;
+            try {
+                const res = await fetch(`/api/chat/${chatSessionId}`);
+                const data = await res.json();
+                document.getElementById('chatMessages').innerHTML = '';
+                data.data.forEach(msg => {
+                    if (msg.message !== 'Chat started') {
+                        addMessage(msg.isAdmin ? 'admin' : 'user', msg.message);
+                    }
+                });
+                document.getElementById('chatForm').style.display = 'none';
+                document.getElementById('chatInputArea').style.display = 'flex';
+            } catch(e) { console.error(e); }
+        }
     </script>
-    <script src="/cookie-consent.js"></script>
 </body>
 </html>

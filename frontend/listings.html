@@ -1,39 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse Listings — Ten&See</title>
-<link rel="icon" type="image/png" href="/assets/logo.png">
+    <meta name="color-scheme" content="light dark">
+    <title>Browse Listings - Ten&See</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- AOS Animate On Scroll -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-    <link rel="stylesheet" href="/cookie-consent.css">
     <style>
         :root {
-            --color-primary: #2C3830;
-            --color-accent: #B8954A;
-            --color-accent-light: #F0D9A0;
-            --color-bg: #F7F8FA;
-            --color-surface: #FFFFFF;
-            --color-text-main: #1C2420;
-            --color-text-muted: #6B7280;
-            --color-success: #10B981;
-            --color-border: #E5E7EB;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-glow: 0 0 40px -10px rgba(99, 102, 241, 0.4);
+            
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --card-bg: rgba(248, 250, 252, 0.6);
+            --input-bg: rgba(15, 23, 42, 0.05);
         }
 
-        html { scroll-behavior: smooth; }
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --card-bg: rgba(248, 250, 252, 0.8);
+            --input-bg: rgba(15, 23, 42, 0.05);
+        }
+
+        html:not([data-theme="light"]) {
+            --bg-primary: #020617;
+            --bg-secondary: #0f172a;
+            --text-primary: #f8fafc;
+            --text-secondary: #64748b;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --card-bg: rgba(15, 23, 42, 0.6);
+            --input-bg: rgba(255, 255, 255, 0.05);
+        }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--color-bg);
-            color: var(--color-text-main);
+            background: var(--bg-primary);
+            color: var(--text-primary);
             line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
         }
         h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', sans-serif; }
 
@@ -41,12 +67,10 @@
         .navbar {
             position: fixed; top: 0; left: 0; right: 0;
             z-index: 1000; padding: 1rem 2rem;
-            background: var(--color-primary);
+            background: rgba(var(--bg-secondary-rgb), 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
             transition: all 0.3s ease;
-        }
-        .navbar.scrolled {
-            box-shadow: 0 2px 20px rgba(0,0,0,0.15);
-            padding: 0.75rem 2rem;
         }
         .nav-container {
             max-width: 1400px; margin: 0 auto;
@@ -55,77 +79,75 @@
         .logo {
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.75rem; font-weight: 700;
-            color: var(--color-accent);
-            text-decoration: none;
-            display: inline-flex; align-items: center;
+            background: var(--gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; text-decoration: none;
         }
-        .logo span { font-weight: 300; color: white; }
-        .logo img { width: 54px; height: 54px; object-fit: contain; display: block; border-radius: 10px; }
+        .logo span { font-weight: 300; }
         .nav-links { display: flex; gap: 2.5rem; align-items: center; list-style: none; }
-        .nav-links a {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none; font-weight: 500;
-            transition: color 0.3s;
-        }
-        .nav-links a:hover { color: var(--color-accent); }
-        .hamburger {
-            display: none;
-            background: none; border: none;
-            color: white; font-size: 1.5rem;
-            cursor: pointer;
-        }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--text-primary); }
         .btn {
             display: inline-flex; align-items: center; gap: 0.5rem;
             padding: 0.75rem 1.5rem; border-radius: 12px;
-            font-weight: 600; font-size: 0.95rem;
-            cursor: pointer; transition: all 0.2s ease;
-            border: none; text-decoration: none;
+            font-weight: 600; font-size: 0.95rem; cursor: pointer;
+            transition: all 0.3s; border: none; text-decoration: none;
         }
-        .btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
-        .btn-primary {
-            background: var(--color-accent);
-            color: var(--color-primary);
-            box-shadow: 0 4px 15px rgba(201, 168, 76, 0.3);
-        }
-        .btn-primary:hover {
-            background: #D4B55D;
-            box-shadow: 0 6px 20px rgba(201, 168, 76, 0.4);
-        }
-        .btn-outline {
-            background: transparent; color: white;
-            border: 1.5px solid rgba(255,255,255,0.25);
-        }
-        .btn-outline:hover {
-            border-color: var(--color-accent);
-            background: rgba(201, 168, 76, 0.1);
-            color: var(--color-accent);
-        }
-        .btn-outline-dark {
-            background: transparent;
-            color: var(--color-primary);
-            border: 1.5px solid var(--color-border);
-        }
-        .btn-outline-dark:hover {
-            border-color: var(--color-accent);
-            color: var(--color-accent);
-        }
+        .btn-primary { background: var(--gradient); color: white; box-shadow: var(--shadow-glow); }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .btn-outline { background: transparent; color: var(--text-primary); border: 1.5px solid var(--border-color); }
+        .btn-outline:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
         .btn-whatsapp { background: #25d366; color: white; }
         .btn-whatsapp:hover { background: #128c7e; }
         .btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+            position: relative;
+            margin-left: 1rem;
+        }
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .theme-toggle i {
+            position: absolute;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .theme-toggle i.fa-moon {
+            opacity: 1; transform: rotate(0deg);
+        }
+        .theme-toggle i.fa-sun {
+            opacity: 0; transform: rotate(-180deg);
+        }
+        .theme-toggle.light-mode i.fa-moon {
+            opacity: 0; transform: rotate(180deg);
+        }
+        .theme-toggle.light-mode i.fa-sun {
+            opacity: 1; transform: rotate(0deg);
+        }
 
         /* Page Header */
         .page-header {
             padding: 8rem 2rem 3rem;
             text-align: center;
-            background: linear-gradient(180deg, rgba(27,46,75,0.06) 0%, transparent 100%);
+            background: linear-gradient(180deg, rgba(99,102,241,0.08) 0%, transparent 100%);
         }
         .page-header h1 {
             font-size: clamp(2rem, 4vw, 3rem);
             margin-bottom: 0.75rem;
-            color: var(--color-primary);
+            color: var(--text-primary);
         }
-        .page-header h1 .accent-text { color: var(--color-accent); }
-        .page-header p { color: var(--color-text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        .page-header p { color: var(--text-secondary); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
 
         /* Filters */
         .filters-section {
@@ -136,23 +158,25 @@
             display: flex; gap: 1rem; flex-wrap: wrap;
             align-items: center; justify-content: center;
         }
-        .filter-group { position: relative; }
+        .filter-group {
+            position: relative;
+        }
         .filter-group select, .filter-group input {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 0.75rem 2.5rem 0.75rem 1rem;
-            color: var(--color-text-main);
+            color: var(--text-primary);
             font-size: 0.9rem;
             min-width: 180px;
             cursor: pointer;
             appearance: none;
             outline: none;
-            font-family: inherit;
+            transition: all 0.3s ease;
         }
         .filter-group input { min-width: 250px; cursor: text; }
         .filter-group select:focus, .filter-group input:focus {
-            border-color: var(--color-accent);
+            border-color: var(--primary);
         }
         .filter-group::after {
             content: '\f107';
@@ -161,7 +185,7 @@
             position: absolute;
             right: 1rem; top: 50%;
             transform: translateY(-50%);
-            color: var(--color-text-muted);
+            color: var(--text-secondary);
             pointer-events: none;
         }
         .filter-group.input-group::after { content: '\f002'; }
@@ -173,7 +197,7 @@
             width: 120px; min-width: 120px;
             padding: 0.75rem 1rem;
         }
-        .price-range span { color: var(--color-text-muted); font-size: 0.85rem; }
+        .price-range span { color: var(--text-secondary); font-size: 0.85rem; }
 
         .active-filters {
             display: flex; gap: 0.5rem; flex-wrap: wrap;
@@ -182,57 +206,15 @@
         .filter-tag {
             display: inline-flex; align-items: center; gap: 0.4rem;
             padding: 0.4rem 0.875rem;
-            background: rgba(201, 168, 76, 0.1);
-            border: 1px solid rgba(201, 168, 76, 0.2);
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
             border-radius: 100px;
             font-size: 0.8rem;
-            color: var(--color-accent);
+            color: var(--primary);
         }
         .filter-tag button {
-            background: none; border: none; color: var(--color-accent);
+            background: none; border: none; color: var(--primary);
             cursor: pointer; font-size: 0.7rem;
-        }
-
-        /* Skeleton Loading */
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 8px;
-        }
-        .skeleton-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 20px;
-            overflow: hidden;
-        }
-        .skeleton-image {
-            height: 220px;
-            width: 100%;
-        }
-        .skeleton-content {
-            padding: 1.5rem;
-        }
-        .skeleton-line {
-            height: 16px;
-            margin-bottom: 12px;
-            border-radius: 6px;
-        }
-        .skeleton-line.short { width: 40%; }
-        .skeleton-line.medium { width: 70%; }
-        .skeleton-line.long { width: 90%; }
-        .skeleton-actions {
-            display: flex; gap: 0.75rem;
-            margin-top: 1rem;
-        }
-        .skeleton-btn {
-            height: 36px;
-            flex: 1;
-            border-radius: 10px;
         }
 
         /* Listings Grid */
@@ -247,17 +229,17 @@
         }
 
         .listing-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 20px;
             overflow: hidden;
-            transition: all 0.25s ease;
+            transition: all 0.4s ease;
             position: relative;
         }
         .listing-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px -10px rgba(27, 46, 75, 0.15);
-            border-color: var(--color-accent);
+            transform: translateY(-8px);
+            border-color: rgba(99, 102, 241, 0.2);
+            box-shadow: var(--shadow-glow);
         }
 
         .listing-image {
@@ -282,19 +264,8 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
-        .badge-featured { background: var(--color-accent); color: var(--color-primary); }
-        .badge-new { background: var(--color-success); color: white; }
-        .badge-verified {
-            background: var(--color-success);
-            color: white;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        .badge-university {
-            background: var(--color-accent-light);
-            color: var(--color-primary);
-        }
+        .badge-featured { background: var(--gradient); color: white; }
+        .badge-new { background: var(--accent); color: white; }
 
         .listing-price {
             position: absolute;
@@ -310,35 +281,33 @@
         .listing-price span {
             font-size: 0.75rem;
             font-weight: 400;
-            color: rgba(255,255,255,0.7);
+            color: var(--gray-light);
         }
 
-        .listing-content { padding: 1.5rem; }
-        .listing-meta {
-            display: flex; gap: 0.5rem;
-            margin-bottom: 0.75rem;
-            flex-wrap: wrap;
+        .listing-content {
+            padding: 1.5rem;
         }
         .listing-type {
             display: inline-block;
             padding: 0.25rem 0.75rem;
-            background: rgba(201, 168, 76, 0.1);
+            background: rgba(99, 102, 241, 0.1);
             border-radius: 6px;
             font-size: 0.75rem;
-            color: var(--color-accent);
+            color: var(--primary);
             font-weight: 600;
             text-transform: uppercase;
+            margin-bottom: 0.75rem;
         }
         .listing-title {
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
             line-height: 1.3;
-            color: var(--color-primary);
+            color: var(--text-primary);
         }
         .listing-location {
             display: flex; align-items: center; gap: 0.4rem;
-            color: var(--color-text-muted);
+            color: var(--text-secondary);
             font-size: 0.9rem;
             margin-bottom: 1rem;
         }
@@ -349,9 +318,9 @@
         .listing-feature {
             display: flex; align-items: center; gap: 0.35rem;
             font-size: 0.85rem;
-            color: var(--color-text-muted);
+            color: var(--text-secondary);
         }
-        .listing-feature i { color: var(--color-accent); font-size: 0.9rem; }
+        .listing-feature i { color: var(--primary); font-size: 0.9rem; }
 
         .listing-amenities {
             display: flex; flex-wrap: wrap; gap: 0.4rem;
@@ -359,10 +328,10 @@
         }
         .amenity-tag {
             padding: 0.25rem 0.6rem;
-            background: var(--color-bg);
+            background: var(--input-bg);
             border-radius: 6px;
             font-size: 0.75rem;
-            color: var(--color-text-muted);
+            color: var(--text-secondary);
         }
 
         .listing-actions {
@@ -370,21 +339,28 @@
         }
         .listing-actions .btn { flex: 1; justify-content: center; }
 
-        /* Empty State */
+        /* Loading & Empty States */
+        .loading-state {
+            text-align: center; padding: 4rem;
+        }
+        .loading-state i {
+            font-size: 3rem;
+            color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         .empty-state {
             text-align: center; padding: 4rem;
             grid-column: 1 / -1;
         }
         .empty-state i {
             font-size: 4rem;
-            color: var(--color-text-muted);
+            color: var(--text-secondary);
             margin-bottom: 1rem;
         }
-        .empty-state h3 {
-            color: var(--color-primary);
-            margin-bottom: 0.5rem;
-        }
-        .empty-state p { color: var(--color-text-muted); }
+        .empty-state h3 { margin-bottom: 0.5rem; color: var(--text-primary); }
+        .empty-state p { color: var(--text-secondary); }
 
         /* Modal */
         .modal-overlay {
@@ -399,152 +375,86 @@
         }
         .modal-overlay.active { display: flex; }
         .modal {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 24px;
             max-width: 500px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            position: relative;
+            transition: all 0.3s ease;
         }
         .modal-header {
             padding: 1.5rem;
-            border-bottom: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--border-color);
             display: flex; justify-content: space-between; align-items: center;
         }
-        .modal-header h3 { font-size: 1.25rem; color: var(--color-primary); }
+        .modal-header h3 { font-size: 1.25rem; color: var(--text-primary); }
         .modal-close {
-            background: none; border: none; color: var(--color-text-muted);
+            background: none; border: none; color: var(--text-secondary);
             font-size: 1.5rem; cursor: pointer;
         }
         .modal-body { padding: 1.5rem; }
         .form-group { margin-bottom: 1.25rem; }
         .form-group label {
             display: block; margin-bottom: 0.5rem;
-            font-size: 0.9rem; font-weight: 500;
-            color: var(--color-text-main);
+            font-size: 0.9rem; font-weight: 500; color: var(--text-primary);
         }
         .form-group input, .form-group textarea, .form-group select {
             width: 100%;
-            background: var(--color-bg);
-            border: 1px solid var(--color-border);
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 0.875rem 1rem;
-            color: var(--color-text-main);
+            color: var(--text-primary);
             font-size: 0.95rem;
             outline: none; font-family: inherit;
+            transition: border-color 0.3s ease;
         }
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-            border-color: var(--color-accent);
+            border-color: var(--primary);
         }
         .form-group textarea { min-height: 100px; resize: vertical; }
 
         /* Footer */
         .footer {
-            background: var(--color-primary);
-            padding: 4rem 2rem 2rem;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            margin-top: 4rem;
-        }
-        .footer-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            margin-bottom: 2rem;
-        }
-        .footer-col h4 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.5rem;
-            color: var(--color-accent);
-            margin-bottom: 0.75rem;
-        }
-        .footer-col h4 span { font-weight: 300; color: white; }
-        .footer-logo img { width: 64px; height: 64px; object-fit: contain; display: block; border-radius: 12px; }
-        .footer-col p {
-            color: rgba(255,255,255,0.6);
-            font-size: 0.9rem;
-            line-height: 1.6;
-            margin-bottom: 0.5rem;
-        }
-        .footer-col h5 {
-            color: var(--color-accent-light);
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-        .footer-col a {
-            display: block;
-            color: rgba(255,255,255,0.6);
-            text-decoration: none;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            transition: color 0.2s;
-        }
-        .footer-col a:hover { color: var(--color-accent); }
-        .footer-col .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: rgba(255,255,255,0.6);
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-        .footer-col .contact-item i {
-            color: var(--color-accent);
-            width: 18px;
-        }
-        .footer-bottom {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            text-align: center;
-            color: rgba(255,255,255,0.4);
-            font-size: 0.85rem;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center; color: var(--text-secondary);
+            font-size: 0.875rem; margin-top: 4rem;
+            transition: border-color 0.3s ease;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0; right: 0;
-                background: var(--color-primary);
-                flex-direction: column;
-                padding: 1rem 2rem;
-                gap: 1rem;
-                border-top: 1px solid rgba(255,255,255,0.1);
-            }
-            .nav-links.active { display: flex; }
-            .hamburger { display: block; }
+            .nav-links { display: none; }
             .filters-bar { flex-direction: column; align-items: stretch; }
             .filter-group select, .filter-group input { width: 100%; min-width: unset; }
             .listings-grid { grid-template-columns: 1fr; }
             .price-range { flex-direction: column; align-items: stretch; }
-            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar" id="navbar">
+    <nav class="navbar">
         <div class="nav-container">
-            <a href="/" class="logo" target="_self" aria-label="Ten&See home"><img src="/assets/logo.png" alt="Ten&See logo"></a>
-            <button class="hamburger" onclick="toggleMobileNav()">☰</button>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="/" target="_self">Home</a></li>
-                <li><a href="/listings.html" target="_self">Listings</a></li>
-                <li><a href="/index.html#features" target="_self">Features</a></li>
-                <li><a href="/index.html#contact" target="_self">Contact</a></li>
-            </ul>
+            <a href="/" class="logo">Ten<span>&</span>See</a>
+            <div style="display: flex; align-items: center;">
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/listings.html">Listings</a></li>
+                    <li><a href="/admin">Admin</a></li>
+                </ul>
+                <button class="theme-toggle" id="themeToggle" onclick="themeManager.toggleTheme()" title="Toggle dark mode">
+                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
     <div class="page-header">
-        <h1>Find Your <span class="accent-text">Perfect Home</span></h1>
+        <h1>Find Your <span style="background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Perfect Home</span></h1>
         <p>Browse our curated collection of student-friendly accommodations</p>
     </div>
 
@@ -556,23 +466,11 @@
             <div class="filter-group">
                 <select id="cityFilter" onchange="applyFilters()">
                     <option value="">All Cities</option>
-                    <option value="Subang Jaya">Subang Jaya</option>
-                    <option value="Petaling Jaya">Petaling Jaya</option>
-                    <option value="Cheras">Cheras</option>
-                    <option value="Cyberjaya">Cyberjaya</option>
-                    <option value="Nilai">Nilai</option>
-                    <option value="Kuala Lumpur">Kuala Lumpur</option>
                 </select>
             </div>
             <div class="filter-group">
                 <select id="universityFilter" onchange="applyFilters()">
                     <option value="">All Universities</option>
-                    <option value="Taylor's University">Taylor's University</option>
-                    <option value="Sunway University">Sunway University</option>
-                    <option value="Monash University Malaysia">Monash University Malaysia</option>
-                    <option value="INTI International University">INTI International University</option>
-                    <option value="Help University">Help University</option>
-                    <option value="SEGi University">SEGi University</option>
                 </select>
             </div>
             <div class="filter-group">
@@ -595,9 +493,9 @@
                 </select>
             </div>
             <div class="price-range">
-                <input type="number" id="minPrice" placeholder="Min RM" onchange="applyFilters()">
+                <input type="number" id="minPrice" placeholder="Min $" onchange="applyFilters()">
                 <span>to</span>
-                <input type="number" id="maxPrice" placeholder="Max RM" onchange="applyFilters()">
+                <input type="number" id="maxPrice" placeholder="Max $" onchange="applyFilters()">
             </div>
             <button class="btn btn-outline btn-sm" onclick="clearFilters()">
                 <i class="fas fa-undo"></i> Reset
@@ -608,78 +506,9 @@
 
     <div class="listings-section">
         <div class="listings-grid" id="listingsGrid">
-            <!-- Skeleton loading cards -->
-            <div class="skeleton-card">
-                <div class="skeleton skeleton-image"></div>
-                <div class="skeleton-content">
-                    <div class="skeleton skeleton-line short"></div>
-                    <div class="skeleton skeleton-line medium"></div>
-                    <div class="skeleton skeleton-line long"></div>
-                    <div class="skeleton-actions">
-                        <div class="skeleton skeleton-btn"></div>
-                        <div class="skeleton skeleton-btn"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="skeleton-card">
-                <div class="skeleton skeleton-image"></div>
-                <div class="skeleton-content">
-                    <div class="skeleton skeleton-line short"></div>
-                    <div class="skeleton skeleton-line medium"></div>
-                    <div class="skeleton skeleton-line long"></div>
-                    <div class="skeleton-actions">
-                        <div class="skeleton skeleton-btn"></div>
-                        <div class="skeleton skeleton-btn"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="skeleton-card">
-                <div class="skeleton skeleton-image"></div>
-                <div class="skeleton-content">
-                    <div class="skeleton skeleton-line short"></div>
-                    <div class="skeleton skeleton-line medium"></div>
-                    <div class="skeleton skeleton-line long"></div>
-                    <div class="skeleton-actions">
-                        <div class="skeleton skeleton-btn"></div>
-                        <div class="skeleton skeleton-btn"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="skeleton-card">
-                <div class="skeleton skeleton-image"></div>
-                <div class="skeleton-content">
-                    <div class="skeleton skeleton-line short"></div>
-                    <div class="skeleton skeleton-line medium"></div>
-                    <div class="skeleton skeleton-line long"></div>
-                    <div class="skeleton-actions">
-                        <div class="skeleton skeleton-btn"></div>
-                        <div class="skeleton skeleton-btn"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="skeleton-card">
-                <div class="skeleton skeleton-image"></div>
-                <div class="skeleton-content">
-                    <div class="skeleton skeleton-line short"></div>
-                    <div class="skeleton skeleton-line medium"></div>
-                    <div class="skeleton skeleton-line long"></div>
-                    <div class="skeleton-actions">
-                        <div class="skeleton skeleton-btn"></div>
-                        <div class="skeleton skeleton-btn"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="skeleton-card">
-                <div class="skeleton skeleton-image"></div>
-                <div class="skeleton-content">
-                    <div class="skeleton skeleton-line short"></div>
-                    <div class="skeleton skeleton-line medium"></div>
-                    <div class="skeleton skeleton-line long"></div>
-                    <div class="skeleton-actions">
-                        <div class="skeleton skeleton-btn"></div>
-                        <div class="skeleton skeleton-btn"></div>
-                    </div>
-                </div>
+            <div class="loading-state">
+                <i class="fas fa-circle-notch"></i>
+                <p style="margin-top:1rem;color:var(--text-secondary)">Loading listings...</p>
             </div>
         </div>
     </div>
@@ -688,7 +517,7 @@
     <div class="modal-overlay" id="bookingModal">
         <div class="modal">
             <div class="modal-header">
-                <h3><i class="fas fa-calendar-check" style="color:var(--color-accent)"></i> Book a Viewing</h3>
+                <h3><i class="fas fa-calendar-check" style="color:var(--primary)"></i> Book a Viewing</h3>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
@@ -728,58 +557,14 @@
     </div>
 
     <footer class="footer">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <h4 class="footer-logo"><img src="/assets/logo.png" alt="Ten&See logo"></h4>
-                <p>The trusted student housing platform in Malaysia.</p>
-                <p>Registered in Malaysia.</p>
-            </div>
-            <div class="footer-col">
-                <h5>Links</h5>
-                <a href="/" target="_self">Home</a>
-                <a href="/listings.html" target="_self">Listings</a>
-                <a href="/index.html#contact" target="_self">Contact</a>
-            </div>
-            <div class="footer-col">
-                <h5>Contact</h5>
-                <div class="contact-item">
-                    <i class="fab fa-whatsapp"></i>
-                    <span>+60 XX-XXXX XXXX</span>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-envelope"></i>
-                    <span>hello@tenandsee.homes</span>
-                </div>
-                <div class="contact-item">
-                    <i class="fab fa-instagram"></i>
-                    <span>@tenseeofficial</span>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>© 2026 Ten&See. All rights reserved.</p>
-        </div>
+        <p>© 2026 Ten&See. All rights reserved.</p>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="/dark-mode.js"></script>
     <script>
-        // AOS Init
-        AOS.init({ duration: 600, once: true });
-
-        // Navbar scroll effect
-        window.addEventListener('scroll', () => {
-            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
-        });
-
-        // Mobile hamburger toggle
-        function toggleMobileNav() {
-            document.getElementById('navLinks').classList.toggle('active');
-        }
-
         let allListings = [];
         let searchTimeout;
 
-        // Load listings on page load
         document.addEventListener('DOMContentLoaded', () => {
             loadListings();
             loadFilterOptions();
@@ -796,8 +581,8 @@
                 document.getElementById('listingsGrid').innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-exclamation-circle"></i>
-                        <h3>No listings available right now.</h3>
-                        <p>Check back soon or contact us on WhatsApp.</p>
+                        <h3>Unable to load listings</h3>
+                        <p>Please check your connection and try again.</p>
                     </div>
                 `;
             }
@@ -810,18 +595,13 @@
                 const options = data.data;
 
                 const citySelect = document.getElementById('cityFilter');
-                // Keep hardcoded Malaysian cities, only add if not already present
                 options.cities.forEach(city => {
-                    if (city && !Array.from(citySelect.options).some(o => o.value === city)) {
-                        citySelect.innerHTML += `<option value="${city}">${city}</option>`;
-                    }
+                    if (city) citySelect.innerHTML += `<option value="${city}">${city}</option>`;
                 });
 
                 const uniSelect = document.getElementById('universityFilter');
                 options.universities.forEach(uni => {
-                    if (uni && !Array.from(uniSelect.options).some(o => o.value === uni)) {
-                        uniSelect.innerHTML += `<option value="${uni}">${uni}</option>`;
-                    }
+                    if (uni) uniSelect.innerHTML += `<option value="${uni}">${uni}</option>`;
                 });
             } catch (e) { console.error(e); }
         }
@@ -833,30 +613,26 @@
                 grid.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-search"></i>
-                        <h3>No listings match your filters.</h3>
-                        <p>Try adjusting your search or contact us directly.</p>
+                        <h3>No listings found</h3>
+                        <p>Try adjusting your filters to see more results.</p>
                     </div>
                 `;
                 return;
             }
 
             grid.innerHTML = listings.map(listing => `
-                <div class="listing-card" data-id="${listing._id}" data-aos="fade-up">
-                    <div class="listing-image" onclick="window.location='/listing.html?id=${listing._id}'" style="cursor:pointer;">
+                <div class="listing-card" data-id="${listing._id}">
+                    <div class="listing-image">
                         <img src="${listing.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600'}" alt="${listing.title}">
                         ${listing.isFeatured ? '<span class="listing-badge badge-featured">Featured</span>' : ''}
                         ${isNew(listing.createdAt) ? '<span class="listing-badge badge-new" style="left:auto;right:1rem;">New</span>' : ''}
-                        <div class="listing-price">RM ${listing.price}<span>/${listing.pricePeriod}</span></div>
+                        <div class="listing-price">$${listing.price}<span>/${listing.pricePeriod}</span></div>
                     </div>
                     <div class="listing-content">
-                        <div class="listing-meta">
-                            <span class="listing-type">${listing.propertyType.replace('_', ' ')}</span>
-                            ${listing.location?.university ? `<span class="listing-badge badge-university">Near ${listing.location.university}</span>` : ''}
-                            <span class="listing-badge badge-verified"><i class="fas fa-check-circle"></i> Verified</span>
-                        </div>
+                        <span class="listing-type">${listing.propertyType.replace('_', ' ')}</span>
                         <h3 class="listing-title">${listing.title}</h3>
                         <div class="listing-location">
-                            <i class="fas fa-map-marker-alt" style="color:var(--color-accent)"></i>
+                            <i class="fas fa-map-marker-alt" style="color:var(--primary)"></i>
                             ${listing.location?.address || ''}, ${listing.location?.city || ''}
                         </div>
                         <div class="listing-features">
@@ -869,19 +645,16 @@
                             ${(listing.amenities || []).length > 4 ? `<span class="amenity-tag">+${listing.amenities.length - 4} more</span>` : ''}
                         </div>
                         <div class="listing-actions">
-                            <a href="/listing.html?id=${listing._id}" class="btn btn-outline-dark btn-sm" style="flex:1;justify-content:center;">
-                                <i class="fas fa-eye"></i> View Details
-                            </a>
                             <button class="btn btn-primary btn-sm" onclick="openBooking('${listing._id}', '${listing.title.replace(/'/g, "\'")}')">
-                                <i class="fas fa-calendar"></i> Enquire
+                                <i class="fas fa-calendar"></i> Book Viewing
                             </button>
+                            <a href="https://wa.me/${listing.whatsappNumber || '+966503874798'}" class="btn btn-whatsapp btn-sm" onclick="trackWhatsAppLead('${listing._id}', '${listing.title.replace(/'/g, "\'")}')">
+                                <i class="fab fa-whatsapp"></i> WhatsApp
+                            </a>
                         </div>
                     </div>
                 </div>
             `).join('');
-
-            // Re-init AOS for dynamically added elements
-            if (window.AOS) AOS.refresh();
         }
 
         function isNew(date) {
@@ -908,7 +681,7 @@
 
             if (search) {
                 const s = search.toLowerCase();
-                filtered = filtered.filter(l =>
+                filtered = filtered.filter(l => 
                     l.title.toLowerCase().includes(s) ||
                     l.description.toLowerCase().includes(s) ||
                     l.location?.city?.toLowerCase().includes(s) ||
@@ -936,7 +709,7 @@
             if (filters.type) tags.push({ label: filters.type.replace('_', ' '), key: 'type' });
             if (filters.bedrooms) tags.push({ label: `${filters.bedrooms}+ BR`, key: 'bedrooms' });
             if (filters.minPrice || filters.maxPrice) {
-                tags.push({ label: `RM ${filters.minPrice || 0} - RM ${filters.maxPrice || '∞'}`, key: 'price' });
+                tags.push({ label: `$${filters.minPrice || 0} - $${filters.maxPrice || '∞'}`, key: 'price' });
             }
 
             container.innerHTML = tags.map(tag => `
@@ -1009,11 +782,26 @@
             } catch (e) { alert('Error submitting booking. Please try again.'); }
         }
 
-        // Close modal on overlay click
+        async function trackWhatsAppLead(listingId, listingTitle) {
+            try {
+                await fetch('/api/leads', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'WhatsApp Visitor',
+                        email: 'whatsapp@visitor.com',
+                        source: 'whatsapp',
+                        listingId,
+                        listingTitle,
+                        message: `Clicked WhatsApp for: ${listingTitle}`
+                    })
+                });
+            } catch(e) { console.log(e); }
+        }
+
         document.getElementById('bookingModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('bookingModal')) closeModal();
         });
     </script>
-    <script src="/cookie-consent.js"></script>
 </body>
 </html>
