@@ -10,6 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
+
 app.get('/debug', (req, res) => {
   const fs = require('fs');
   const frontendPath = path.join(__dirname, '../frontend');
@@ -20,6 +21,7 @@ app.get('/debug', (req, res) => {
     frontendFiles: fs.existsSync(frontendPath) ? fs.readdirSync(frontendPath) : 'NOT FOUND'
   });
 });
+
 app.get('/debug-html', (req, res) => {
   const fs = require('fs');
   const content = fs.readFileSync(path.join(__dirname, '../frontend/index.html'), 'utf8');
@@ -33,17 +35,19 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tenandsee
 .then(() => console.log('MongoDB Connected'))
 .catch(err => console.error('MongoDB Connection Error:', err));
 
+// ── API ROUTES ──
 app.use('/api/listings', require('./routes/listings'));
 app.use('/api/leads', require('./routes/leads'));
 app.use('/api/chat', require('./routes/chat'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/analytics', require('./routes/analytics'));
-app.use('/api/notifications', require('./routes/notifications').router);
+app.use('/api/notifications', require('./routes/notifications')); // ← FIXED: removed .router
 app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/reports', require('./routes/reports'));
 app.use('/api/audit', require('./routes/audit').router);
 app.use('/api/whatsapp', require('./routes/whatsapp'));
 
+// ── FRONTEND ROUTES ──
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
@@ -56,13 +60,13 @@ app.get('/listing', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/listing.html'));
 });
 
+// ── WEEKLY REPORT CRON ──
 cron.schedule('0 9 * * 1', async () => {
   try {
     const emailService = require('./utils/email');
     const Lead = require('./models/Lead');
     const Listing = require('./models/Listing');
     const ChatMessage = require('./models/ChatMessage');
-    const Booking = require('./models/Booking');
 
     const last7Days = new Date();
     last7Days.setDate(last7Days.getDate() - 7);
