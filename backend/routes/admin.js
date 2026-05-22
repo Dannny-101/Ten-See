@@ -5,6 +5,30 @@ const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 const { createAuditLog } = require('./audit');
 
+// ── TEMPORARY EMERGENCY PASSWORD RESET ──
+// REMOVE THIS AFTER YOU LOG IN SUCCESSFULLY
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { username, newPassword } = req.body;
+    const admin = await Admin.findOne({ username });
+    
+    if (!admin) {
+      return res.status(404).json({ success: false, error: 'Admin not found' });
+    }
+    
+    // Force set new password (will be hashed by pre-save hook)
+    admin.password = newPassword;
+    await admin.save();
+    
+    res.json({ 
+      success: true, 
+      message: 'Password reset successfully',
+      admin: { username: admin.username, role: admin.role }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 // POST login
 router.post('/login', async (req, res) => {
   try {
