@@ -53,6 +53,7 @@ io.on('connection', (socket) => {
                 email,
                 message,
                 isAdmin: false,
+                senderType: 'visitor',
                 ipAddress: socket.handshake.address
             });
             
@@ -77,6 +78,64 @@ io.on('connection', (socket) => {
             });
             
             console.log(`Visitor message saved and emitted for session ${sessionId}`);
+            
+            // ── AI AUTO-REPLY ──
+            setTimeout(async () => {
+                try {
+                    const lowerMsg = message.toLowerCase();
+                    let aiResponse = '';
+                    
+                    if (/budget|cheap|price|cost|rm/.test(lowerMsg)) {
+                        aiResponse = "What's your monthly budget? We have rooms from RM400–RM1,500.";
+                    } else if (/location|where|area|near|close/.test(lowerMsg)) {
+                        aiResponse = "Which university? I can recommend the best areas.";
+                    } else if (/wifi|internet|fiber|connection/.test(lowerMsg)) {
+                        aiResponse = "All listings include WiFi. Some have fiber.";
+                    } else if (/deposit|payment|advance|pay/.test(lowerMsg)) {
+                        aiResponse = "Most need 1 month deposit + 1 month advance.";
+                    } else if (/viewing|tour|visit|see/.test(lowerMsg)) {
+                        aiResponse = "We can arrange virtual or in-person. When works?";
+                    } else if (/contact|whatsapp|phone|call/.test(lowerMsg)) {
+                        aiResponse = "Reach us on WhatsApp at +60 XX-XXXX XXXX.";
+                    } else {
+                        aiResponse = "Thanks! A human agent will join shortly. Tell me your university and budget.";
+                    }
+                    
+                    // Save AI message to DB
+                    const aiMsg = await ChatMessage.create({
+                        sessionId,
+                        name: 'AI Assistant',
+                        message: aiResponse,
+                        isAdmin: true,
+                        senderType: 'ai',
+                        ipAddress: 'system'
+                    });
+                    
+                    // Emit AI response to visitor
+                    io.to(`chat_${sessionId}`).emit('message_received', {
+                        sessionId,
+                        message: aiResponse,
+                        isAdmin: true,
+                        senderType: 'ai',
+                        createdAt: aiMsg.createdAt
+                    });
+                    
+                    // Notify admins that AI responded
+                    emitToAdmins('new_chat_message', {
+                        sessionId,
+                        name: 'AI Assistant',
+                        message: aiResponse,
+                        createdAt: aiMsg.createdAt,
+                        isAdmin: true,
+                        senderType: 'ai'
+                    });
+                    
+                    console.log(`AI auto-reply sent for session ${sessionId}`);
+                } catch (err) {
+                    console.error('AI auto-reply failed:', err.message);
+                }
+            }, 1500);
+            
         } catch (err) {
             console.error('Failed to save visitor message:', err.message);
         }
