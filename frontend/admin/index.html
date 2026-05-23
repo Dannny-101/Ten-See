@@ -393,6 +393,264 @@
       box-shadow: 0 25px 60px rgba(0,0,0,0.6);
     }
     .modal-sm { max-width: 440px; }
+    .modal-lead { 
+      max-width: 600px; 
+      width: 90%; 
+      max-height: 90vh;
+      animation: modalFadeIn 200ms ease-out;
+    }
+    .modal-lead.closing {
+      animation: modalFadeOut 150ms ease-in forwards;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes modalFadeOut {
+      from { opacity: 1; transform: scale(1) translateY(0); }
+      to { opacity: 0; transform: scale(0.95) translateY(10px); }
+    }
+    @media (max-width: 768px) {
+      .modal-lead { width: 95%; max-height: 95vh; }
+    }
+    @media (max-width: 480px) {
+      .modal-lead { 
+        width: 100%; 
+        max-width: 100%; 
+        max-height: 100vh;
+        border-radius: 0;
+        margin: 0;
+      }
+      .modal-overlay { padding: 0; align-items: flex-end; }
+    }
+    .lead-modal-header {
+      border-bottom: none;
+      padding-bottom: 0.5rem;
+    }
+    .lead-header-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .lead-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0;
+      color: var(--text);
+    }
+    .lead-status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.875rem;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .lead-status-badge.new { background: #dbeafe; color: #1e40af; }
+    .lead-status-badge.contacted { background: #fef3c7; color: #92400e; }
+    .lead-status-badge.viewing_scheduled { background: #e0e7ff; color: #3730a3; }
+    .lead-status-badge.converted { background: #d1fae5; color: #065f46; }
+    .lead-status-badge.closed { background: #f3f4f6; color: #4b5563; }
+    
+    /* Lead Cards */
+    .lead-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .lead-card-title {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-bottom: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .lead-card-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .lead-field {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .lead-field-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 0.875rem;
+      flex-shrink: 0;
+    }
+    .lead-field-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .lead-field-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+    .lead-field-value {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text);
+      word-break: break-word;
+    }
+    .lead-field-value a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+    .lead-field-value a:hover { text-decoration: underline; }
+    .lead-field-value.not-provided {
+      color: #9ca3af;
+      font-style: italic;
+    }
+    .lead-copy-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      transition: all 0.2s;
+    }
+    .lead-copy-btn:hover {
+      background: var(--surface);
+      color: var(--gold);
+    }
+    
+    /* Message Card - Most Prominent */
+    .lead-message-card {
+      background: #f0f7ff;
+      border: 1px solid #dbeafe;
+      border-left: 4px solid #3b82f6;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .lead-message-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #3b82f6;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .lead-message-text {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #1e3a5f;
+      white-space: pre-wrap;
+    }
+    @media (min-width: 768px) {
+      .lead-message-text { font-size: 17px; }
+    }
+    
+    /* Metadata Grid */
+    .lead-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 480px) {
+      .lead-meta-grid { grid-template-columns: 1fr; }
+    }
+    .lead-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .lead-meta-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .lead-meta-value {
+      font-size: 0.85rem;
+      color: var(--text);
+      word-break: break-all;
+    }
+    .lead-meta-value.not-provided {
+      color: #9ca3af;
+      font-style: italic;
+    }
+    
+    /* Property Link Card */
+    .lead-property-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .lead-property-link:hover {
+      border-color: var(--gold);
+      background: rgba(201, 168, 76, 0.05);
+    }
+    .lead-property-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--gold-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 1rem;
+    }
+    .lead-property-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .lead-property-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .lead-property-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .lead-property-arrow {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+    
+    /* Lead Actions Section */
+    .lead-actions {
+      border-top: 1px solid var(--border);
+      padding-top: 1.25rem;
+      margin-top: 0.5rem;
+    }
     .modal-header {
       padding: 1.25rem 1.5rem;
       border-bottom: 1px solid var(--border);
@@ -605,24 +863,61 @@
     }
     @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: 1fr 1fr; } .three-col { grid-template-columns: 1fr; } }
   /* ── TASK BOARD ── */
-.task-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
-.task-column { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem; min-height: 400px; }
+.task-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; overflow-x: auto; }
+@media (max-width: 1200px) {
+  .task-board { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .task-board { grid-template-columns: repeat(4, 280px); gap: 0.75rem; padding-bottom: 0.5rem; }
+}
+.task-column { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem; min-height: 400px; display: flex; flex-direction: column; }
+.task-column.drag-over { background: rgba(201, 168, 76, 0.1); border-color: var(--gold); }
 .task-column-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
 .task-column-header h4 { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
 .task-column-header span { background: var(--surface); padding: 2px 8px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; color: var(--text-dim); }
-.task-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin-bottom: 0.75rem; cursor: pointer; transition: all var(--transition); border-left: 3px solid var(--gold); }
+.task-column-content { flex: 1; min-height: 100px; }
+
+.task-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin-bottom: 0.75rem; cursor: grab; transition: all var(--transition); border-left: 3px solid var(--gold); position: relative; }
 .task-card:hover { border-color: var(--border-accent); transform: translateY(-2px); box-shadow: var(--shadow-admin); }
-.task-card.priority-urgent { border-left-color: var(--danger); }
-.task-card.priority-high { border-left-color: var(--warning); }
+.task-card.dragging { opacity: 0.5; cursor: grabbing; transform: rotate(2deg); }
+.task-card.priority-urgent { border-left-color: var(--danger); border-left-width: 4px; }
+.task-card.priority-high { border-left-color: var(--warning); border-left-width: 4px; }
 .task-card.priority-medium { border-left-color: var(--info); }
 .task-card.priority-low { border-left-color: var(--success); }
+.task-card.due-overdue { border-color: var(--danger); box-shadow: 0 0 0 1px var(--danger); }
+.task-card.due-soon { border-color: #f59e0b; box-shadow: 0 0 0 1px #f59e0b; }
 .task-card h5 { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text); }
 .task-card p { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.4; }
-.task-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: var(--text-muted); }
+
+.task-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.5rem; }
+.task-priority-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.task-priority-dot.urgent { background: #dc2626; }
+.task-priority-dot.high { background: #ea580c; }
+.task-priority-dot.medium { background: #2563eb; }
+.task-priority-dot.low { background: #16a34a; }
+
+.task-assignee { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+.task-assignee-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--gold-dim); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 600; color: var(--gold); }
+.task-assignee-name { font-size: 0.7rem; color: var(--text-muted); }
+
+.task-due-date { display: flex; align-items: center; gap: 0.35rem; font-size: 0.7rem; margin-top: 0.5rem; }
+.task-due-date.overdue { color: var(--danger); }
+.task-due-date.soon { color: #f59e0b; }
+.task-due-date.upcoming { color: var(--text-muted); }
+
+.task-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: var(--text-muted); margin-top: 0.75rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
 .task-meta .creator { color: var(--gold); font-weight: 500; }
 .task-completed { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border); font-size: 0.7rem; color: var(--success); }
 .task-actions { display: flex; gap: 0.4rem; margin-top: 0.75rem; }
 .task-actions .btn { padding: 0.25rem 0.5rem; font-size: 0.7rem; }
+
+/* Task Filters */
+.task-filters { display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+.task-filters select { min-width: 140px; }
+
+/* Undo Button */
+.task-undo-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); padding: 0.25rem 0.5rem; border-radius: var(--radius); font-size: 0.7rem; cursor: pointer; transition: all 0.2s; }
+.task-undo-btn:hover { background: var(--gold-dim); color: var(--gold); border-color: var(--gold); }
 .team-avatar { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.75rem; color: var(--navy); }
 .notif-item { cursor: pointer; }
 .notif-item.unread { background: var(--gold-dim); }
@@ -693,11 +988,17 @@
         </div>
         <div class="form-group">
           <label class="form-label">City *</label>
-          <input class="form-input" id="lCity" required>
+          <input class="form-input" id="lCity" value="Kuala Lumpur" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Area *</label>
+          <input class="form-input" id="lArea" placeholder="e.g. Subang Jaya, Cheras" required>
         </div>
         <div class="form-group">
           <label class="form-label">University</label>
-          <input class="form-input" id="lUniversity">
+          <select class="form-input" id="lUniversity" onchange="autoPopulateArea()">
+            <option value="">Select University</option>
+          </select>
         </div>
         <div class="form-group">
           <label class="form-label">Address</label>
@@ -751,12 +1052,15 @@
 
 <!-- Lead Modal -->
 <div class="modal-overlay" id="leadModal">
-  <div class="modal modal-sm">
-    <div class="modal-header">
-      <span class="modal-title">Lead Details</span>
+  <div class="modal modal-lead">
+    <div class="modal-header lead-modal-header">
+      <div class="lead-header-info">
+        <h2 class="lead-name" id="leadModalName">Lead Name</h2>
+        <span class="lead-status-badge" id="leadModalStatus">new</span>
+      </div>
       <button class="modal-close" onclick="closeModal('leadModal')">&times;</button>
     </div>
-    <div class="modal-body" id="leadModalBody"></div>
+    <div class="modal-body lead-modal-body" id="leadModalBody"></div>
   </div>
 </div>
 
@@ -768,13 +1072,14 @@
       <button class="modal-close" onclick="closeModal('taskModal')">&times;</button>
     </div>
     <div class="modal-body">
+      <input type="hidden" id="taskId">
       <div class="form-group">
         <label class="form-label">Title *</label>
         <input class="form-input" id="taskTitle" required>
       </div>
       <div class="form-group">
         <label class="form-label">Description</label>
-        <textarea class="form-textarea" id="taskDesc"></textarea>
+        <textarea class="form-textarea" id="taskDesc" rows="3"></textarea>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -787,21 +1092,40 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Category</label>
-          <select class="form-select" id="taskCategory">
-            <option value="general">General</option>
-            <option value="listings">Listings</option>
-            <option value="leads">Leads</option>
-            <option value="bookings">Bookings</option>
+          <label class="form-label">Status</label>
+          <select class="form-select" id="taskStatus">
+            <option value="todo" selected>To Do</option>
+            <option value="in_progress">In Progress</option>
+            <option value="review">Review</option>
+            <option value="done">Done</option>
           </select>
         </div>
       </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="taskCategory">
+            <option value="general">General</option>
+            <option value="listing">Listings</option>
+            <option value="lead">Leads</option>
+            <option value="booking">Bookings</option>
+            <option value="chat">Chat</option>
+            <option value="maintenance">Maintenance</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Due Date</label>
+          <input class="form-input" type="date" id="taskDueDate">
+        </div>
+      </div>
       <div class="form-group">
-        <label class="form-label">Due Date</label>
-        <input class="form-input" type="date" id="taskDueDate">
+        <label class="form-label">Assigned To</label>
+        <select class="form-select" id="taskAssignedTo">
+          <option value="">Unassigned</option>
+        </select>
       </div>
       <button class="btn btn-gold" style="width:100%;" onclick="saveTask()">
-        <i class="fas fa-save"></i> Save Task
+        <i class="fas fa-save"></i> <span id="taskSaveBtnText">Save Task</span>
       </button>
     </div>
   </div>
@@ -1243,13 +1567,13 @@ function filterListings(search) {
   renderListingsBody(S.listings.filter(l => !q || l.title?.toLowerCase().includes(q) || l.location?.city?.toLowerCase().includes(q)));
 }
 
-function openListingModal(l = null) {
+async function openListingModal(l = null) {
   document.getElementById('listingModalTitle').textContent = l ? 'Edit Listing' : 'Add Listing';
   document.getElementById('listingId').value = l?._id || '';
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v ?? ''; };
   set('lTitle', l?.title); set('lDesc', l?.description); set('lPrice', l?.price);
   set('lPeriod', l?.pricePeriod || 'month'); set('lType', l?.propertyType || 'apartment');
-  set('lCity', l?.location?.city); set('lUniversity', l?.location?.university);
+  set('lCity', l?.location?.city); set('lArea', l?.location?.area); set('lUniversity', l?.location?.university);
   set('lAddress', l?.location?.address); set('lBedrooms', l?.bedrooms);
   set('lBathrooms', l?.bathrooms); set('lOccupants', l?.maxOccupants);
   set('lWhatsapp', l?.whatsappNumber);
@@ -1258,6 +1582,7 @@ function openListingModal(l = null) {
   set('lFrom', l?.availableFrom?.split('T')[0]); set('lUntil', l?.availableUntil?.split('T')[0]);
   document.getElementById('lActive').checked = l ? l.isActive : true;
   document.getElementById('lFeatured').checked = l?.isFeatured || false;
+  await loadUniversities(); // Load university dropdown
   openModal('listingModal');
 }
 
@@ -1271,7 +1596,7 @@ async function saveListing() {
     price: parseInt(document.getElementById('lPrice').value),
     pricePeriod: document.getElementById('lPeriod').value,
     propertyType: document.getElementById('lType').value,
-    location: { city: document.getElementById('lCity').value, university: document.getElementById('lUniversity').value, address: document.getElementById('lAddress').value },
+    location: { city: document.getElementById('lCity').value, area: document.getElementById('lArea').value, university: document.getElementById('lUniversity').value, address: document.getElementById('lAddress').value },
     bedrooms: parseInt(document.getElementById('lBedrooms').value)||0,
     bathrooms: parseFloat(document.getElementById('lBathrooms').value)||0,
     maxOccupants: parseInt(document.getElementById('lOccupants').value)||1,
@@ -1295,6 +1620,46 @@ async function deleteListing(id) {
   const r = await api(`/api/listings/${id}`, { method: 'DELETE' });
   if (r.success) { toast('Listing deleted'); loadListings(); }
   else toast('Error deleting listing', 'error');
+}
+
+// ── UNIVERSITY/AREA HELPERS ──
+let universityAreaMap = {}; // Cache for university to area mapping
+
+async function loadUniversities() {
+  try {
+    const r = await api('/api/listings/lookup/universities');
+    if (r.success && r.data?.universities) {
+      universityAreaMap = r.data.map || {};
+      const select = document.getElementById('lUniversity');
+      const currentValue = select.value;
+      
+      // Build options
+      let options = '<option value="">Select University</option>';
+      r.data.universities.forEach(uni => {
+        options += `<option value="${uni}">${uni}</option>`;
+      });
+      select.innerHTML = options;
+      
+      // Restore selection if editing
+      if (currentValue) select.value = currentValue;
+    }
+  } catch (e) {
+    console.error('Failed to load universities:', e);
+  }
+}
+
+function autoPopulateArea() {
+  const university = document.getElementById('lUniversity').value;
+  const areaInput = document.getElementById('lArea');
+  
+  if (university && universityAreaMap[university]) {
+    const areas = universityAreaMap[university];
+    if (areas && areas.length > 0) {
+      areaInput.value = areas[0]; // Always update to first area for selected university
+    }
+  } else if (!university) {
+    areaInput.value = ''; // Clear area if no university selected
+  }
 }
 
 // ── LEADS ──
@@ -1351,30 +1716,118 @@ function filterLeads() { renderLeadsBody(); }
 function viewLead(id) {
   const l = S.leads.find(x => x._id === id);
   if (!l) return;
+  
+  // Update header
+  document.getElementById('leadModalName').textContent = l.name;
+  const statusBadge = document.getElementById('leadModalStatus');
+  statusBadge.textContent = l.status;
+  statusBadge.className = `lead-status-badge ${l.status}`;
+  
+  // Helper to format value or show "Not provided"
+  const val = (v) => v ? `<span class="lead-field-value">${v}</span>` : `<span class="lead-field-value not-provided">Not provided</span>`;
+  const valMeta = (v) => v ? `<span class="lead-meta-value">${v}</span>` : `<span class="lead-meta-value not-provided">Not provided</span>`;
+  
+  // Format date: "23 May 2026"
+  const fmtDateLong = (d) => {
+    if (!d) return null;
+    const date = new Date(d);
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+  
+  // Copy to clipboard function
+  const copyBtn = (text) => `<button class="lead-copy-btn" onclick="navigator.clipboard.writeText('${text}');toast('Copied!')" title="Copy"><i class="fas fa-copy"></i></button>`;
+  
+  // Clean message - remove metadata prefixes like "Enquiry for..." and "Move-in:..."
+  const cleanMessage = (msg) => {
+    if (!msg) return '';
+    // Remove patterns like 'Enquiry for "trial". Move-in: 2026-05-28.'
+    let cleaned = msg.replace(/Enquiry for\s+["'][^"']+["']\.?\s*/gi, '');
+    cleaned = cleaned.replace(/Move-in:\s*\d{4}-\d{2}-\d{2}\.?\s*/gi, '');
+    cleaned = cleaned.trim();
+    return cleaned;
+  };
+  
   document.getElementById('leadModalBody').innerHTML = `
-    <div style="margin-bottom:1.25rem;">
-      <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;">${l.name}</div>
-      <div style="color:var(--text-muted);font-size:0.85rem;display:flex;flex-direction:column;gap:4px;">
-        <span><i class="fas fa-envelope" style="width:16px;"></i> ${l.email}</span>
-        ${l.phone?`<span><i class="fas fa-phone" style="width:16px;"></i> ${l.phone}</span>`:''}
-        ${l.university?`<span><i class="fas fa-graduation-cap" style="width:16px;"></i> ${l.university}</span>`:''}
-        <span><i class="fas fa-tag" style="width:16px;"></i> Source: ${l.source?.replace(/_/g,' ')}</span>
+    <!-- Contact Card -->
+    <div class="lead-card">
+      <div class="lead-card-title"><i class="fas fa-user"></i> Contact Information</div>
+      <div class="lead-card-content">
+        <div class="lead-field">
+          <div class="lead-field-icon"><i class="fas fa-user"></i></div>
+          <div class="lead-field-content">
+            <div class="lead-field-label">Name</div>
+            ${val(l.name)} ${copyBtn(l.name)}
+          </div>
+        </div>
+        <div class="lead-field">
+          <div class="lead-field-icon"><i class="fas fa-envelope"></i></div>
+          <div class="lead-field-content">
+            <div class="lead-field-label">Email</div>
+            ${l.email ? `<span class="lead-field-value"><a href="mailto:${l.email}">${l.email}</a></span> ${copyBtn(l.email)}` : val(null)}
+          </div>
+        </div>
+        <div class="lead-field">
+          <div class="lead-field-icon"><i class="fas fa-phone"></i></div>
+          <div class="lead-field-content">
+            <div class="lead-field-label">Phone</div>
+            ${l.phone ? `<span class="lead-field-value">${l.phone}</span> ${copyBtn(l.phone)}` : val(null)}
+          </div>
+        </div>
+        <div class="lead-field">
+          <div class="lead-field-icon"><i class="fas fa-graduation-cap"></i></div>
+          <div class="lead-field-content">
+            <div class="lead-field-label">University</div>
+            ${val(l.university)}
+          </div>
+        </div>
       </div>
     </div>
-    ${l.message?`<div style="background:var(--surface2);padding:0.875rem;border-radius:var(--radius);margin-bottom:1.25rem;font-size:0.85rem;">${l.message}</div>`:''}
-    <div class="form-group">
-      <label class="form-label">Status</label>
-      <select class="form-select" id="lStatusSel">
-        ${['new','contacted','viewing_scheduled','converted','closed'].map(s=>`<option value="${s}"${l.status===s?' selected':''}>${cap(s)}</option>`).join('')}
-      </select>
+    
+    <!-- Property Card (if applicable) -->
+    ${l.listingId ? `
+    <div class="lead-card">
+      <div class="lead-card-title"><i class="fas fa-home"></i> Property Interest</div>
+      <a href="/listing.html?id=${l.listingId}" target="_blank" class="lead-property-link">
+        <div class="lead-property-icon"><i class="fas fa-building"></i></div>
+        <div class="lead-property-info">
+          <div class="lead-property-name">${l.listingTitle || 'View Property'}</div>
+          <div class="lead-property-meta">Click to view listing details</div>
+        </div>
+        <div class="lead-property-arrow"><i class="fas fa-chevron-right"></i></div>
+      </a>
     </div>
-    <div class="form-group">
-      <label class="form-label">Notes</label>
-      <textarea class="form-textarea" id="lNotesTa">${l.notes||''}</textarea>
+    ` : ''}
+    
+    <!-- Message Card - Most Prominent -->
+    ${l.message && cleanMessage(l.message) ? `
+    <div class="lead-message-card">
+      <div class="lead-message-label"><i class="fas fa-comment-dots"></i> Visitor's Message</div>
+      <div class="lead-message-text">${cleanMessage(l.message)}</div>
     </div>
-    <button class="btn btn-gold" style="width:100%;" onclick="updateLead('${l._id}')">
-      <i class="fas fa-save"></i> Update Lead
-    </button>
+    ` : ''}
+    
+    <!-- Dates -->
+    <div style="display:flex;gap:1.5rem;justify-content:center;padding:0.5rem 0;font-size:0.75rem;color:var(--text-muted);">
+      <span>${fmtDateLong(l.createdAt) || ''}</span>
+      ${l.updatedAt && l.updatedAt !== l.createdAt ? `<span>${fmtDateLong(l.updatedAt)}</span>` : ''}
+    </div>
+    
+    <!-- Actions Section -->
+    <div class="lead-actions">
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="lStatusSel">
+          ${['new','contacted','viewing_scheduled','converted','closed'].map(s=>`<option value="${s}"${l.status===s?' selected':''}>${cap(s)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="form-textarea" id="lNotesTa" rows="3">${l.notes||''}</textarea>
+      </div>
+      <button class="btn btn-gold" style="width:100%;" onclick="updateLead('${l._id}')">
+        <i class="fas fa-save"></i> Update Lead
+      </button>
+    </div>
   `;
   openModal('leadModal');
 }
@@ -1906,106 +2359,378 @@ function initSocket() {
     toast(`New task: ${data.title} by ${data.createdBy.name || data.createdBy.username}`);
     const sound = document.getElementById('notifSound');
     if (sound) sound.play().catch(() => {});
-    if (S.section === 'tasks') loadTasks();
+    if (S.section === 'tasks') fetchAndRenderTasks();
   });
   
   socket.on('task_completed', (data) => {
     toast(`Task completed: ${data.title} by ${data.completedBy.name || data.completedBy.username}`);
     const sound = document.getElementById('notifSound');
     if (sound) sound.play().catch(() => {});
-    if (S.section === 'tasks') loadTasks();
+    if (S.section === 'tasks') fetchAndRenderTasks();
   });
   
   socket.on('task_updated', () => {
-    if (S.section === 'tasks') loadTasks();
+    if (S.section === 'tasks') fetchAndRenderTasks();
+  });
+  
+  socket.on('task_moved', (data) => {
+    toast(`Task moved to ${data.to.replace('_', ' ')}: ${data.title}`);
+    if (S.section === 'tasks') fetchAndRenderTasks();
+  });
+  
+  socket.on('task_assigned', (data) => {
+    const assignee = data.assignedTo?.name || data.assignedTo?.username || 'Unassigned';
+    toast(`Task assigned to ${assignee}: ${data.title}`);
+    if (S.section === 'tasks') fetchAndRenderTasks();
+  });
+  
+  socket.on('task_undone', (data) => {
+    toast(`Task restored to ${data.restoredTo.replace('_', ' ')}: ${data.title}`);
+    if (S.section === 'tasks') fetchAndRenderTasks();
   });
 }
 
 // ── TASKS ──
+// Initialize task-specific state (S is declared globally)
+S.taskFilters = { assignee: '', priority: '', dueDateFrom: '', dueDateTo: '' };
+S.teamMembers = S.teamMembers || [];
+S.allTasks = S.allTasks || [];
+
+// Load team members for assignee dropdown
+async function loadTeamMembers() {
+  try {
+    const data = await api('/api/admin');
+    S.teamMembers = data.data || [];
+    return S.teamMembers;
+  } catch { return []; }
+}
+
 async function loadTasks() {
   const sec = document.getElementById('sec-tasks');
   sec.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:1rem;">
       <h2 style="font-size:1.1rem;font-weight:600;">Task Board</h2>
       <button class="btn btn-gold" onclick="openTaskModal()"><i class="fas fa-plus"></i> New Task</button>
     </div>
+    <div class="task-filters" id="taskFilters">
+      <select class="form-select" id="filterAssignee" onchange="applyTaskFilters()">
+        <option value="">All Assignees</option>
+      </select>
+      <select class="form-select" id="filterPriority" onchange="applyTaskFilters()">
+        <option value="">All Priorities</option>
+        <option value="urgent">Urgent</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+      <input type="date" class="form-input" id="filterDueFrom" onchange="applyTaskFilters()" placeholder="Due from">
+      <input type="date" class="form-input" id="filterDueTo" onchange="applyTaskFilters()" placeholder="Due to">
+      <button class="btn btn-ghost btn-sm" onclick="clearTaskFilters()"><i class="fas fa-times"></i> Clear</button>
+    </div>
     <div class="task-board" id="taskBoard"><div class="loading"><div class="spinner"></div></div></div>
   `;
+  
   try {
-    const data = await api('/api/tasks');
-    const tasks = data.data || [];
-    const columns = ['todo', 'in_progress', 'done', 'cancelled'];
-    const titles = { todo: 'To Do', in_progress: 'In Progress', done: 'Done', cancelled: 'Cancelled' };
+    // Load team members first
+    await loadTeamMembers();
     
-    document.getElementById('taskBoard').innerHTML = columns.map(col => `
-      <div class="task-column">
-        <div class="task-column-header">
-          <h4>${titles[col]}</h4>
-          <span>${tasks.filter(t => t.status === col).length}</span>
-        </div>
-        ${tasks.filter(t => t.status === col).map(t => `
-          <div class="task-card priority-${t.priority}" onclick="viewTask('${t._id}')">
-            <h5>${t.title}</h5>
+    // Populate assignee filter
+    const assigneeSelect = document.getElementById('filterAssignee');
+    S.teamMembers.forEach(m => {
+      assigneeSelect.innerHTML += `<option value="${m._id}">${m.name || m.username}</option>`;
+    });
+    
+    // Load tasks
+    await fetchAndRenderTasks();
+  } catch (e) { 
+    console.error(e);
+    sec.innerHTML = `<div class="empty-state"><i class="fas fa-tasks"></i><p>Failed to load tasks</p></div>`; 
+  }
+}
+
+async function fetchAndRenderTasks() {
+  try {
+    let url = '/api/tasks';
+    const params = [];
+    if (S.taskFilters.assignee) params.push(`assignedTo=${S.taskFilters.assignee}`);
+    if (S.taskFilters.priority) params.push(`priority=${S.taskFilters.priority}`);
+    if (S.taskFilters.dueDateFrom) params.push(`dueDateFrom=${S.taskFilters.dueDateFrom}`);
+    if (S.taskFilters.dueDateTo) params.push(`dueDateTo=${S.taskFilters.dueDateTo}`);
+    if (params.length) url += '?' + params.join('&');
+    
+    const data = await api(url);
+    S.allTasks = data.data || [];
+    renderTaskBoard();
+  } catch (e) {
+    console.error('Failed to fetch tasks', e);
+  }
+}
+
+function applyTaskFilters() {
+  S.taskFilters.assignee = document.getElementById('filterAssignee').value;
+  S.taskFilters.priority = document.getElementById('filterPriority').value;
+  S.taskFilters.dueDateFrom = document.getElementById('filterDueFrom').value;
+  S.taskFilters.dueDateTo = document.getElementById('filterDueTo').value;
+  fetchAndRenderTasks();
+}
+
+function clearTaskFilters() {
+  document.getElementById('filterAssignee').value = '';
+  document.getElementById('filterPriority').value = '';
+  document.getElementById('filterDueFrom').value = '';
+  document.getElementById('filterDueTo').value = '';
+  S.taskFilters = { assignee: '', priority: '', dueDateFrom: '', dueDateTo: '' };
+  fetchAndRenderTasks();
+}
+
+function renderTaskBoard() {
+  const tasks = S.allTasks;
+  const columns = ['todo', 'in_progress', 'review', 'done'];
+  const titles = { todo: 'To Do', in_progress: 'In Progress', review: 'Review', done: 'Done' };
+  
+  // Helper to check due date status
+  const getDueStatus = (dueDate) => {
+    if (!dueDate) return null;
+    const now = new Date();
+    const due = new Date(dueDate);
+    const hoursUntil = (due - now) / (1000 * 60 * 60);
+    if (hoursUntil < 0) return 'overdue';
+    if (hoursUntil <= 24) return 'soon';
+    return 'upcoming';
+  };
+  
+  const getDueClass = (status) => {
+    if (status === 'overdue') return 'due-overdue';
+    if (status === 'soon') return 'due-soon';
+    return '';
+  };
+  
+  const formatDueDate = (dueDate) => {
+    if (!dueDate) return '';
+    const date = new Date(dueDate);
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  };
+  
+  document.getElementById('taskBoard').innerHTML = columns.map(col => `
+    <div class="task-column" 
+         data-status="${col}"
+         ondragover="handleTaskDragOver(event)" 
+         ondragleave="handleTaskDragLeave(event)"
+         ondrop="handleTaskDrop(event, '${col}')">
+      <div class="task-column-header">
+        <h4>${titles[col]}</h4>
+        <span id="count-${col}">${tasks.filter(t => t.status === col).length}</span>
+      </div>
+      <div class="task-column-content" id="column-${col}">
+        ${tasks.filter(t => t.status === col).map(t => {
+          const dueStatus = getDueStatus(t.dueDate);
+          const dueClass = getDueClass(dueStatus);
+          const assignee = t.assignedTo;
+          const assigneeInitials = assignee?.name ? assignee.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : (assignee?.username?.substring(0, 2).toUpperCase() || '?');
+          
+          return `
+          <div class="task-card priority-${t.priority} ${dueClass}" 
+               draggable="true"
+               data-task-id="${t._id}"
+               ondragstart="handleTaskDragStart(event, '${t._id}')"
+               ondragend="handleTaskDragEnd(event)"
+               onclick="editTask('${t._id}')">
+            <div class="task-card-header">
+              <h5>${t.title}</h5>
+              <div class="task-priority-dot ${t.priority}"></div>
+            </div>
             <p>${t.description?.substring(0, 80) || ''}${t.description?.length > 80 ? '...' : ''}</p>
+            
+            ${t.dueDate ? `
+            <div class="task-due-date ${dueStatus}">
+              <i class="fas fa-calendar-alt"></i>
+              <span>${formatDueDate(t.dueDate)}</span>
+              ${dueStatus === 'overdue' ? '<span style="margin-left:0.25rem;">(Overdue)</span>' : ''}
+              ${dueStatus === 'soon' ? '<span style="margin-left:0.25rem;">(Due soon)</span>' : ''}
+            </div>
+            ` : ''}
+            
+            ${assignee ? `
+            <div class="task-assignee">
+              <div class="task-assignee-avatar">${assigneeInitials}</div>
+              <span class="task-assignee-name">${assignee.name || assignee.username}</span>
+            </div>
+            ` : ''}
+            
             <div class="task-meta">
               <span class="creator">By ${t.createdBy?.name || t.createdBy?.username}</span>
               <span style="text-transform:capitalize;">${t.priority}</span>
             </div>
-            ${t.completedBy?.username ? `
-              <div class="task-completed">
-                <i class="fas fa-check-circle"></i> Completed by ${t.completedBy.name || t.completedBy.username}
+            
+            ${t.status === 'done' ? `
+              <div style="margin-top:0.5rem;display:flex;justify-content:space-between;align-items:center;">
+                <span class="task-completed">
+                  <i class="fas fa-check-circle"></i> Completed
+                </span>
+                <button class="task-undo-btn" onclick="event.stopPropagation();undoCompleteTask('${t._id}')">
+                  <i class="fas fa-undo"></i> Undo
+                </button>
               </div>
-            ` : `
-              <div class="task-actions">
-                ${t.status !== 'done' ? `<button class="btn btn-success-ghost" onclick="event.stopPropagation();completeTask('${t._id}')"><i class="fas fa-check"></i> Complete</button>` : ''}
-                ${t.status === 'todo' ? `<button class="btn btn-ghost" onclick="event.stopPropagation();startTask('${t._id}')"><i class="fas fa-play"></i> Start</button>` : ''}
-              </div>
-            `}
+            ` : ''}
           </div>
-        `).join('') || '<p style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:1rem;">No tasks</p>'}
+        `}).join('') || '<p style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:1rem;">No tasks</p>'}
       </div>
-    `).join('');
-  } catch { sec.innerHTML = `<div class="empty-state"><i class="fas fa-tasks"></i><p>Failed to load tasks</p></div>`; }
+    </div>
+  `).join('');
 }
 
-function openTaskModal() {
+// Drag and Drop handlers
+let draggedTaskId = null;
+
+function handleTaskDragStart(e, taskId) {
+  draggedTaskId = taskId;
+  e.target.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', taskId);
+}
+
+function handleTaskDragEnd(e) {
+  e.target.classList.remove('dragging');
+  draggedTaskId = null;
+  // Remove all drag-over classes
+  document.querySelectorAll('.task-column').forEach(col => col.classList.remove('drag-over'));
+}
+
+function handleTaskDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  e.currentTarget.classList.add('drag-over');
+}
+
+function handleTaskDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+
+async function handleTaskDrop(e, newStatus) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  
+  const taskId = e.dataTransfer.getData('text/plain') || draggedTaskId;
+  if (!taskId) return;
+  
+  const task = S.allTasks.find(t => t._id === taskId);
+  if (!task || task.status === newStatus) return;
+  
+  try {
+    const r = await api(`/api/tasks/${taskId}/status`, { 
+      method: 'PATCH', 
+      body: JSON.stringify({ status: newStatus }) 
+    });
+    if (r.success) {
+      toast(`Task moved to ${newStatus.replace('_', ' ')}`);
+      fetchAndRenderTasks();
+    }
+  } catch { toast('Error moving task', 'error'); }
+}
+
+async function openTaskModal() {
+  // Reset form for new task
+  document.getElementById('taskId').value = '';
   document.getElementById('taskModalTitle').textContent = 'New Task';
+  document.getElementById('taskSaveBtnText').textContent = 'Save Task';
   document.getElementById('taskTitle').value = '';
   document.getElementById('taskDesc').value = '';
   document.getElementById('taskPriority').value = 'medium';
+  document.getElementById('taskStatus').value = 'todo';
   document.getElementById('taskCategory').value = 'general';
   document.getElementById('taskDueDate').value = '';
+  
+  // Populate assignee dropdown
+  const assigneeSelect = document.getElementById('taskAssignedTo');
+  assigneeSelect.innerHTML = '<option value="">Unassigned</option>';
+  S.teamMembers.forEach(m => {
+    assigneeSelect.innerHTML += `<option value="${m._id}" data-name="${m.name || ''}" data-username="${m.username}">${m.name || m.username}</option>`;
+  });
+  assigneeSelect.value = '';
+  
+  openModal('taskModal');
+}
+
+async function editTask(id) {
+  const task = S.allTasks.find(t => t._id === id);
+  if (!task) return;
+  
+  // Populate form for edit
+  document.getElementById('taskId').value = task._id;
+  document.getElementById('taskModalTitle').textContent = 'Edit Task';
+  document.getElementById('taskSaveBtnText').textContent = 'Update Task';
+  document.getElementById('taskTitle').value = task.title;
+  document.getElementById('taskDesc').value = task.description || '';
+  document.getElementById('taskPriority').value = task.priority;
+  document.getElementById('taskStatus').value = task.status;
+  document.getElementById('taskCategory').value = task.category;
+  document.getElementById('taskDueDate').value = task.dueDate ? task.dueDate.split('T')[0] : '';
+  
+  // Populate assignee dropdown
+  const assigneeSelect = document.getElementById('taskAssignedTo');
+  assigneeSelect.innerHTML = '<option value="">Unassigned</option>';
+  S.teamMembers.forEach(m => {
+    assigneeSelect.innerHTML += `<option value="${m._id}" data-name="${m.name || ''}" data-username="${m.username}">${m.name || m.username}</option>`;
+  });
+  assigneeSelect.value = task.assignedTo?.userId || '';
+  
   openModal('taskModal');
 }
 
 async function saveTask() {
+  const taskId = document.getElementById('taskId').value;
+  const isEdit = !!taskId;
+  
+  const assigneeSelect = document.getElementById('taskAssignedTo');
+  const assigneeOption = assigneeSelect.options[assigneeSelect.selectedIndex];
+  const assignedTo = assigneeSelect.value ? {
+    userId: assigneeSelect.value,
+    name: assigneeOption.dataset.name || '',
+    username: assigneeOption.dataset.username
+  } : null;
+  
   const body = {
     title: document.getElementById('taskTitle').value,
     description: document.getElementById('taskDesc').value,
     priority: document.getElementById('taskPriority').value,
+    status: document.getElementById('taskStatus').value,
     category: document.getElementById('taskCategory').value,
-    dueDate: document.getElementById('taskDueDate').value || undefined
+    dueDate: document.getElementById('taskDueDate').value || undefined,
+    assignedTo
   };
+  
   if (!body.title) { toast('Title is required', 'error'); return; }
+  
   try {
-    const r = await api('/api/tasks', { method: 'POST', body: JSON.stringify(body) });
-    if (r.success) { closeModal('taskModal'); toast('Task created'); loadTasks(); }
+    let r;
+    if (isEdit) {
+      r = await api(`/api/tasks/${taskId}`, { method: 'PUT', body: JSON.stringify(body) });
+    } else {
+      r = await api('/api/tasks', { method: 'POST', body: JSON.stringify(body) });
+    }
+    
+    if (r.success) { 
+      closeModal('taskModal'); 
+      toast(isEdit ? 'Task updated' : 'Task created'); 
+      fetchAndRenderTasks(); 
+    }
     else toast(r.error || 'Error', 'error');
-  } catch { toast('Error creating task', 'error'); }
+  } catch { toast(isEdit ? 'Error updating task' : 'Error creating task', 'error'); }
 }
 
-async function completeTask(id) {
-  const r = await api(`/api/tasks/${id}`, { method: 'PUT', body: JSON.stringify({ status: 'done' }) });
-  if (r.success) { toast('Task completed'); loadTasks(); }
-}
-
-async function startTask(id) {
-  const r = await api(`/api/tasks/${id}`, { method: 'PUT', body: JSON.stringify({ status: 'in_progress' }) });
-  if (r.success) { toast('Task started'); loadTasks(); }
+async function undoCompleteTask(id) {
+  try {
+    const r = await api(`/api/tasks/${id}/undo`, { method: 'POST' });
+    if (r.success) { 
+      toast('Task restored to previous status'); 
+      fetchAndRenderTasks(); 
+    }
+    else toast(r.error || 'Error', 'error');
+  } catch { toast('Error undoing completion', 'error'); }
 }
 
 function viewTask(id) {
-  alert('Task details - implement enhanced view if needed');
+  editTask(id);
 }
 
 // ── TEAM ──

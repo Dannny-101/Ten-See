@@ -296,9 +296,10 @@
                         <h1 class="listing-title">${l.title}</h1>
                         <div class="listing-location">
                             <i class="fas fa-map-marker-alt"></i>
-                            ${[l.location?.address, l.location?.city].filter(Boolean).join(', ')}
+                            ${l.location?.area || l.location?.city || 'Klang Valley'}
                             ${l.location?.university ? `<span style="margin-left:0.5rem;background:rgba(201,168,74,0.1);padding:0.2rem 0.6rem;border-radius:6px;font-size:0.8rem;color:var(--color-accent);">Near ${l.location.university}</span>` : ''}
                         </div>
+                        ${l.location?.address ? `<div style="font-size:0.85rem;color:var(--color-text-muted);margin-bottom:1rem;margin-left:1.5rem;">${l.location.address}</div>` : ''}
                         <div class="price-block">
                             <span class="price-main">RM ${l.price.toLocaleString()}</span>
                             <span class="price-period">/ ${l.pricePeriod}</span>

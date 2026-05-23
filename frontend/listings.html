@@ -3,32 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse Listings - Ten&See</title>
+    <title>Browse Listings — Ten&See</title>
+<link rel="icon" type="image/png" href="/assets/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animate On Scroll -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <script src="/theme.js"></script>
+    <link rel="stylesheet" href="/theme.css">
+    <link rel="stylesheet" href="/cookie-consent.css">
     <style>
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #f59e0b;
-            --accent: #10b981;
-            --dark: #0f172a;
-            --darker: #020617;
-            --light: #f8fafc;
-            --gray: #64748b;
-            --gray-light: #e2e8f0;
-            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-            --shadow-glow: 0 0 40px -10px rgba(99, 102, 241, 0.4);
-        }
+        html { scroll-behavior: smooth; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--darker);
-            color: var(--light);
+            background: var(--color-bg);
+            color: var(--color-text-main);
             line-height: 1.6;
         }
         h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', sans-serif; }
@@ -37,9 +28,12 @@
         .navbar {
             position: fixed; top: 0; left: 0; right: 0;
             z-index: 1000; padding: 1rem 2rem;
-            background: rgba(2, 6, 23, 0.9);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: var(--color-primary);
+            transition: all 0.3s ease;
+        }
+        .navbar.scrolled {
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+            padding: 0.75rem 2rem;
         }
         .nav-container {
             max-width: 1400px; margin: 0 auto;
@@ -48,24 +42,68 @@
         .logo {
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.75rem; font-weight: 700;
-            background: var(--gradient);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text; text-decoration: none;
+            color: var(--color-accent);
+            text-decoration: none;
+            display: inline-flex; align-items: center;
         }
-        .logo span { font-weight: 300; }
-        .nav-links { display: flex; gap: 2.5rem; align-items: center; list-style: none; }
-        .nav-links a { color: var(--gray); text-decoration: none; font-weight: 500; transition: color 0.3s; }
-        .nav-links a:hover { color: var(--light); }
+        .logo span { font-weight: 300; color: white; }
+        .logo img { width: 54px; height: 54px; object-fit: contain; display: block; border-radius: 10px; }
+        .nav-links { display: flex; gap: 2.5rem; align-items: center; list-style: none; position: absolute; left: 50%; transform: translateX(-50%); }
+        .nav-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none; font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--color-accent); }
+        .hamburger {
+            display: none;
+            background: none; border: none;
+            color: white; font-size: 1.5rem;
+            cursor: pointer;
+        }
         .btn {
             display: inline-flex; align-items: center; gap: 0.5rem;
             padding: 0.75rem 1.5rem; border-radius: 12px;
-            font-weight: 600; font-size: 0.95rem; cursor: pointer;
-            transition: all 0.3s; border: none; text-decoration: none;
+            font-weight: 600; font-size: 0.95rem;
+            cursor: pointer; transition: all 0.2s ease;
+            border: none; text-decoration: none;
         }
-        .btn-primary { background: var(--gradient); color: white; box-shadow: var(--shadow-glow); }
-        .btn-primary:hover { transform: translateY(-2px); }
-        .btn-outline { background: transparent; color: var(--light); border: 1.5px solid rgba(255,255,255,0.15); }
-        .btn-outline:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
+        .btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+        .btn-primary {
+            background: var(--color-accent);
+            color: var(--color-primary);
+            box-shadow: 0 4px 15px rgba(201, 168, 76, 0.3);
+        }
+        .btn-primary:hover {
+            background: #D4B55D;
+            box-shadow: 0 6px 20px rgba(201, 168, 76, 0.4);
+        }
+        .btn-outline {
+            background: transparent; color: white;
+            border: 1.5px solid rgba(255,255,255,0.25);
+        }
+        .btn-outline:hover {
+            border-color: var(--color-accent);
+            background: rgba(201, 168, 76, 0.1);
+            color: var(--color-accent);
+        }
+        .filters-bar .btn-outline {
+            color: var(--color-text-main);
+            border-color: var(--color-border);
+        }
+        .filters-bar .btn-outline:hover {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+        }
+        .btn-outline-dark {
+            background: transparent;
+            color: var(--color-text-main);
+            border: 1.5px solid var(--color-border);
+        }
+        .btn-outline-dark:hover {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+        }
         .btn-whatsapp { background: #25d366; color: white; }
         .btn-whatsapp:hover { background: #128c7e; }
         .btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; }
@@ -74,13 +112,15 @@
         .page-header {
             padding: 8rem 2rem 3rem;
             text-align: center;
-            background: linear-gradient(180deg, rgba(99,102,241,0.08) 0%, transparent 100%);
+            background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 6%, transparent) 0%, transparent 100%);
         }
         .page-header h1 {
             font-size: clamp(2rem, 4vw, 3rem);
             margin-bottom: 0.75rem;
+            color: var(--color-text-main);
         }
-        .page-header p { color: var(--gray); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        .page-header h1 .accent-text { color: var(--color-accent); }
+        .page-header p { color: var(--color-text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
 
         /* Filters */
         .filters-section {
@@ -91,24 +131,23 @@
             display: flex; gap: 1rem; flex-wrap: wrap;
             align-items: center; justify-content: center;
         }
-        .filter-group {
-            position: relative;
-        }
+        .filter-group { position: relative; }
         .filter-group select, .filter-group input {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
             border-radius: 12px;
             padding: 0.75rem 2.5rem 0.75rem 1rem;
-            color: var(--light);
+            color: var(--color-text-main);
             font-size: 0.9rem;
             min-width: 180px;
             cursor: pointer;
             appearance: none;
             outline: none;
+            font-family: inherit;
         }
         .filter-group input { min-width: 250px; cursor: text; }
         .filter-group select:focus, .filter-group input:focus {
-            border-color: var(--primary);
+            border-color: var(--color-accent);
         }
         .filter-group::after {
             content: '\f107';
@@ -117,7 +156,7 @@
             position: absolute;
             right: 1rem; top: 50%;
             transform: translateY(-50%);
-            color: var(--gray);
+            color: var(--color-text-muted);
             pointer-events: none;
         }
         .filter-group.input-group::after { content: '\f002'; }
@@ -129,7 +168,7 @@
             width: 120px; min-width: 120px;
             padding: 0.75rem 1rem;
         }
-        .price-range span { color: var(--gray); font-size: 0.85rem; }
+        .price-range span { color: var(--color-text-muted); font-size: 0.85rem; }
 
         .active-filters {
             display: flex; gap: 0.5rem; flex-wrap: wrap;
@@ -138,15 +177,57 @@
         .filter-tag {
             display: inline-flex; align-items: center; gap: 0.4rem;
             padding: 0.4rem 0.875rem;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.2);
+            background: rgba(201, 168, 76, 0.1);
+            border: 1px solid rgba(201, 168, 76, 0.2);
             border-radius: 100px;
             font-size: 0.8rem;
-            color: var(--primary);
+            color: var(--color-accent);
         }
         .filter-tag button {
-            background: none; border: none; color: var(--primary);
+            background: none; border: none; color: var(--color-accent);
             cursor: pointer; font-size: 0.7rem;
+        }
+
+        /* Skeleton Loading */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+        .skeleton-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .skeleton-image {
+            height: 220px;
+            width: 100%;
+        }
+        .skeleton-content {
+            padding: 1.5rem;
+        }
+        .skeleton-line {
+            height: 16px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+        }
+        .skeleton-line.short { width: 40%; }
+        .skeleton-line.medium { width: 70%; }
+        .skeleton-line.long { width: 90%; }
+        .skeleton-actions {
+            display: flex; gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .skeleton-btn {
+            height: 36px;
+            flex: 1;
+            border-radius: 10px;
         }
 
         /* Listings Grid */
@@ -161,17 +242,17 @@
         }
 
         .listing-card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255,255,255,0.05);
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
             border-radius: 20px;
             overflow: hidden;
-            transition: all 0.4s ease;
+            transition: all 0.25s ease;
             position: relative;
         }
         .listing-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(99, 102, 241, 0.2);
-            box-shadow: var(--shadow-glow);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px -10px rgba(27, 46, 75, 0.15);
+            border-color: var(--color-accent);
         }
 
         .listing-image {
@@ -196,8 +277,19 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
-        .badge-featured { background: var(--gradient); color: white; }
-        .badge-new { background: var(--accent); color: white; }
+        .badge-featured { background: var(--color-accent); color: var(--color-primary); }
+        .badge-new { background: var(--color-success); color: white; }
+        .badge-verified {
+            background: var(--color-success);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .badge-university {
+            background: var(--color-accent-light);
+            color: var(--color-primary);
+        }
 
         .listing-price {
             position: absolute;
@@ -208,36 +300,40 @@
             border-radius: 10px;
             font-weight: 700;
             font-size: 1.1rem;
+            color: white;
         }
         .listing-price span {
             font-size: 0.75rem;
             font-weight: 400;
-            color: var(--gray);
+            color: rgba(255,255,255,0.7);
         }
 
-        .listing-content {
-            padding: 1.5rem;
+        .listing-content { padding: 1.5rem; }
+        .listing-meta {
+            display: flex; gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
         }
         .listing-type {
             display: inline-block;
             padding: 0.25rem 0.75rem;
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(201, 168, 76, 0.1);
             border-radius: 6px;
             font-size: 0.75rem;
-            color: var(--primary);
+            color: var(--color-accent);
             font-weight: 600;
             text-transform: uppercase;
-            margin-bottom: 0.75rem;
         }
         .listing-title {
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
             line-height: 1.3;
+            color: var(--color-text-main);
         }
         .listing-location {
             display: flex; align-items: center; gap: 0.4rem;
-            color: var(--gray);
+            color: var(--color-text-muted);
             font-size: 0.9rem;
             margin-bottom: 1rem;
         }
@@ -248,9 +344,9 @@
         .listing-feature {
             display: flex; align-items: center; gap: 0.35rem;
             font-size: 0.85rem;
-            color: var(--gray);
+            color: var(--color-text-muted);
         }
-        .listing-feature i { color: var(--primary); font-size: 0.9rem; }
+        .listing-feature i { color: var(--color-accent); font-size: 0.9rem; }
 
         .listing-amenities {
             display: flex; flex-wrap: wrap; gap: 0.4rem;
@@ -258,10 +354,10 @@
         }
         .amenity-tag {
             padding: 0.25rem 0.6rem;
-            background: rgba(255,255,255,0.05);
+            background: var(--color-bg);
             border-radius: 6px;
             font-size: 0.75rem;
-            color: var(--gray);
+            color: var(--color-text-muted);
         }
 
         .listing-actions {
@@ -269,28 +365,21 @@
         }
         .listing-actions .btn { flex: 1; justify-content: center; }
 
-        /* Loading & Empty States */
-        .loading-state {
-            text-align: center; padding: 4rem;
-        }
-        .loading-state i {
-            font-size: 3rem;
-            color: var(--primary);
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
+        /* Empty State */
         .empty-state {
             text-align: center; padding: 4rem;
             grid-column: 1 / -1;
         }
         .empty-state i {
             font-size: 4rem;
-            color: var(--gray);
+            color: var(--color-text-muted);
             margin-bottom: 1rem;
         }
-        .empty-state h3 { margin-bottom: 0.5rem; }
-        .empty-state p { color: var(--gray); }
+        .empty-state h3 {
+            color: var(--color-text-main);
+            margin-bottom: 0.5rem;
+        }
+        .empty-state p { color: var(--color-text-muted); }
 
         /* Modal */
         .modal-overlay {
@@ -305,8 +394,8 @@
         }
         .modal-overlay.active { display: flex; }
         .modal {
-            background: var(--dark);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
             border-radius: 24px;
             max-width: 500px;
             width: 100%;
@@ -316,12 +405,12 @@
         }
         .modal-header {
             padding: 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid var(--color-border);
             display: flex; justify-content: space-between; align-items: center;
         }
-        .modal-header h3 { font-size: 1.25rem; }
+        .modal-header h3 { font-size: 1.25rem; color: var(--color-text-main); }
         .modal-close {
-            background: none; border: none; color: var(--gray);
+            background: none; border: none; color: var(--color-text-muted);
             font-size: 1.5rem; cursor: pointer;
         }
         .modal-body { padding: 1.5rem; }
@@ -329,70 +418,140 @@
         .form-group label {
             display: block; margin-bottom: 0.5rem;
             font-size: 0.9rem; font-weight: 500;
+            color: var(--color-text-main);
         }
         .form-group input, .form-group textarea, .form-group select {
             width: 100%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
             border-radius: 12px;
             padding: 0.875rem 1rem;
-            color: var(--light);
+            color: var(--color-text-main);
             font-size: 0.95rem;
             outline: none; font-family: inherit;
         }
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-            border-color: var(--primary);
+            border-color: var(--color-accent);
         }
         .form-group textarea { min-height: 100px; resize: vertical; }
 
         /* Footer */
         .footer {
-            padding: 3rem 2rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            text-align: center; color: var(--gray);
-            font-size: 0.875rem; margin-top: 4rem;
+            background: var(--color-primary);
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            margin-top: 4rem;
+        }
+        .footer-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+        .footer-col h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            margin-bottom: 0.75rem;
+        }
+        .footer-col h4 span { font-weight: 300; color: white; }
+        .footer-logo img { width: 64px; height: 64px; object-fit: contain; display: block; border-radius: 12px; }
+        .footer-col p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+        .footer-col h5 {
+            color: var(--color-accent-light);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .footer-col a {
+            display: block;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover { color: var(--color-accent); }
+        .footer-col .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .footer-col .contact-item i {
+            color: var(--color-accent);
+            width: 18px;
+        }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.85rem;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .nav-links { display: none; }
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-primary); flex-direction: column; padding: 1rem 2rem; gap: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+            .nav-links.active { display: flex; }
+            .hamburger { display: block; }
             .filters-bar { flex-direction: column; align-items: stretch; }
             .filter-group select, .filter-group input { width: 100%; min-width: unset; }
             .listings-grid { grid-template-columns: 1fr; }
             .price-range { flex-direction: column; align-items: stretch; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <a href="/" class="logo">Ten<span>&</span>See</a>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/listings.html">Listings</a></li>
-                <li><a href="/admin">Admin</a></li>
+            <a href="/" class="logo" target="_self" aria-label="Ten&See home"><img src="/assets/logo.png" alt="Ten&See logo"></a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/" target="_self">Home</a></li>
+                <li><a href="/listings.html" target="_self">Listings</a></li>
+                <li><a href="/index.html#features" target="_self">Features</a></li>
+                <li><a href="/index.html#contact" target="_self">Contact</a></li>
             </ul>
+            <div class="nav-actions">
+                <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to dark mode">
+                    <i class="fas fa-moon" aria-hidden="true"></i>
+                    <i class="fas fa-sun" aria-hidden="true"></i>
+                </button>
+                <button class="hamburger" onclick="toggleMobileNav()">☰</button>
+            </div>
         </div>
     </nav>
 
     <div class="page-header">
-        <h1>Find Your <span style="background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Perfect Home</span></h1>
+        <h1>Find Your <span class="accent-text">Perfect Home</span></h1>
         <p>Browse our curated collection of student-friendly accommodations</p>
     </div>
 
     <div class="filters-section">
         <div class="filters-bar">
             <div class="filter-group input-group">
-                <input type="text" id="searchInput" placeholder="Search by location, university..." oninput="debouncedSearch()">
+                <input type="text" id="searchInput" placeholder="Search by keyword..." oninput="debouncedSearch()">
             </div>
             <div class="filter-group">
-                <select id="cityFilter" onchange="applyFilters()">
-                    <option value="">All Cities</option>
+                <select id="universityFilter" onchange="onUniversityChange()">
+                    <option value="">Select University</option>
                 </select>
             </div>
             <div class="filter-group">
-                <select id="universityFilter" onchange="applyFilters()">
-                    <option value="">All Universities</option>
+                <select id="areaFilter" onchange="applyFilters()">
+                    <option value="">Select Area</option>
                 </select>
             </div>
             <div class="filter-group">
@@ -415,9 +574,9 @@
                 </select>
             </div>
             <div class="price-range">
-                <input type="number" id="minPrice" placeholder="Min $" onchange="applyFilters()">
+                <input type="number" id="minPrice" placeholder="Min RM" onchange="applyFilters()">
                 <span>to</span>
-                <input type="number" id="maxPrice" placeholder="Max $" onchange="applyFilters()">
+                <input type="number" id="maxPrice" placeholder="Max RM" onchange="applyFilters()">
             </div>
             <button class="btn btn-outline btn-sm" onclick="clearFilters()">
                 <i class="fas fa-undo"></i> Reset
@@ -428,9 +587,78 @@
 
     <div class="listings-section">
         <div class="listings-grid" id="listingsGrid">
-            <div class="loading-state">
-                <i class="fas fa-circle-notch"></i>
-                <p style="margin-top:1rem;color:var(--gray)">Loading listings...</p>
+            <!-- Skeleton loading cards -->
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-line medium"></div>
+                    <div class="skeleton skeleton-line long"></div>
+                    <div class="skeleton-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-line medium"></div>
+                    <div class="skeleton skeleton-line long"></div>
+                    <div class="skeleton-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-line medium"></div>
+                    <div class="skeleton skeleton-line long"></div>
+                    <div class="skeleton-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-line medium"></div>
+                    <div class="skeleton skeleton-line long"></div>
+                    <div class="skeleton-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-line medium"></div>
+                    <div class="skeleton skeleton-line long"></div>
+                    <div class="skeleton-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-line medium"></div>
+                    <div class="skeleton skeleton-line long"></div>
+                    <div class="skeleton-actions">
+                        <div class="skeleton skeleton-btn"></div>
+                        <div class="skeleton skeleton-btn"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -439,7 +667,7 @@
     <div class="modal-overlay" id="bookingModal">
         <div class="modal">
             <div class="modal-header">
-                <h3><i class="fas fa-calendar-check" style="color:var(--primary)"></i> Book a Viewing</h3>
+                <h3><i class="fas fa-calendar-check" style="color:var(--color-accent)"></i> Book a Viewing</h3>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
@@ -479,18 +707,139 @@
     </div>
 
     <footer class="footer">
-        <p>© 2026 Ten&See. All rights reserved.</p>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4 class="footer-logo"><img src="/assets/logo.png" alt="Ten&See logo"></h4>
+                <p>The trusted student housing platform in Malaysia.</p>
+                <p>Registered in Malaysia.</p>
+            </div>
+            <div class="footer-col">
+                <h5>Links</h5>
+                <a href="/" target="_self">Home</a>
+                <a href="/listings.html" target="_self">Listings</a>
+                <a href="/index.html#contact" target="_self">Contact</a>
+            </div>
+            <div class="footer-col">
+                <h5>Contact</h5>
+                <div class="contact-item">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>+60 XX-XXXX XXXX</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>hello@tenandsee.homes</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fab fa-instagram"></i>
+                    <span>@tenseeofficial</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Ten&See. All rights reserved.</p>
+        </div>
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
+        // AOS Init
+        AOS.init({ duration: 600, once: true });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Mobile hamburger toggle
+        function toggleMobileNav() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
         let allListings = [];
         let searchTimeout;
+
+        // University to Area mapping (frontend mirror of backend)
+        const UNIVERSITY_AREA_MAP = {
+            "Taylor's University": ["Subang Jaya", "Lakeside Campus"],
+            "Sunway University": ["Bandar Sunway"],
+            "Monash University Malaysia": ["Bandar Sunway"],
+            "UCSI University": ["Cheras", "Taman Connaught"],
+            "Asia Pacific University (APU)": ["Bukit Jalil"],
+            "University of Malaya (UM)": ["Petaling Jaya", "Kerinchi"],
+            "Universiti Putra Malaysia (UPM)": ["Serdang"],
+            "HELP University": ["Damansara Heights"],
+            "INTI International College": ["Kuala Lumpur City Centre"],
+            "Multimedia University (MMU) Cyberjaya": ["Cyberjaya"]
+        };
+
+        // All areas in Klang Valley
+        const ALL_AREAS = ["Subang Jaya", "Bandar Sunway", "Petaling Jaya", "Cheras", "Bukit Jalil", 
+            "Cyberjaya", "Damansara Heights", "Kuala Lumpur City Centre", "Serdang", "Lakeside Campus", 
+            "Taman Connaught", "Kerinchi", "Shah Alam", "Kajang", "Puchong"];
 
         // Load listings on page load
         document.addEventListener('DOMContentLoaded', () => {
             loadListings();
             loadFilterOptions();
+            applyUrlParams();
         });
+
+        // Apply URL parameters from quick search
+        function applyUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const university = params.get('university');
+            const area = params.get('area');
+            const type = params.get('type');
+            
+            if (university) {
+                document.getElementById('universityFilter').value = university;
+                updateAreaDropdown(); // Update area dropdown options but don't apply filters yet
+            }
+            if (area) document.getElementById('areaFilter').value = area;
+            if (type) document.getElementById('typeFilter').value = type;
+            
+            // Apply filters if any params were set
+            if (university || area || type) {
+                setTimeout(applyFilters, 100); // Wait for listings to load
+            }
+        }
+
+        // Available areas from database (populated by loadFilterOptions)
+        let availableAreas = [];
+
+        // Update area dropdown without applying filters (for URL param loading)
+        function updateAreaDropdown() {
+            const uni = document.getElementById('universityFilter').value;
+            const areaSelect = document.getElementById('areaFilter');
+            const currentArea = areaSelect.value;
+            
+            // Get mapped areas for selected university
+            let mappedAreas = [];
+            if (uni && UNIVERSITY_AREA_MAP[uni]) {
+                mappedAreas = UNIVERSITY_AREA_MAP[uni];
+            }
+            
+            // Filter by what's actually available in database
+            let areas = mappedAreas.length > 0 
+                ? mappedAreas.filter(area => availableAreas.includes(area))
+                : availableAreas;
+            
+            // Build options - show placeholder only when no university selected
+            let optionsHtml = uni ? '' : '<option value="">Select Area</option>';
+            areas.forEach(area => {
+                optionsHtml += `<option value="${area}">${area}</option>`;
+            });
+            areaSelect.innerHTML = optionsHtml;
+            
+            // Auto-select first area if university is selected and no valid current selection
+            if (uni && areas.length > 0) {
+                if (!currentArea || !areas.includes(currentArea)) {
+                    areaSelect.value = areas[0]; // Auto-select first area
+                } else {
+                    areaSelect.value = currentArea; // Keep valid selection
+                }
+            }
+        }
 
         async function loadListings() {
             try {
@@ -503,8 +852,8 @@
                 document.getElementById('listingsGrid').innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-exclamation-circle"></i>
-                        <h3>Unable to load listings</h3>
-                        <p>Please check your connection and try again.</p>
+                        <h3>No listings available right now.</h3>
+                        <p>Check back soon or contact us on WhatsApp.</p>
                     </div>
                 `;
             }
@@ -516,16 +865,31 @@
                 const data = await res.json();
                 const options = data.data;
 
-                const citySelect = document.getElementById('cityFilter');
-                options.cities.forEach(city => {
-                    if (city) citySelect.innerHTML += `<option value="${city}">${city}</option>`;
+                // Store available areas for filtering
+                availableAreas = options.areas || [];
+                
+                // Populate area dropdown with areas from database
+                const areaSelect = document.getElementById('areaFilter');
+                let areaOptions = '<option value="">Select Area</option>';
+                availableAreas.forEach(area => {
+                    if (area) areaOptions += `<option value="${area}">${area}</option>`;
                 });
+                areaSelect.innerHTML = areaOptions;
 
+                // Populate university dropdown dynamically from database
                 const uniSelect = document.getElementById('universityFilter');
-                options.universities.forEach(uni => {
-                    if (uni) uniSelect.innerHTML += `<option value="${uni}">${uni}</option>`;
+                let uniOptions = '<option value="">Select University</option>';
+                (options.universities || []).forEach(uni => {
+                    if (uni) uniOptions += `<option value="${uni}">${uni}</option>`;
                 });
+                uniSelect.innerHTML = uniOptions;
             } catch (e) { console.error(e); }
+        }
+
+        // Update area dropdown based on university selection
+        function onUniversityChange() {
+            updateAreaDropdown();
+            applyFilters();
         }
 
         function renderListings(listings) {
@@ -535,27 +899,31 @@
                 grid.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-search"></i>
-                        <h3>No listings found</h3>
-                        <p>Try adjusting your filters to see more results.</p>
+                        <h3>No listings match your filters.</h3>
+                        <p>Try adjusting your search or contact us directly.</p>
                     </div>
                 `;
                 return;
             }
 
             grid.innerHTML = listings.map(listing => `
-                <div class="listing-card" data-id="${listing._id}">
-                    <div class="listing-image">
+                <div class="listing-card" data-id="${listing._id}" data-aos="fade-up">
+                    <div class="listing-image" onclick="window.location='/listing.html?id=${listing._id}'" style="cursor:pointer;">
                         <img src="${listing.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600'}" alt="${listing.title}">
                         ${listing.isFeatured ? '<span class="listing-badge badge-featured">Featured</span>' : ''}
                         ${isNew(listing.createdAt) ? '<span class="listing-badge badge-new" style="left:auto;right:1rem;">New</span>' : ''}
-                        <div class="listing-price">$${listing.price}<span>/${listing.pricePeriod}</span></div>
+                        <div class="listing-price">RM ${listing.price}<span>/${listing.pricePeriod}</span></div>
                     </div>
                     <div class="listing-content">
-                        <span class="listing-type">${listing.propertyType.replace('_', ' ')}</span>
+                        <div class="listing-meta">
+                            <span class="listing-type">${listing.propertyType.replace('_', ' ')}</span>
+                            ${listing.location?.university ? `<span class="listing-badge badge-university">Near ${listing.location.university}</span>` : ''}
+                            <span class="listing-badge badge-verified"><i class="fas fa-check-circle"></i> Verified</span>
+                        </div>
                         <h3 class="listing-title">${listing.title}</h3>
                         <div class="listing-location">
-                            <i class="fas fa-map-marker-alt" style="color:var(--primary)"></i>
-                            ${listing.location?.address || ''}, ${listing.location?.city || ''}
+                            <i class="fas fa-map-marker-alt" style="color:var(--color-accent)"></i>
+                            ${listing.location?.area || listing.location?.city || 'Klang Valley'}
                         </div>
                         <div class="listing-features">
                             ${listing.bedrooms ? `<div class="listing-feature"><i class="fas fa-bed"></i> ${listing.bedrooms} BR</div>` : ''}
@@ -567,16 +935,19 @@
                             ${(listing.amenities || []).length > 4 ? `<span class="amenity-tag">+${listing.amenities.length - 4} more</span>` : ''}
                         </div>
                         <div class="listing-actions">
-                            <button class="btn btn-primary btn-sm" onclick="openBooking('${listing._id}', '${listing.title.replace(/'/g, "\'")}')">
-                                <i class="fas fa-calendar"></i> Book Viewing
-                            </button>
-                            <a href="https://wa.me/${listing.whatsappNumber || '+966503874798'}" class="btn btn-whatsapp btn-sm" onclick="trackWhatsAppLead('${listing._id}', '${listing.title.replace(/'/g, "\'")}')">
-                                <i class="fab fa-whatsapp"></i> WhatsApp
+                            <a href="/listing.html?id=${listing._id}" class="btn btn-outline-dark btn-sm" style="flex:1;justify-content:center;">
+                                <i class="fas fa-eye"></i> View Details
                             </a>
+                            <button class="btn btn-primary btn-sm" onclick="openBooking('${listing._id}', '${listing.title.replace(/'/g, "\'")}')">
+                                <i class="fas fa-calendar"></i> Enquire
+                            </button>
                         </div>
                     </div>
                 </div>
             `).join('');
+
+            // Re-init AOS for dynamically added elements
+            if (window.AOS) AOS.refresh();
         }
 
         function isNew(date) {
@@ -592,8 +963,8 @@
 
         function applyFilters() {
             const search = document.getElementById('searchInput').value;
-            const city = document.getElementById('cityFilter').value;
             const university = document.getElementById('universityFilter').value;
+            const area = document.getElementById('areaFilter').value;
             const type = document.getElementById('typeFilter').value;
             const bedrooms = document.getElementById('bedroomsFilter').value;
             const minPrice = document.getElementById('minPrice').value;
@@ -603,22 +974,22 @@
 
             if (search) {
                 const s = search.toLowerCase();
-                filtered = filtered.filter(l => 
+                filtered = filtered.filter(l =>
                     l.title.toLowerCase().includes(s) ||
                     l.description.toLowerCase().includes(s) ||
-                    l.location?.city?.toLowerCase().includes(s) ||
+                    l.location?.area?.toLowerCase().includes(s) ||
                     l.location?.university?.toLowerCase().includes(s)
                 );
             }
-            if (city) filtered = filtered.filter(l => l.location?.city === city);
             if (university) filtered = filtered.filter(l => l.location?.university === university);
+            if (area) filtered = filtered.filter(l => l.location?.area === area);
             if (type) filtered = filtered.filter(l => l.propertyType === type);
             if (bedrooms) filtered = filtered.filter(l => l.bedrooms >= parseInt(bedrooms));
             if (minPrice) filtered = filtered.filter(l => l.price >= parseInt(minPrice));
             if (maxPrice) filtered = filtered.filter(l => l.price <= parseInt(maxPrice));
 
             renderListings(filtered);
-            updateActiveFilters({ search, city, university, type, bedrooms, minPrice, maxPrice });
+            updateActiveFilters({ search, area, university, type, bedrooms, minPrice, maxPrice });
         }
 
         function updateActiveFilters(filters) {
@@ -626,12 +997,12 @@
             const tags = [];
 
             if (filters.search) tags.push({ label: `Search: "${filters.search}"`, key: 'search' });
-            if (filters.city) tags.push({ label: filters.city, key: 'city' });
             if (filters.university) tags.push({ label: filters.university, key: 'university' });
+            if (filters.area) tags.push({ label: filters.area, key: 'area' });
             if (filters.type) tags.push({ label: filters.type.replace('_', ' '), key: 'type' });
             if (filters.bedrooms) tags.push({ label: `${filters.bedrooms}+ BR`, key: 'bedrooms' });
             if (filters.minPrice || filters.maxPrice) {
-                tags.push({ label: `$${filters.minPrice || 0} - $${filters.maxPrice || '∞'}`, key: 'price' });
+                tags.push({ label: `RM ${filters.minPrice || 0} - RM ${filters.maxPrice || '∞'}`, key: 'price' });
             }
 
             container.innerHTML = tags.map(tag => `
@@ -644,7 +1015,7 @@
 
         function removeFilter(key) {
             if (key === 'search') document.getElementById('searchInput').value = '';
-            if (key === 'city') document.getElementById('cityFilter').value = '';
+            if (key === 'area') document.getElementById('areaFilter').value = '';
             if (key === 'university') document.getElementById('universityFilter').value = '';
             if (key === 'type') document.getElementById('typeFilter').value = '';
             if (key === 'bedrooms') document.getElementById('bedroomsFilter').value = '';
@@ -657,13 +1028,20 @@
 
         function clearFilters() {
             document.getElementById('searchInput').value = '';
-            document.getElementById('cityFilter').value = '';
+            document.getElementById('areaFilter').value = '';
             document.getElementById('universityFilter').value = '';
             document.getElementById('typeFilter').value = '';
             document.getElementById('bedroomsFilter').value = '';
             document.getElementById('minPrice').value = '';
             document.getElementById('maxPrice').value = '';
             document.getElementById('activeFilters').innerHTML = '';
+            // Reset area dropdown to all areas
+            const areaSelect = document.getElementById('areaFilter');
+            let options = '<option value="">All Areas (Klang Valley)</option>';
+            ALL_AREAS.forEach(area => {
+                options += `<option value="${area}">${area}</option>`;
+            });
+            areaSelect.innerHTML = options;
             renderListings(allListings);
         }
 
@@ -704,82 +1082,11 @@
             } catch (e) { alert('Error submitting booking. Please try again.'); }
         }
 
-        async function trackWhatsAppLead(listingId, listingTitle) {
-            try {
-                await fetch('/api/leads', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: 'WhatsApp Visitor',
-                        email: 'whatsapp@visitor.com',
-                        source: 'whatsapp',
-                        listingId,
-                        listingTitle,
-                        message: `Clicked WhatsApp for: ${listingTitle}`
-                    })
-                });
-            } catch(e) { console.log(e); }
-        }
-
         // Close modal on overlay click
         document.getElementById('bookingModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('bookingModal')) closeModal();
         });
     </script>
-    <!-- Cookie Banner -->
-    <div id="cookieBanner" style="position:fixed;bottom:0;left:0;right:0;background:rgba(2,6,23,0.98);backdrop-filter:blur(20px);border-top:1px solid rgba(99,102,241,0.2);z-index:10000;transform:translateY(100%);transition:transform 0.6s cubic-bezier(0.16,1,0.3,1);font-family:'Inter',sans-serif;">
-        <div style="max-width:1200px;margin:0 auto;padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;">
-            <div style="display:flex;align-items:flex-start;gap:1rem;flex:1;">
-                <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(168,85,247,0.2));border:1px solid rgba(99,102,241,0.3);display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#6366f1;flex-shrink:0;">
-                    <i class="fas fa-cookie-bite"></i>
-                </div>
-                <div>
-                    <h4 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;color:#f8fafc;margin:0 0 0.5rem 0;">We value your privacy</h4>
-                    <p style="font-size:0.9rem;color:#64748b;line-height:1.6;margin:0;max-width:600px;">We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic.</p>
-                </div>
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-shrink:0;">
-                <button onclick="acceptEssential()" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.75rem 1.25rem;border-radius:10px;font-weight:600;font-size:0.875rem;cursor:pointer;transition:all 0.3s;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#94a3b8;">Essential Only</button>
-                <button onclick="acceptAll()" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.75rem 1.25rem;border-radius:10px;font-weight:600;font-size:0.875rem;cursor:pointer;transition:all 0.3s;border:none;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;box-shadow:0 4px 15px rgba(99,102,241,0.3);">Accept All</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Cookie functions
-        function setCookie(name, value, days) {
-            const expires = new Date(Date.now() + days * 864e5).toUTCString();
-            document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/; domain=' + window.location.hostname;
-        }
-        
-        function getCookie(name) {
-            return document.cookie.split('; ').reduce((r, v) => {
-                const parts = v.split('=');
-                return parts[0] === name ? decodeURIComponent(parts[1]) : r;
-            }, '');
-        }
-        
-        function acceptEssential() {
-            setCookie('cookieConsent', 'essential', 365);
-            hideBanner();
-        }
-        
-        function acceptAll() {
-            setCookie('cookieConsent', 'all', 365);
-            hideBanner();
-        }
-        
-        function hideBanner() {
-            document.getElementById('cookieBanner').style.transform = 'translateY(100%)';
-        }
-        
-        // Show banner if no consent
-        if (!getCookie('cookieConsent')) {
-            setTimeout(() => {
-                document.getElementById('cookieBanner').style.transform = 'translateY(0)';
-            }, 1000);
-        }
-    </script>
+    <script src="/cookie-consent.js"></script>
 </body>
 </html>
-

@@ -751,27 +751,15 @@
             <h3><i class="fas fa-search" style="color:var(--color-accent);margin-right:0.5rem;"></i> Quick Search</h3>
             <div class="search-row">
                 <div class="search-field">
-                    <label>City</label>
-                    <select id="qCity">
-                        <option value="">Any City</option>
-                        <option>Subang Jaya</option>
-                        <option>Petaling Jaya</option>
-                        <option>Cyberjaya</option>
-                        <option>Cheras</option>
-                        <option>Kuala Lumpur</option>
-                        <option>Nilai</option>
+                    <label>University</label>
+                    <select id="qUni" onchange="updateAreaOptions()">
+                        <option value="">Select University</option>
                     </select>
                 </div>
                 <div class="search-field">
-                    <label>University</label>
-                    <select id="qUni">
-                        <option value="">Any University</option>
-                        <option>Taylor's University</option>
-                        <option>Sunway University</option>
-                        <option>Monash University Malaysia</option>
-                        <option>INTI International University</option>
-                        <option>Help University</option>
-                        <option>SEGi University</option>
+                    <label>Area</label>
+                    <select id="qArea">
+                        <option value="">Select Area</option>
                     </select>
                 </div>
                 <div class="search-field">
@@ -865,18 +853,13 @@
                 </div>
                 <div class="uni-card" data-aos="fade-up" data-aos-delay="60">
                     <div class="uni-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <div class="uni-name">Sunway University</div>
-                    <div class="uni-city">Petaling Jaya</div>
-                </div>
-                <div class="uni-card" data-aos="fade-up" data-aos-delay="120">
-                    <div class="uni-icon"><i class="fas fa-graduation-cap"></i></div>
                     <div class="uni-name">Monash University Malaysia</div>
                     <div class="uni-city">Subang Jaya</div>
                 </div>
                 <div class="uni-card" data-aos="fade-up" data-aos-delay="180">
                     <div class="uni-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <div class="uni-name">INTI International University</div>
-                    <div class="uni-city">Nilai</div>
+                    <div class="uni-name">INTI International College</div>
+                    <div class="uni-city">Subang Jaya</div>
                 </div>
                 <div class="uni-card" data-aos="fade-up" data-aos-delay="240">
                     <div class="uni-icon"><i class="fas fa-graduation-cap"></i></div>
@@ -1066,7 +1049,6 @@
                         <select id="cUni">
                             <option value="">Select your university</option>
                             <option>Taylor's University</option>
-                            <option>Sunway University</option>
                             <option>Monash University Malaysia</option>
                             <option>INTI International University</option>
                             <option>Help University</option>
@@ -1105,7 +1087,6 @@
             <div class="footer-col">
                 <h5>Universities</h5>
                 <a href="/listings.html?university=Taylor's University" target="_self">Taylor's University</a>
-                <a href="/listings.html?university=Sunway University" target="_self">Sunway University</a>
                 <a href="/listings.html?university=Monash University Malaysia" target="_self">Monash Malaysia</a>
                 <a href="/listings.html?university=INTI International University" target="_self">INTI University</a>
                 <a href="/listings.html?university=Help University" target="_self">Help University</a>
@@ -1163,14 +1144,68 @@
             document.getElementById('navLinks').classList.toggle('active');
         }
 
+        // University to Area mapping (frontend mirror of backend)
+        const UNIVERSITY_AREA_MAP = {
+            "Taylor's University": ["Subang Jaya", "Lakeside Campus"],
+            "Sunway University": ["Bandar Sunway"],
+            "Monash University Malaysia": ["Bandar Sunway"],
+            "UCSI University": ["Cheras", "Taman Connaught"],
+            "Asia Pacific University (APU)": ["Bukit Jalil"],
+            "University of Malaya (UM)": ["Petaling Jaya", "Kerinchi"],
+            "Universiti Putra Malaysia (UPM)": ["Serdang"],
+            "HELP University": ["Damansara Heights"],
+            "INTI International College": ["Kuala Lumpur City Centre"],
+            "Multimedia University (MMU) Cyberjaya": ["Cyberjaya"]
+        };
+
+        // All areas in Klang Valley
+        const ALL_AREAS = ["Subang Jaya", "Bandar Sunway", "Petaling Jaya", "Cheras", "Bukit Jalil", 
+            "Cyberjaya", "Damansara Heights", "Kuala Lumpur City Centre", "Serdang", "Lakeside Campus", 
+            "Taman Connaught", "Kerinchi", "Shah Alam", "Kajang", "Puchong"];
+
+        // Update area dropdown based on university selection
+        function updateAreaOptions() {
+            const uni = document.getElementById('qUni').value;
+            const areaSelect = document.getElementById('qArea');
+            const currentArea = areaSelect.value;
+            
+            // Get mapped areas for selected university
+            let mappedAreas = [];
+            if (uni && UNIVERSITY_AREA_MAP[uni]) {
+                mappedAreas = UNIVERSITY_AREA_MAP[uni];
+            }
+            
+            // Filter by what's actually available in database
+            const availableAreas = window.availableAreas || ALL_AREAS;
+            let areas = mappedAreas.length > 0 
+                ? mappedAreas.filter(area => availableAreas.includes(area))
+                : availableAreas;
+            
+            // Build options - show placeholder only when no university selected
+            let options = uni ? '' : '<option value="">Select Area</option>';
+            areas.forEach(area => {
+                options += `<option value="${area}">${area}</option>`;
+            });
+            areaSelect.innerHTML = options;
+            
+            // Auto-select first area if university is selected and no valid current selection
+            if (uni && areas.length > 0) {
+                if (!currentArea || !areas.includes(currentArea)) {
+                    areaSelect.value = areas[0]; // Auto-select first area
+                } else {
+                    areaSelect.value = currentArea; // Keep valid selection
+                }
+            }
+        }
+
         // Quick search redirect
         function quickSearch() {
-            const city = document.getElementById('qCity').value;
             const uni = document.getElementById('qUni').value;
+            const area = document.getElementById('qArea').value;
             const type = document.getElementById('qType').value;
             let params = new URLSearchParams();
-            if (city) params.set('city', city);
             if (uni) params.set('university', uni);
+            if (area) params.set('area', area);
             if (type) params.set('type', type);
             window.location.href = `/listings.html${params.toString() ? '?' + params : ''}`;
         }
@@ -1213,7 +1248,7 @@
                             <h3 class="listing-title">${l.title}</h3>
                             <div class="listing-location">
                                 <i class="fas fa-map-marker-alt" style="color:var(--color-accent)"></i>
-                                ${l.location?.city || ''}
+                                ${l.location?.area || l.location?.city || 'Klang Valley'}
                             </div>
                             <div class="listing-features">
                                 ${l.bedrooms ? `<div class="listing-feature"><i class="fas fa-bed"></i> ${l.bedrooms} BR</div>` : ''}
@@ -1301,7 +1336,31 @@
             area.scrollTop = area.scrollHeight;
         }
 
-        document.addEventListener('DOMContentLoaded', loadFeatured);
+        // Load filter options and featured listings on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFilterOptions();
+            loadFeatured();
+        });
+
+        // Load universities and areas from database
+        async function loadFilterOptions() {
+            try {
+                const res = await fetch('/api/listings/filters/options');
+                const data = await res.json();
+                const options = data.data;
+
+                // Populate university dropdown
+                const uniSelect = document.getElementById('qUni');
+                let uniOptions = '<option value="">Select University</option>';
+                (options.universities || []).forEach(uni => {
+                    if (uni) uniOptions += `<option value="${uni}">${uni}</option>`;
+                });
+                uniSelect.innerHTML = uniOptions;
+
+                // Store available areas for later use
+                window.availableAreas = options.areas || [];
+            } catch (e) { console.error(e); }
+        }
     </script>
     <!-- Cookie Banner -->
     <div id="cookieBanner" style="position:fixed;bottom:0;left:0;right:0;background:rgba(2,6,23,0.98);backdrop-filter:blur(20px);border-top:1px solid rgba(99,102,241,0.2);z-index:10000;transform:translateY(100%);transition:transform 0.6s cubic-bezier(0.16,1,0.3,1);font-family:'Inter',sans-serif;">

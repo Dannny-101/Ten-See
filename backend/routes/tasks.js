@@ -10,12 +10,18 @@ router.use(authMiddleware);
 // GET all tasks
 router.get('/', async (req, res) => {
   try {
-    const { status, priority, category, search, limit = 50 } = req.query;
+    const { status, priority, category, assignedTo, dueDateFrom, dueDateTo, search, limit = 100 } = req.query;
     let query = { isActive: true };
 
     if (status) query.status = status;
     if (priority) query.priority = priority;
     if (category) query.category = category;
+    if (assignedTo) query['assignedTo.userId'] = assignedTo;
+    if (dueDateFrom || dueDateTo) {
+      query.dueDate = {};
+      if (dueDateFrom) query.dueDate.$gte = new Date(dueDateFrom);
+      if (dueDateTo) query.dueDate.$lte = new Date(dueDateTo);
+    }
     if (search) {
       query.$or = [
         { title: new RegExp(search, 'i') },
@@ -212,6 +218,153 @@ router.delete('/:id', async (req, res) => {
     res.json({ success: true, message: 'Task deleted' });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PATCH update task status (for drag-drop)
+router.patch('/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ success: false, error: 'Task not found' });
+    
+    const oldStatus = task.status;
+    task.status = status;
+    task.previousStatus = oldStatus;
+    task.updatedAt = Date.now();
+    
+    // Add to history
+    task.history.push({
+      action: 'status_change',
+      from: oldStatus,
+      to: status,
+      by: {
+        userId: req.admin.id,
+        username: req.admin.username,
+        name: req.admin.name || req.admin.username
+      },
+      at: new Date()
+    });
+    
+    // If moved to done, record completion
+    if (status === 'done' && oldStatus !== 'done') {
+      task.completedBy = {
+        userId: req.admin.id,
+        username: req.admin.username,
+        name: req.admin.name || req.admin.username,
+        completedAt: new Date()
+      };
+    }
+    
+    await task.save();
+    
+    // Emit socket event
+    const io = req.app.get('io');
+    if (io) {
+      io.to('all_admins').emit('task_moved', {
+        taskId: task._id,
+        title: task.title,
+        from: oldStatus,
+        to: status,
+        movedBy: req.admin.username,
+        movedAt: new Date()
+      });
+    }
+    
+    res.json({ success: true, data: task });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// PATCH assign task to member
+router.patch('/:id/assign', async (req, res) => {
+  try {
+    const { assignedTo } = req.body;
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ success: false, error: 'Task not found' });
+    
+    const oldAssignee = task.assignedTo;
+    task.assignedTo = assignedTo;
+    task.updatedAt = Date.now();
+    
+    // Add to history
+    task.history.push({
+      action: 'assigned',
+      from: oldAssignee?.username || 'Unassigned',
+      to: assignedTo?.username || 'Unassigned',
+      by: {
+        userId: req.admin.id,
+        username: req.admin.username,
+        name: req.admin.name || req.admin.username
+      },
+      at: new Date()
+    });
+    
+    await task.save();
+    
+    // Emit socket event
+    const io = req.app.get('io');
+    if (io) {
+      io.to('all_admins').emit('task_assigned', {
+        taskId: task._id,
+        title: task.title,
+        assignedTo: assignedTo,
+        assignedBy: req.admin.username,
+        assignedAt: new Date()
+      });
+    }
+    
+    res.json({ success: true, data: task });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// POST undo task completion
+router.post('/:id/undo', async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ success: false, error: 'Task not found' });
+    if (task.status !== 'done') return res.status(400).json({ success: false, error: 'Task is not completed' });
+    
+    const previousStatus = task.previousStatus || 'in_progress';
+    const oldStatus = task.status;
+    
+    task.status = previousStatus;
+    task.completedBy = null;
+    task.updatedAt = Date.now();
+    
+    // Add to history
+    task.history.push({
+      action: 'undo_complete',
+      from: oldStatus,
+      to: previousStatus,
+      by: {
+        userId: req.admin.id,
+        username: req.admin.username,
+        name: req.admin.name || req.admin.username
+      },
+      at: new Date()
+    });
+    
+    await task.save();
+    
+    // Emit socket event
+    const io = req.app.get('io');
+    if (io) {
+      io.to('all_admins').emit('task_undone', {
+        taskId: task._id,
+        title: task.title,
+        restoredTo: previousStatus,
+        undoneBy: req.admin.username,
+        undoneAt: new Date()
+      });
+    }
+    
+    res.json({ success: true, data: task });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
   }
 });
 

@@ -8,6 +8,7 @@ const listingSchema = new mongoose.Schema({
     location: {
         address: String,
         city: String,
+        area: String,
         university: String,
         lat: Number,
         lng: Number
