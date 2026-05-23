@@ -35,10 +35,7 @@
             box-shadow: 0 2px 20px rgba(0,0,0,0.15);
             padding: 0.75rem 2rem;
         }
-        .nav-container {
-            max-width: 1400px; margin: 0 auto;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        /* nav-container grid layout is defined in theme.css */
         .logo {
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.75rem; font-weight: 700;
@@ -48,7 +45,7 @@
         }
         .logo span { font-weight: 300; color: white; }
         .logo img { width: 54px; height: 54px; object-fit: contain; display: block; border-radius: 10px; }
-        .nav-links { display: flex; gap: 2.5rem; align-items: center; list-style: none; }
+        /* nav-links base styling is in theme.css */
         .nav-links a {
             color: rgba(255,255,255,0.7);
             text-decoration: none; font-weight: 500;
@@ -503,18 +500,6 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0; right: 0;
-                background: var(--color-primary);
-                flex-direction: column;
-                padding: 1rem 2rem;
-                gap: 1rem;
-                border-top: 1px solid rgba(255,255,255,0.1);
-            }
-            .nav-links.active { display: flex; }
             .hamburger { display: block; }
             .filters-bar { flex-direction: column; align-items: stretch; }
             .filter-group select, .filter-group input { width: 100%; min-width: unset; }
@@ -528,6 +513,12 @@
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="/" class="logo" target="_self" aria-label="Ten&See home"><img src="/assets/logo.png" alt="Ten&See logo"></a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/" target="_self">Home</a></li>
+                <li><a href="/listings.html" target="_self">Listings</a></li>
+                <li><a href="/index.html#features" target="_self">Features</a></li>
+                <li><a href="/index.html#contact" target="_self">Contact</a></li>
+            </ul>
             <div class="nav-actions">
                 <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to dark mode">
                     <i class="fas fa-moon" aria-hidden="true"></i>
@@ -535,12 +526,6 @@
                 </button>
                 <button class="hamburger" onclick="toggleMobileNav()">☰</button>
             </div>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="/" target="_self">Home</a></li>
-                <li><a href="/listings.html" target="_self">Listings</a></li>
-                <li><a href="/index.html#features" target="_self">Features</a></li>
-                <li><a href="/index.html#contact" target="_self">Contact</a></li>
-            </ul>
         </div>
     </nav>
 

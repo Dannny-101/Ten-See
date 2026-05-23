@@ -34,10 +34,7 @@
             box-shadow: 0 2px 20px rgba(0,0,0,0.15);
             padding: 0.75rem 2rem;
         }
-        .nav-container {
-            max-width: 1400px; margin: 0 auto;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        /* nav-container grid layout is defined in theme.css */
         .logo {
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.75rem; font-weight: 700;
@@ -47,7 +44,7 @@
         }
         .logo span { font-weight: 300; color: white; }
         .logo img { width: 54px; height: 54px; object-fit: contain; display: block; border-radius: 10px; }
-        .nav-links { display: flex; gap: 2.5rem; align-items: center; list-style: none; }
+        /* nav-links base styling is in theme.css */
         .nav-links a {
             color: rgba(255,255,255,0.7);
             text-decoration: none; font-weight: 500;
@@ -268,12 +265,18 @@
             font-size: 1rem; color: var(--color-text-muted);
             max-width: 560px; line-height: 1.7;
         }
-        section[style*="background:white"] .section-title,
-        section[style*="background:white"] .section-desc,
-        section[style*="background:white"] .why-content h4,
-        section[style*="background:white"] .why-content p,
-        section[style*="background:white"] .wv-stat-label {
-            color: var(--color-primary);
+        /* ── WHY US SECTION ── */
+        .why-section {
+            background: var(--color-surface);
+        }
+        .why-section .section-title,
+        .why-section .section-desc,
+        .why-section .why-content h4,
+        .why-section .why-content p {
+            color: var(--color-text-main);
+        }
+        .why-section .wv-stat-label {
+            color: var(--color-text-muted);
         }
         .section-header { margin-bottom: 3rem; }
         .section-header-row {
@@ -462,7 +465,11 @@
             font-size: 2rem; font-weight: 700;
             color: var(--color-accent); line-height: 1;
         }
-        .wv-stat-label { font-size: 0.82rem; color: rgba(255,255,255,0.55); margin-top: 4px; }
+        .wv-stat-label {
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.7);
+            margin-top: 4px;
+        }
         .wv-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; position: relative; z-index: 1; }
 
         /* ── CTA ── */
@@ -632,8 +639,6 @@
             .search-row { grid-template-columns: 1fr 1fr; }
         }
         @media (max-width: 768px) {
-            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-primary); flex-direction: column; padding: 1rem 2rem; gap: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
-            .nav-links.active { display: flex; }
             .hamburger { display: block; }
             .how-grid { grid-template-columns: 1fr; }
             .features-grid { grid-template-columns: 1fr; }
@@ -925,7 +930,7 @@
     </section>
 
     <!-- ── WHY US ── -->
-    <section class="section" style="background:white;">
+    <section class="section why-section">
         <div class="section-inner">
             <div class="why-grid">
                 <div data-aos="fade-right">
