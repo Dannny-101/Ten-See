@@ -1857,17 +1857,30 @@
             });
             
             chatSocket.on('connect', () => {
-                console.log('Chat socket connected:', chatSocket.id);
+                console.log('🟢 Chat socket connected:', chatSocket.id);
                 
-                // Join room if we have a session
+                // ALWAYS try to join room when socket connects (handles initial + reconnect)
                 if (chatSessionId) {
-                    console.log('Joining chat room:', chatSessionId);
+                    console.log('🟢 Auto-joining chat room on connect:', chatSessionId);
+                    chatSocket.emit('join_chat', chatSessionId);
+                }
+            });
+            
+            chatSocket.on('reconnect', () => {
+                console.log('🟢 Chat socket reconnected');
+                if (chatSessionId) {
+                    console.log('🟢 Re-joining chat room after reconnect:', chatSessionId);
                     chatSocket.emit('join_chat', chatSessionId);
                 }
             });
             
             chatSocket.on('disconnect', (reason) => {
-                console.log('Chat socket disconnected:', reason);
+                console.log('🔴 Chat socket disconnected:', reason);
+            });
+            
+            // Receive ack from backend that we joined the room
+            chatSocket.on('joined_chat', (data) => {
+                console.log('✅ Confirmed joined chat room:', data);
             });
             
             // Listen for all messages (both own and admin replies)
@@ -1882,10 +1895,7 @@
                     console.log('ERROR: chatMessagesArea not found');
                     return;
                 }
-                if (area.style.display === 'none') {
-                    console.log('ERROR: chatMessagesArea is hidden');
-                    return;
-                }
+                // Note: We process messages even if chat area is hidden (will show when user opens chat)
                 
                 // Create unique message ID for deduplication
                 const msgId = data._id || `${data.sessionId}-${data.message?.substring(0, 30)}-${data.createdAt || Date.now()}`;
@@ -1960,43 +1970,69 @@
             
             // Admin connected - show banner and disable AI
             chatSocket.on('admin_connected', (data) => {
-                console.log('Admin connected:', data);
+                console.log('🟢 Admin connected event received:', data);
                 adminConnected = true;
+                
                 const area = document.getElementById('chatMessagesArea');
-                if (!area || area.style.display === 'none') return;
+                if (!area) {
+                    console.log('⚠️ chatMessagesArea not found for admin_connected');
+                    return;
+                }
                 
                 // Remove any existing AI typing indicators
                 const typingIndicator = document.querySelector('.chat-typing-indicator');
                 if (typingIndicator) typingIndicator.remove();
                 
+                // Don't add duplicate banners
+                const existingBanner = area.querySelector('.chat-agent-banner-connected');
+                if (existingBanner) {
+                    console.log('Banner already exists, skipping');
+                    return;
+                }
+                
                 // Show admin connected banner
                 const banner = document.createElement('div');
-                banner.className = 'chat-agent-banner';
-                banner.innerHTML = `<i class="fas fa-user-headset"></i> A human agent has connected and will assist you.`;
+                banner.className = 'chat-agent-banner chat-agent-banner-connected';
+                const adminName = data.adminName || 'Agent';
+                banner.innerHTML = `<i class="fas fa-user-headset"></i> <strong>${escapeHtml(adminName)}</strong> has joined the chat and will assist you. AI is now disabled.`;
                 area.appendChild(banner);
                 area.scrollTop = area.scrollHeight;
                 
                 // Update header status
-                document.getElementById('chatHeaderStatus').textContent = 'Agent online';
+                const statusEl = document.getElementById('chatHeaderStatus');
+                if (statusEl) statusEl.textContent = `${adminName} online`;
+                
+                console.log('✅ Admin connected banner shown');
             });
             
             // Admin disconnected
             chatSocket.on('admin_disconnected', (data) => {
-                console.log('Admin disconnected:', data);
+                console.log('🔴 Admin disconnected event received:', data);
                 adminConnected = false;
+                
                 const area = document.getElementById('chatMessagesArea');
-                if (!area || area.style.display === 'none') return;
+                if (!area) {
+                    console.log('⚠️ chatMessagesArea not found for admin_disconnected');
+                    return;
+                }
+                
+                // Remove the connected banner
+                const connectedBanner = area.querySelector('.chat-agent-banner-connected');
+                if (connectedBanner) connectedBanner.remove();
                 
                 const banner = document.createElement('div');
                 banner.className = 'chat-agent-banner';
                 banner.style.background = 'linear-gradient(135deg, #fee2e2, #fecaca)';
                 banner.style.borderColor = '#fca5a5';
                 banner.style.color = '#991b1b';
-                banner.innerHTML = `<i class="fas fa-info-circle"></i> Agent has disconnected. AI will resume shortly.`;
+                banner.innerHTML = `<i class="fas fa-info-circle"></i> Agent has left the chat. AI assistant has resumed.`;
                 area.appendChild(banner);
                 area.scrollTop = area.scrollHeight;
                 
-                document.getElementById('chatHeaderStatus').textContent = chatUserInfo.name || 'Online';
+                const statusEl = document.getElementById('chatHeaderStatus');
+                if (statusEl) statusEl.textContent = chatUserInfo.name || 'Online';
+                
+                console.log('✅ Admin disconnected banner shown');
             });
             
             // Typing indicator from admin

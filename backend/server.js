@@ -39,13 +39,24 @@ io.on('connection', (socket) => {
     
     // Visitor joins their chat session room
     socket.on('join_chat', (sessionId) => {
+        if (!sessionId) {
+            console.log(`⚠️ join_chat called without sessionId from socket ${socket.id}`);
+            return;
+        }
         socket.join(`chat_${sessionId}`);
         socket.sessionId = sessionId;
-        console.log(`Session ${sessionId} joined chat room`);
+        
+        // Get room size for confirmation
+        const roomSize = io.sockets.adapter.rooms.get(`chat_${sessionId}`)?.size || 0;
+        console.log(`✅ Socket ${socket.id} joined chat_${sessionId} (room now has ${roomSize} members)`);
+        
+        // Send ack back to client
+        socket.emit('joined_chat', { sessionId, roomSize });
         
         // Check if admin is already in this session and notify visitor
         if (activeAdminSessions.has(sessionId)) {
-            io.to(`chat_${sessionId}`).emit('admin_connected', { sessionId });
+            console.log(`📢 Notifying visitor ${socket.id} that admin is already in session ${sessionId}`);
+            socket.emit('admin_connected', { sessionId });
         }
     });
     
@@ -193,18 +204,32 @@ io.on('connection', (socket) => {
     // Admin sends reply - broadcast to visitor's room
     socket.on('admin_reply', (data) => {
         const { sessionId, message, adminName } = data;
-        if (sessionId && message) {
-            // Emit as 'message_received' so visitor listener catches it
-            io.to(`chat_${sessionId}`).emit('message_received', {
-                sessionId,
-                message,
-                name: adminName || 'Agent',
-                isAdmin: true,
-                senderType: 'human',
-                createdAt: new Date().toISOString()
-            });
-            console.log(`Admin reply emitted to chat_${sessionId} as message_received`);
+        if (!sessionId || !message) {
+            console.log(`⚠️ admin_reply missing data:`, { sessionId, hasMessage: !!message });
+            return;
         }
+        
+        // Check if visitor is in the room
+        const room = io.sockets.adapter.rooms.get(`chat_${sessionId}`);
+        const roomSize = room?.size || 0;
+        console.log(`📨 Admin reply for chat_${sessionId} - room has ${roomSize} members`);
+        
+        if (roomSize === 0) {
+            console.log(`⚠️ WARNING: No visitors in chat_${sessionId} room. Message will not reach visitor in real-time.`);
+        }
+        
+        // Emit as 'message_received' so visitor listener catches it
+        const payload = {
+            sessionId,
+            message,
+            name: adminName || 'Agent',
+            isAdmin: true,
+            senderType: 'human',
+            createdAt: new Date().toISOString()
+        };
+        
+        io.to(`chat_${sessionId}`).emit('message_received', payload);
+        console.log(`✅ Admin reply emitted to chat_${sessionId} (${roomSize} recipients):`, message.substring(0, 50));
     });
     
     // Typing indicators

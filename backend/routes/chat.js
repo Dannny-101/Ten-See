@@ -99,29 +99,51 @@ router.post('/session', async (req, res) => {
 
 router.get('/admin/sessions', async (req, res) => {
   try {
-    // Get all sessions with their status
+    // Get all sessions - aggregate visitor info from visitor/system messages, latest message info from any
     const sessions = await ChatMessage.aggregate([
       { $sort: { createdAt: -1 } },
       { $group: {
         _id: '$sessionId',
         lastMessage: { $first: '$message' },
         lastMessageAt: { $first: '$createdAt' },
-        name: { $first: '$name' },
-        email: { $first: '$email' },
-        phone: { $first: '$phone' },
+        // Use $push to collect all messages, then we'll filter for visitor name
+        allMessages: { $push: { name: '$name', email: '$email', phone: '$phone', senderType: '$senderType', isAdmin: '$isAdmin', createdAt: '$createdAt' } },
         unreadCount: { $sum: { $cond: [{ $eq: ['$isAdmin', false] }, { $cond: [{ $eq: ['$isRead', false] }, 1, 0] }, 0] } }
       }},
-      { $match: { name: { $ne: null } } }, // Only show sessions with user info
       { $sort: { lastMessageAt: -1 } }
     ]);
     
-    // Get session statuses
-    const sessionIds = sessions.map(s => s._id);
+    // Process to find visitor name from the messages (visitor or system messages have the real name)
+    const processedSessions = sessions.map(s => {
+      // Find first visitor or system message with a name (these contain the actual visitor info)
+      const visitorMsg = s.allMessages.find(m => 
+        (m.senderType === 'visitor' || m.senderType === 'system') && 
+        m.name && m.name !== 'AI Assistant' && m.name !== 'System'
+      );
+      
+      // Fallback: any message with a name that's not AI/System
+      const fallbackMsg = visitorMsg || s.allMessages.find(m => 
+        m.name && m.name !== 'AI Assistant' && m.name !== 'System'
+      );
+      
+      return {
+        _id: s._id,
+        lastMessage: s.lastMessage,
+        lastMessageAt: s.lastMessageAt,
+        name: fallbackMsg?.name || 'Anonymous',
+        email: fallbackMsg?.email || null,
+        phone: fallbackMsg?.phone || null,
+        unreadCount: s.unreadCount
+      };
+    }).filter(s => s.name && s.name !== 'Anonymous'); // Only show sessions with real user info
+    
+    // Get session statuses from ChatSession model
+    const sessionIds = processedSessions.map(s => s._id);
     const sessionStatuses = await ChatSession.find({ sessionId: { $in: sessionIds } });
     const statusMap = new Map(sessionStatuses.map(s => [s.sessionId, s]));
     
     // Merge status into sessions
-    const sessionsWithStatus = sessions.map(s => ({
+    const sessionsWithStatus = processedSessions.map(s => ({
       ...s,
       status: statusMap.get(s._id)?.status || 'active',
       closedAt: statusMap.get(s._id)?.closedAt,
