@@ -739,6 +739,34 @@
             font-size: 0.85rem; color: var(--color-text-main);
             margin-bottom: 0.5rem; max-width: 90%;
         }
+        /* Visitor (right-aligned, gold) */
+        .chat-bubble-visitor {
+            background: var(--color-accent); color: var(--color-primary);
+            border-radius: 12px 12px 4px 12px;
+            margin-left: auto;
+            font-weight: 500;
+        }
+        /* AI (left-aligned, blue/purple) */
+        .chat-bubble-ai {
+            background: linear-gradient(135deg, #e0e7ff, #ede9fe);
+            color: #3730a3;
+            border: 1px solid #c7d2fe;
+        }
+        .chat-bubble-ai .sender-label {
+            font-size: 0.7rem; color: #6366f1;
+            margin-bottom: 0.25rem; font-weight: 600;
+            display: flex; align-items: center; gap: 0.3rem;
+        }
+        /* Human agent (left-aligned, gray) */
+        .chat-bubble-human {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+        }
+        .chat-bubble-human .sender-label {
+            font-size: 0.7rem; color: var(--color-text-muted);
+            margin-bottom: 0.25rem; font-weight: 600;
+            display: flex; align-items: center; gap: 0.3rem;
+        }
         .chat-input-row { padding: 0.75rem; display: flex; gap: 0.5rem; border-top: 1px solid var(--color-border); }
         .chat-input-row input {
             flex: 1; background: var(--color-bg);
@@ -1454,6 +1482,12 @@
         let chatSessionId = null;
         let chatSocket = null;
 
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         // Initialize chat socket for real-time updates
         function initChatSocket() {
             if (chatSocket) return;
@@ -1481,20 +1515,29 @@
                 if (typingIndicator) typingIndicator.remove();
                 
                 const bubble = document.createElement('div');
-                bubble.className = 'chat-bubble';
                 
-                // Determine alignment based on senderType
+                // Determine style based on senderType
                 const senderType = data.senderType || (data.isAdmin ? 'human' : 'visitor');
                 
                 if (senderType === 'visitor') {
-                    // Visitor's own message - right side, skip if already shown optimistically
+                    // Visitor's own message - already shown optimistically, skip
                     return;
+                } else if (senderType === 'ai') {
+                    // AI message - blue/purple, left side
+                    bubble.className = 'chat-bubble chat-bubble-ai';
+                    bubble.innerHTML = `
+                        <div class="sender-label"><i class="fas fa-robot"></i> AI Assistant</div>
+                        <div>${escapeHtml(data.message)}</div>
+                    `;
                 } else {
-                    // Admin (human) or AI message - left side
-                    bubble.style.cssText = 'background:var(--color-surface);border:1px solid var(--color-border);border-radius:12px 12px 12px 4px;';
+                    // Human admin - gray, left side
+                    bubble.className = 'chat-bubble chat-bubble-human';
+                    bubble.innerHTML = `
+                        <div class="sender-label"><i class="fas fa-user-headset"></i> Agent</div>
+                        <div>${escapeHtml(data.message)}</div>
+                    `;
                 }
                 
-                bubble.textContent = data.message;
                 area.appendChild(bubble);
                 area.scrollTop = area.scrollHeight;
             });
@@ -1579,8 +1622,7 @@
             
             // Show own message optimistically
             const userBubble = document.createElement('div');
-            userBubble.className = 'chat-bubble';
-            userBubble.style.cssText = 'background:var(--color-accent);color:var(--color-primary);margin-left:auto;border-radius:12px 12px 4px 12px;font-weight:500;';
+            userBubble.className = 'chat-bubble chat-bubble-visitor';
             userBubble.textContent = msg;
             area.appendChild(userBubble);
             area.scrollTop = area.scrollHeight;
