@@ -106,18 +106,62 @@
             position: relative; overflow: hidden;
             padding: 7rem 2rem 4rem;
         }
+
+        /* Dynamic Hero Background System */
+        .hero-bg-container {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .hero-bg-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(26,26,46,0.7) 0%, rgba(26,26,46,0.85) 50%, rgba(26,26,46,0.95) 100%);
+            z-index: 1;
+        }
+        .hero-bg-image,
+        .hero-bg-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+        .hero-bg-slideshow {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .hero-bg-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            background-size: cover;
+            background-position: center;
+        }
+        .hero-bg-slide.active {
+            opacity: 1;
+        }
+
+        /* Original decorative gradients overlay */
         .hero::before {
             content: '';
             position: absolute; inset: 0;
             background:
                 radial-gradient(circle at 70% 45%, rgba(201,168,76,0.06) 0%, transparent 55%),
                 radial-gradient(circle at 10% 75%, rgba(44,56,48,0.12) 0%, transparent 45%);
+            z-index: 2;
         }
         .hero-grid {
             max-width: 1400px; margin: 0 auto; width: 100%;
             display: grid; grid-template-columns: 1fr 1fr;
             gap: 4rem; align-items: center;
-            position: relative; z-index: 1;
+            position: relative;
+            z-index: 3;
         }
         .hero-badge {
             display: inline-flex; align-items: center; gap: 0.5rem;
@@ -157,20 +201,54 @@
             position: relative; display: flex; justify-content: center; align-items: center;
         }
         .hero-card-main {
-            background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.12);
             border-radius: 24px; padding: 1.5rem;
             width: 100%; max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hero-card-main:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 35px 60px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
         }
         .hc-img {
-            width: 100%; height: 220px;
+            width: 100%; height: 240px;
             border-radius: 16px; overflow: hidden;
             margin-bottom: 1.25rem;
-            background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(27,46,75,0.5));
-            display: flex; align-items: center; justify-content: center;
+            position: relative;
+            background: linear-gradient(135deg, rgba(26,26,46,0.8), rgba(44,56,48,0.9));
         }
-        .hc-img i { font-size: 4rem; color: rgba(201,168,76,0.4); }
+        .hc-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .hero-card-main:hover .hc-img img {
+            transform: scale(1.05);
+        }
+        .hc-img-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .hc-img-badge {
+            background: rgba(201,168,76,0.9);
+            color: #1a1a2e;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
         .hc-badge {
             display: inline-flex; align-items: center; gap: 0.35rem;
             background: var(--color-accent); color: var(--color-primary);
@@ -179,11 +257,46 @@
             text-transform: uppercase; letter-spacing: 0.05em;
             margin-bottom: 0.75rem;
         }
-        .hc-title { color: white; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.4rem; }
-        .hc-location { color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-bottom: 1rem; }
+        .hc-title { color: white; font-size: 1.15rem; font-weight: 600; margin-bottom: 0.4rem; line-height: 1.3; }
+        .hc-location { color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-bottom: 0.75rem; }
         .hc-location i { color: var(--color-accent); margin-right: 4px; }
-        .hc-price { color: var(--color-accent); font-size: 1.4rem; font-weight: 700; }
-        .hc-price span { font-size: 0.8rem; font-weight: 400; color: rgba(255,255,255,0.4); }
+        .hc-details {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .hc-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.5);
+        }
+        .hc-detail i {
+            color: var(--color-accent);
+            font-size: 0.85rem;
+        }
+        .hc-price { color: var(--color-accent); font-size: 1.5rem; font-weight: 700; }
+        .hc-price span { font-size: 0.85rem; font-weight: 400; color: rgba(255,255,255,0.4); }
+        .hc-amenities {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .hc-amenity {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(201,168,76,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: var(--color-accent);
+        }
 
         .float-badge {
             position: absolute;
@@ -694,6 +807,25 @@
 
     <!-- ── HERO ── -->
     <section class="hero" id="home">
+        <!-- Dynamic Hero Background System - CONFIGURABLE -->
+        <!-- Options: 1) Single Image, 2) Video, 3) Slideshow -->
+        <div class="hero-bg-container" id="heroBgContainer">
+            <!-- SLIDESHOW MODE: Add slides below (will auto-rotate) -->
+            <div class="hero-bg-slideshow" id="heroSlideshow">
+                <div class="hero-bg-slide active" style="background-image: url('https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1920&q=80');"></div>
+                <div class="hero-bg-slide" style="background-image: url('https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1920&q=80');"></div>
+                <div class="hero-bg-slide" style="background-image: url('https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1920&q=80');"></div>
+            </div>
+
+            <!-- VIDEO MODE: Uncomment below and comment out slideshow above -->
+            <!-- <video class="hero-bg-video" autoplay muted loop playsinline>
+                <source src="/assets/hero-video.mp4" type="video/mp4">
+            </video> -->
+
+            <!-- SINGLE IMAGE MODE: Uncomment below and comment out slideshow -->
+            <!-- <img class="hero-bg-image" src="/assets/hero-bg.jpg" alt="Background"> -->
+        </div>
+
         <div class="hero-grid">
             <div data-aos="fade-right">
                 <div class="hero-badge">
@@ -729,14 +861,31 @@
                 </div>
             </div>
             <div class="hero-visual" data-aos="fade-left">
+                <!-- Enhanced Hero Popup Card with Rich Details -->
                 <div class="hero-card-main">
                     <div class="hc-img">
-                        <i class="fas fa-building"></i>
+                        <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80" alt="Modern studio apartment with city view">
+                        <div class="hc-img-overlay">
+                            <span class="hc-img-badge">Just Listed</span>
+                        </div>
                     </div>
-                    <span class="hc-badge"><i class="fas fa-star"></i> Featured</span>
-                    <div class="hc-title">Studio near Taylor's University</div>
-                    <div class="hc-location"><i class="fas fa-map-marker-alt"></i> Subang Jaya, Selangor</div>
-                    <div class="hc-price">RM 900 <span>/ month</span></div>
+                    <span class="hc-badge"><i class="fas fa-star"></i> Featured Listing</span>
+                    <div class="hc-title">Premium Studio with City View</div>
+                    <div class="hc-location"><i class="fas fa-map-marker-alt"></i> 5 min walk to Taylor's University • Subang Jaya</div>
+                    <div class="hc-details">
+                        <div class="hc-detail"><i class="fas fa-bed"></i> Studio</div>
+                        <div class="hc-detail"><i class="fas fa-bath"></i> 1 Bath</div>
+                        <div class="hc-detail"><i class="fas fa-wifi"></i> WiFi</div>
+                        <div class="hc-detail"><i class="fas fa-snowflake"></i> AC</div>
+                    </div>
+                    <div class="hc-price">RM 1,200 <span>/ month</span></div>
+                    <div class="hc-amenities">
+                        <div class="hc-amenity" title="Gym"><i class="fas fa-dumbbell"></i></div>
+                        <div class="hc-amenity" title="Swimming Pool"><i class="fas fa-swimming-pool"></i></div>
+                        <div class="hc-amenity" title="24/7 Security"><i class="fas fa-shield-alt"></i></div>
+                        <div class="hc-amenity" title="Parking"><i class="fas fa-car"></i></div>
+                        <div class="hc-amenity" title="Laundry"><i class="fas fa-tshirt"></i></div>
+                    </div>
                 </div>
                 <div class="float-badge fb-top" data-aos="fade-down" data-aos-delay="300">
                     <div class="fb-icon gold"><i class="fas fa-shield-alt"></i></div>
@@ -1389,6 +1538,32 @@
             </div>
         </div>
     </div>
+
+    <!-- Hero Slideshow JavaScript -->
+    <script>
+        // HERO SLIDESHOW SYSTEM
+        // Automatically cycles through hero background slides every 6 seconds
+        // Configurable: Change slideInterval (ms) to adjust rotation speed
+        (function initHeroSlideshow() {
+            const slideshow = document.getElementById('heroSlideshow');
+            if (!slideshow) return;
+
+            const slides = slideshow.querySelectorAll('.hero-bg-slide');
+            if (slides.length <= 1) return;
+
+            let currentSlide = 0;
+            const slideInterval = 6000; // 6 seconds per slide
+
+            function nextSlide() {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }
+
+            // Start slideshow after initial delay
+            setInterval(nextSlide, slideInterval);
+        })();
+    </script>
 
     <script>
         // Cookie functions
