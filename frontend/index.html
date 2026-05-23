@@ -46,7 +46,8 @@
             display: inline-flex; align-items: center;
         }
         .logo span { font-weight: 300; color: white; }
-        .logo img { width: 54px; height: 54px; object-fit: contain; display: block; border-radius: 10px; }
+        .logo img { width: 54px; height: 54px; object-fit: contain; display: block; border-radius: 0; background: transparent; }
+        .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 600; color: white; margin-left: 0.75rem; letter-spacing: -0.02em; }
         .nav-links { display: flex; gap: 2.5rem; align-items: center; list-style: none; position: absolute; left: 50%; transform: translateX(-50%); }
         .nav-links a {
             color: rgba(255,255,255,0.7);
@@ -661,7 +662,7 @@
     <!-- ── NAVBAR ── -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <a href="/" class="logo" target="_self" aria-label="Ten&See home"><img src="/assets/logo.png" alt="Ten&See logo"></a>
+            <a href="/" class="logo" target="_self" aria-label="Ten&See home"><img src="/assets/logo.png" alt="Ten&See logo"><span class="logo-text">Tenandsee</span></a>
             <ul class="nav-links" id="navLinks">
                 <li><a href="/" target="_self">Home</a></li>
                 <li><a href="/listings.html" target="_self">Listings</a></li>
@@ -711,8 +712,8 @@
                         <div class="hero-stat-label">Malaysian Universities</div>
                     </div>
                     <div>
-                        <div class="hero-stat-value">5</div>
-                        <div class="hero-stat-label">Cities Covered</div>
+                        <div class="hero-stat-value">KL</div>
+                        <div class="hero-stat-label">Currently serving Kuala Lumpur</div>
                     </div>
                 </div>
             </div>
@@ -947,7 +948,7 @@
                             <div class="why-icon"><i class="fas fa-user-check"></i></div>
                             <div class="why-content">
                                 <h4>No Middlemen</h4>
-                                <p>You deal directly with us. No third-party agents inflating prices or adding hidden fees.</p>
+                                <p>Direct partnerships with property owners ensure transparent pricing with no hidden fees or commission markups. Every listing is personally vetted by our team to guarantee quality and authenticity.</p>
                             </div>
                         </div>
                         <div class="why-item">
@@ -961,7 +962,7 @@
                             <div class="why-icon"><i class="fas fa-hand-holding-heart"></i></div>
                             <div class="why-content">
                                 <h4>Student-First Approach</h4>
-                                <p>Flexible move-in dates, short-term options, and pricing that works for student budgets.</p>
+                                <p>Flexible move-in dates and pricing structured around student budgets. We understand the academic calendar and align our services to support your educational journey.</p>
                             </div>
                         </div>
                     </div>
@@ -982,8 +983,8 @@
                         </div>
                     </div>
                     <div class="wv-stat" style="margin-bottom:0;background:rgba(201,168,76,0.08);border-color:rgba(201,168,76,0.2);">
-                        <div class="wv-stat-num" style="font-size:1.25rem;">🇲🇾 Malaysia Only</div>
-                        <div class="wv-stat-label">100% focused on the local student market</div>
+                        <div class="wv-stat-num" style="font-size:1.25rem;">Currently serving KL</div>
+                        <div class="wv-stat-label">Focused expansion to more cities soon</div>
                     </div>
                 </div>
             </div>
