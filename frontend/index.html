@@ -1525,21 +1525,15 @@
             });
         }
 
-        // Initialize socket when chat opens
-        const originalToggleChat = toggleChat;
-        toggleChat = function() {
+        function toggleChat() {
             chatOpen = !chatOpen;
-            document.getElementById('chatWidget').classList.toggle('active', chatOpen);
-            document.getElementById('chatIcon').className = chatOpen ? 'fas fa-times' : 'fas fa-comments';
+            const widget = document.getElementById('chatWidget') || document.getElementById('chatPopup');
+            if (widget) widget.classList.toggle('active', chatOpen);
+            const icon = document.getElementById('chatIcon');
+            if (icon) icon.className = chatOpen ? 'fas fa-times' : 'fas fa-comments';
             if (chatOpen && !chatSocket) {
                 initChatSocket();
             }
-        };
-
-        function toggleChat() {
-            chatOpen = !chatOpen;
-            document.getElementById('chatPopup').classList.toggle('active', chatOpen);
-            document.getElementById('chatIcon').className = chatOpen ? 'fas fa-times' : 'fas fa-comments';
         }
 
         // Typing indicator timeout
