@@ -1334,11 +1334,13 @@ function autoPopulateArea() {
   const university = document.getElementById('lUniversity').value;
   const areaInput = document.getElementById('lArea');
   
-  if (university && universityAreaMap[university] && !areaInput.value) {
+  if (university && universityAreaMap[university]) {
     const areas = universityAreaMap[university];
     if (areas && areas.length > 0) {
-      areaInput.value = areas[0]; // Use first area as default
+      areaInput.value = areas[0]; // Always update to first area for selected university
     }
+  } else if (!university) {
+    areaInput.value = ''; // Clear area if no university selected
   }
 }
 

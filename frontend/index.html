@@ -750,27 +750,25 @@
             <h3><i class="fas fa-search" style="color:var(--color-accent);margin-right:0.5rem;"></i> Quick Search</h3>
             <div class="search-row">
                 <div class="search-field">
-                    <label>City</label>
-                    <select id="qCity">
-                        <option value="">Any City</option>
-                        <option>Subang Jaya</option>
-                        <option>Petaling Jaya</option>
-                        <option>Cyberjaya</option>
-                        <option>Cheras</option>
-                        <option>Kuala Lumpur</option>
-                        <option>Nilai</option>
+                    <label>University</label>
+                    <select id="qUni" onchange="updateAreaOptions()">
+                        <option value="">Any University</option>
+                        <option value="Taylor's University">Taylor's University</option>
+                        <option value="Sunway University">Sunway University</option>
+                        <option value="Monash University Malaysia">Monash University Malaysia</option>
+                        <option value="UCSI University">UCSI University</option>
+                        <option value="Asia Pacific University (APU)">Asia Pacific University (APU)</option>
+                        <option value="University of Malaya (UM)">University of Malaya (UM)</option>
+                        <option value="Universiti Putra Malaysia (UPM)">Universiti Putra Malaysia (UPM)</option>
+                        <option value="HELP University">HELP University</option>
+                        <option value="INTI International College">INTI International College</option>
+                        <option value="Multimedia University (MMU) Cyberjaya">Multimedia University (MMU) Cyberjaya</option>
                     </select>
                 </div>
                 <div class="search-field">
-                    <label>University</label>
-                    <select id="qUni">
-                        <option value="">Any University</option>
-                        <option>Taylor's University</option>
-                        <option>Sunway University</option>
-                        <option>Monash University Malaysia</option>
-                        <option>INTI International University</option>
-                        <option>Help University</option>
-                        <option>SEGi University</option>
+                    <label>Area</label>
+                    <select id="qArea">
+                        <option value="">Any Area (Klang Valley)</option>
                     </select>
                 </div>
                 <div class="search-field">
@@ -1162,14 +1160,59 @@
             document.getElementById('navLinks').classList.toggle('active');
         }
 
+        // University to Area mapping (frontend mirror of backend)
+        const UNIVERSITY_AREA_MAP = {
+            "Taylor's University": ["Subang Jaya", "Lakeside Campus"],
+            "Sunway University": ["Bandar Sunway"],
+            "Monash University Malaysia": ["Bandar Sunway"],
+            "UCSI University": ["Cheras", "Taman Connaught"],
+            "Asia Pacific University (APU)": ["Bukit Jalil"],
+            "University of Malaya (UM)": ["Petaling Jaya", "Kerinchi"],
+            "Universiti Putra Malaysia (UPM)": ["Serdang"],
+            "HELP University": ["Damansara Heights"],
+            "INTI International College": ["Kuala Lumpur City Centre"],
+            "Multimedia University (MMU) Cyberjaya": ["Cyberjaya"]
+        };
+
+        // All areas in Klang Valley
+        const ALL_AREAS = ["Subang Jaya", "Bandar Sunway", "Petaling Jaya", "Cheras", "Bukit Jalil", 
+            "Cyberjaya", "Damansara Heights", "Kuala Lumpur City Centre", "Serdang", "Lakeside Campus", 
+            "Taman Connaught", "Kerinchi", "Shah Alam", "Kajang", "Puchong"];
+
+        // Update area dropdown based on university selection
+        function updateAreaOptions() {
+            const uni = document.getElementById('qUni').value;
+            const areaSelect = document.getElementById('qArea');
+            const currentArea = areaSelect.value;
+            
+            let areas = [];
+            if (uni && UNIVERSITY_AREA_MAP[uni]) {
+                areas = UNIVERSITY_AREA_MAP[uni];
+            } else {
+                areas = ALL_AREAS;
+            }
+            
+            // Build options
+            let options = '<option value="">Any Area (Klang Valley)</option>';
+            areas.forEach(area => {
+                options += `<option value="${area}">${area}</option>`;
+            });
+            areaSelect.innerHTML = options;
+            
+            // Restore selection if still valid
+            if (areas.includes(currentArea)) {
+                areaSelect.value = currentArea;
+            }
+        }
+
         // Quick search redirect
         function quickSearch() {
-            const city = document.getElementById('qCity').value;
             const uni = document.getElementById('qUni').value;
+            const area = document.getElementById('qArea').value;
             const type = document.getElementById('qType').value;
             let params = new URLSearchParams();
-            if (city) params.set('city', city);
             if (uni) params.set('university', uni);
+            if (area) params.set('area', area);
             if (type) params.set('type', type);
             window.location.href = `/listings.html${params.toString() ? '?' + params : ''}`;
         }
