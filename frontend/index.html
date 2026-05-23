@@ -39,15 +39,12 @@
             display: flex; justify-content: space-between; align-items: center;
         }
         .logo {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.75rem; font-weight: 700;
-            color: var(--color-accent);
             text-decoration: none;
             display: inline-flex; align-items: center;
         }
-        .logo span { font-weight: 300; color: white; }
         .logo img { width: 54px; height: 54px; object-fit: contain; display: block; border-radius: 0; background: transparent; }
-        .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 600; color: white; margin-left: 0.75rem; letter-spacing: -0.02em; }
+        .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 600; color: white; margin-left: 0.75rem; letter-spacing: -0.02em; display: flex; align-items: center; }
+        .logo-text span { color: var(--color-accent); font-weight: 700; }
         .nav-links { display: flex; gap: 2.5rem; align-items: center; list-style: none; position: absolute; left: 50%; transform: translateX(-50%); }
         .nav-links a {
             color: rgba(255,255,255,0.7);
@@ -676,7 +673,7 @@
     <!-- ── NAVBAR ── -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <a href="/" class="logo" target="_self" aria-label="Ten&See home"><img src="/assets/logo.png" alt="Ten&See logo"><span class="logo-text">Tenandsee</span></a>
+            <a href="/" class="logo" target="_self" aria-label="Ten&See home"><img src="/assets/logo.png" alt="Ten&See logo"><span class="logo-text">Ten<span>&</span>See</span></a>
             <ul class="nav-links" id="navLinks">
                 <li><a href="/" target="_self">Home</a></li>
                 <li><a href="/listings.html" target="_self">Listings</a></li>
