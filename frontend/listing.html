@@ -318,7 +318,7 @@
                     <!-- Amenities -->
                     ${l.amenities && l.amenities.length ? `
                     <div class="info-card">
-                        <h3 style="font-size:1rem;font-weight:600;color:var(--color-primary);margin-bottom:0.5rem;">Amenities</h3>
+                        <h3 style="font-size:1rem;font-weight:600;color:var(--color-text-main);margin-bottom:0.5rem;">Amenities</h3>
                         <div class="amenities-grid">
                             ${l.amenities.map(a => `<span class="amenity"><i class="fas fa-check"></i> ${a}</span>`).join('')}
                         </div>
@@ -327,7 +327,7 @@
 
                     <!-- Availability -->
                     <div class="info-card">
-                        <h3 style="font-size:1rem;font-weight:600;color:var(--color-primary);margin-bottom:0.75rem;">Availability</h3>
+                        <h3 style="font-size:1rem;font-weight:600;color:var(--color-text-main);margin-bottom:0.75rem;">Availability</h3>
                         <div class="avail-row"><span class="avail-label">Available From</span><span class="avail-value">${formatDate(l.availableFrom)}</span></div>
                         ${l.availableUntil ? `<div class="avail-row"><span class="avail-label">Available Until</span><span class="avail-value">${formatDate(l.availableUntil)}</span></div>` : ''}
                         <div class="avail-row"><span class="avail-label">Status</span><span class="avail-value" style="color:var(--color-success);"><i class="fas fa-circle" style="font-size:0.6rem;margin-right:0.35rem;"></i>Available</span></div>
