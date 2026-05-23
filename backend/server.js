@@ -38,6 +38,19 @@ io.on('connection', (socket) => {
         console.log(`Session ${sessionId} joined chat room`);
     });
     
+    // Admin sends reply - broadcast to visitor's room
+    socket.on('admin_reply', (data) => {
+        const { sessionId, message } = data;
+        if (sessionId && message) {
+            io.to(`chat_${sessionId}`).emit('admin_reply', {
+                sessionId,
+                message,
+                createdAt: new Date().toISOString()
+            });
+            console.log(`Admin reply emitted to chat_${sessionId}`);
+        }
+    });
+    
     socket.on('disconnect', () => {
         console.log('Client disconnected:', socket.id);
     });

@@ -2161,8 +2161,36 @@ async function sendReply() {
   const msg = input.value.trim();
   if (!msg || !S.currentSession) return;
   input.value = '';
-  await api('/api/chat', { method: 'POST', body: JSON.stringify({ sessionId: S.currentSession, message: msg, isAdmin: true }) });
-  await loadMessages(S.currentSession);
+  
+  // Optimistically add message to UI
+  const container = document.getElementById('chatMessages');
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble msg-admin';
+  bubble.innerHTML = `
+    <div class="msg-content">${msg}</div>
+    <div class="msg-time">Just now</div>
+  `;
+  container.appendChild(bubble);
+  container.scrollTop = container.scrollHeight;
+  
+  // Try socket first, fallback to REST
+  let sentViaSocket = false;
+  if (socket && socket.connected) {
+    socket.emit('admin_reply', { sessionId: S.currentSession, message: msg });
+    sentViaSocket = true;
+    console.log('Admin reply sent via socket');
+  }
+  
+  // Always save to database via REST (socket just notifies the visitor)
+  try {
+    await api('/api/chat', { method: 'POST', body: JSON.stringify({ sessionId: S.currentSession, message: msg, isAdmin: true }) });
+    if (!sentViaSocket) {
+      console.log('Admin reply saved via REST (socket unavailable)');
+    }
+  } catch (e) {
+    console.error('Failed to save reply:', e);
+    toast('Failed to send message', 'error');
+  }
 }
 
 // ── ANALYTICS ──
@@ -2569,6 +2597,8 @@ function initSocket() {
   
   // Chat events
   socket.on('new_chat_message', (data) => {
+    console.log('new_chat_message received:', data);
+    
     // Update chat badge
     const badge = document.getElementById('chatBadge');
     if (badge) {
@@ -2601,9 +2631,28 @@ function initSocket() {
     // Show toast notification
     toast(`New message from ${data.name}: ${data.message.substring(0, 40)}${data.message.length > 40 ? '...' : ''}`);
     
-    // Play notification sound
+    // Play notification sound with debugging
     const sound = document.getElementById('notifSound');
-    if (sound) sound.play().catch(() => {});
+    if (sound) {
+      console.log('Playing notification sound...');
+      sound.volume = 1.0;
+      sound.currentTime = 0;
+      const playPromise = sound.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          console.log('Notification sound played successfully');
+        }).catch(err => {
+          console.error('Notification sound failed:', err.message);
+          // Try to unblock audio context on user interaction
+          document.addEventListener('click', function unblockAudio() {
+            sound.play().catch(() => {});
+            document.removeEventListener('click', unblockAudio);
+          }, { once: true });
+        });
+      }
+    } else {
+      console.error('notifSound element not found');
+    }
   });
 }
 

@@ -11,6 +11,7 @@
     <script src="/theme.js"></script>
     <link rel="stylesheet" href="/theme.css">
     <link rel="stylesheet" href="/cookie-consent.css">
+    <script src="/socket.io/socket.io.js"></script>
     <style>
         html { scroll-behavior: smooth; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1451,6 +1452,52 @@
         // Chat widget
         let chatOpen = false;
         let chatSessionId = null;
+        let chatSocket = null;
+
+        // Initialize chat socket for real-time updates
+        function initChatSocket() {
+            if (chatSocket) return;
+            
+            chatSocket = io(window.location.origin, {
+                transports: ['websocket', 'polling'],
+                reconnection: true
+            });
+            
+            chatSocket.on('connect', () => {
+                console.log('Chat socket connected:', chatSocket.id);
+                // Join room once we have a session
+                if (chatSessionId) {
+                    chatSocket.emit('join_chat', chatSessionId);
+                }
+            });
+            
+            // Listen for admin replies
+            chatSocket.on('admin_reply', (data) => {
+                console.log('Admin reply received:', data);
+                const area = document.querySelector('.chat-messages-area');
+                const reply = document.createElement('div');
+                reply.className = 'chat-bubble';
+                reply.style.cssText = 'background:var(--color-surface);border:1px solid var(--color-border);border-radius:12px 12px 12px 4px;';
+                reply.textContent = data.message;
+                area.appendChild(reply);
+                area.scrollTop = area.scrollHeight;
+            });
+            
+            chatSocket.on('connect_error', (err) => {
+                console.error('Chat socket error:', err.message);
+            });
+        }
+
+        // Initialize socket when chat opens
+        const originalToggleChat = toggleChat;
+        toggleChat = function() {
+            chatOpen = !chatOpen;
+            document.getElementById('chatWidget').classList.toggle('active', chatOpen);
+            document.getElementById('chatIcon').className = chatOpen ? 'fas fa-times' : 'fas fa-comments';
+            if (chatOpen && !chatSocket) {
+                initChatSocket();
+            }
+        };
 
         function toggleChat() {
             chatOpen = !chatOpen;
@@ -1476,6 +1523,10 @@
                     const s = await fetch('/api/chat/session', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ source: 'landing_page' }) });
                     const sd = await s.json();
                     chatSessionId = sd.data?._id;
+                    // Join socket room for this session
+                    if (chatSocket && chatSocket.connected) {
+                        chatSocket.emit('join_chat', chatSessionId);
+                    }
                 }
                 await fetch('/api/chat', {
                     method: 'POST',
