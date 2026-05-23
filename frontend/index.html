@@ -1769,8 +1769,9 @@
                 if (!area || area.style.display === 'none') return;
                 
                 // Deduplication: Skip if we've already processed this message
-                // Use message content + timestamp rounded to seconds for socket messages
-                const msgId = data._id || `${data.sessionId}-${data.message}-${Math.floor(new Date(data.createdAt).getTime()/1000)}`;
+                // Use timestamp or current time if not provided
+                const timestamp = data.createdAt ? Math.floor(new Date(data.createdAt).getTime()/1000) : Math.floor(Date.now()/1000);
+                const msgId = data._id || `${data.sessionId}-${data.message?.substring(0, 20)}-${timestamp}`;
                 if (processedMessageIds.has(msgId)) {
                     console.log('Skipping duplicate message:', msgId);
                     return;
@@ -1814,6 +1815,28 @@
                         <div>${escapeHtml(data.message)}</div>
                     `;
                 }
+                
+                area.appendChild(bubble);
+                area.scrollTop = area.scrollHeight;
+            });
+            
+            // Also listen for admin_reply event (fallback)
+            chatSocket.on('admin_reply', (data) => {
+                console.log('Admin reply received:', data);
+                const area = document.getElementById('chatMessagesArea');
+                if (!area || area.style.display === 'none') return;
+                
+                // Remove typing indicator
+                const typingIndicator = document.querySelector('.chat-typing-indicator');
+                if (typingIndicator) typingIndicator.remove();
+                
+                const bubble = document.createElement('div');
+                bubble.className = 'chat-bubble chat-bubble-human';
+                const adminName = data.name || data.adminName || 'Agent';
+                bubble.innerHTML = `
+                    <div class="sender-label"><i class="fas fa-user-headset"></i> ${escapeHtml(adminName)}</div>
+                    <div>${escapeHtml(data.message)}</div>
+                `;
                 
                 area.appendChild(bubble);
                 area.scrollTop = area.scrollHeight;
@@ -1945,7 +1968,7 @@
             area.appendChild(userBubble);
             area.scrollTop = area.scrollHeight;
 
-            // Send via socket (real-time)
+            // Send via socket (real-time) or REST as fallback
             if (chatSocket && chatSocket.connected) {
                 chatSocket.emit('send_message', {
                     sessionId: chatSessionId,
@@ -1954,6 +1977,24 @@
                     email: chatUserInfo.email,
                     phone: chatUserInfo.phone
                 });
+            } else {
+                // Fallback to REST API
+                try {
+                    await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            sessionId: chatSessionId,
+                            message: msg,
+                            name: chatUserInfo.name,
+                            email: chatUserInfo.email,
+                            phone: chatUserInfo.phone,
+                            isAdmin: false
+                        })
+                    });
+                } catch (e) {
+                    console.error('Failed to send message:', e);
+                }
             }
 
             area.scrollTop = area.scrollHeight;
