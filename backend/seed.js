@@ -9,22 +9,23 @@ async function seed() {
     // Clear existing data
     await Listing.deleteMany({});
 
-    // Create sample listings
+    // Create sample listings - Kuala Lumpur / Selangor area
     const listings = [
         {
-            title: "Modern Studio Near Campus",
-            description: "A fully furnished modern studio apartment just 5 minutes walk from the university. Features high-speed WiFi, study desk, and kitchenette.",
-            price: 450,
+            title: "Modern Studio Near Sunway Campus",
+            description: "A fully furnished modern studio apartment just 5 minutes walk from Sunway University. Features high-speed WiFi, study desk, and kitchenette. Perfect for Monash and Sunway students.",
+            price: 1200,
             pricePeriod: "month",
             location: {
-                address: "123 University Ave",
-                city: "Boston",
-                university: "Harvard University",
-                lat: 42.3770,
-                lng: -71.1167
+                address: "Jalan PJS 11/28, Bandar Sunway",
+                city: "Petaling Jaya",
+                area: "Bandar Sunway",
+                university: "Sunway University",
+                lat: 3.0728,
+                lng: 101.6070
             },
             propertyType: "studio",
-            amenities: ["WiFi", "Furnished", "Kitchen", "Laundry", "Gym Access"],
+            amenities: ["WiFi", "Furnished", "Kitchen", "Laundry", "Gym Access", "Air Conditioning"],
             images: ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800"],
             bedrooms: 0,
             bathrooms: 1,
@@ -33,23 +34,24 @@ async function seed() {
             availableUntil: new Date("2027-05-31"),
             isActive: true,
             isFeatured: true,
-            whatsappNumber: "1234567890",
-            agentName: "Sarah Johnson"
+            whatsappNumber: "+60123456789",
+            agentName: "Sarah Ahmad"
         },
         {
-            title: "Shared Student Apartment",
-            description: "Spacious 3-bedroom apartment shared with other students. Large common area, fully equipped kitchen, and in-unit laundry.",
-            price: 320,
+            title: "Shared Apartment Near Taylor's Lakeside",
+            description: "Spacious 3-bedroom apartment shared with other students. Large common area, fully equipped kitchen, and in-unit laundry. Walking distance to Taylor's University.",
+            price: 900,
             pricePeriod: "month",
             location: {
-                address: "456 College St",
-                city: "Boston",
-                university: "MIT",
-                lat: 42.3601,
-                lng: -71.0942
+                address: "Jalan Taylor's, Lakeside Campus",
+                city: "Subang Jaya",
+                area: "Lakeside Campus",
+                university: "Taylor's University",
+                lat: 3.0640,
+                lng: 101.6180
             },
             propertyType: "shared_room",
-            amenities: ["WiFi", "Furnished", "Kitchen", "Laundry", "Parking", "Study Room"],
+            amenities: ["WiFi", "Furnished", "Kitchen", "Laundry", "Parking", "Study Room", "Swimming Pool"],
             images: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800"],
             bedrooms: 3,
             bathrooms: 2,
@@ -58,23 +60,24 @@ async function seed() {
             availableUntil: new Date("2027-06-30"),
             isActive: true,
             isFeatured: false,
-            whatsappNumber: "1234567890",
-            agentName: "Mike Chen"
+            whatsappNumber: "+60123456789",
+            agentName: "Muhammad Chen"
         },
         {
-            title: "Private Room in Student House",
-            description: "Private bedroom in a quiet student house. Shared bathroom and kitchen with 2 other students. Perfect for focused studying.",
-            price: 280,
+            title: "Private Room Near APU Bukit Jalil",
+            description: "Private bedroom in a quiet student house. Shared bathroom and kitchen with 2 other students. 10 minutes to Asia Pacific University. Perfect for focused studying.",
+            price: 650,
             pricePeriod: "month",
             location: {
-                address: "789 Scholar Lane",
-                city: "Cambridge",
-                university: "Harvard University",
-                lat: 42.3736,
-                lng: -71.1097
+                address: "Jalan Jalil Perkasa 13, Bukit Jalil",
+                city: "Kuala Lumpur",
+                area: "Bukit Jalil",
+                university: "Asia Pacific University (APU)",
+                lat: 3.0550,
+                lng: 101.6300
             },
             propertyType: "private_room",
-            amenities: ["WiFi", "Desk", "Wardrobe", "Shared Kitchen", "Garden Access"],
+            amenities: ["WiFi", "Desk", "Wardrobe", "Shared Kitchen", "24/7 Security"],
             images: ["https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=800"],
             bedrooms: 1,
             bathrooms: 1,
@@ -83,23 +86,24 @@ async function seed() {
             availableUntil: new Date("2027-07-31"),
             isActive: true,
             isFeatured: true,
-            whatsappNumber: "1234567890",
-            agentName: "Emma Davis"
+            whatsappNumber: "+60123456789",
+            agentName: "Emma Abdullah"
         },
         {
-            title: "Luxury 2BR Student Apartment",
-            description: "Premium 2-bedroom apartment with modern furnishings, balcony, and building amenities including pool and fitness center.",
-            price: 650,
+            title: "Luxury 2BR Near Monash University",
+            description: "Premium 2-bedroom apartment with modern furnishings, balcony, and building amenities including pool and fitness center. Walking distance to Monash and Sunway campuses.",
+            price: 2500,
             pricePeriod: "month",
             location: {
-                address: "321 Elite Blvd",
-                city: "Boston",
-                university: "Boston University",
-                lat: 42.3503,
-                lng: -71.0810
+                address: "Jalan Lagoon Selatan, Bandar Sunway",
+                city: "Petaling Jaya",
+                area: "Bandar Sunway",
+                university: "Monash University Malaysia",
+                lat: 3.0720,
+                lng: 101.6060
             },
             propertyType: "apartment",
-            amenities: ["WiFi", "Furnished", "Kitchen", "Laundry", "Pool", "Gym", "Parking", "Balcony"],
+            amenities: ["WiFi", "Furnished", "Kitchen", "Laundry", "Pool", "Gym", "Parking", "Balcony", "Air Conditioning"],
             images: ["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800"],
             bedrooms: 2,
             bathrooms: 2,
@@ -108,23 +112,24 @@ async function seed() {
             availableUntil: new Date("2027-05-15"),
             isActive: true,
             isFeatured: false,
-            whatsappNumber: "1234567890",
+            whatsappNumber: "+60123456789",
             agentName: "James Wilson"
         },
         {
-            title: "Cozy Student House",
-            description: "Traditional student house with 4 bedrooms, large garden, and communal study space. Great for group of friends.",
-            price: 250,
+            title: "Cozy Student House Near UCSI",
+            description: "Traditional student house with 4 bedrooms, large common area, and communal study space. Great for group of friends. Walking distance to UCSI University Cheras.",
+            price: 550,
             pricePeriod: "month",
             location: {
-                address: "555 Campus Rd",
-                city: "Cambridge",
-                university: "MIT",
-                lat: 42.3584,
-                lng: -71.0917
+                address: "Jalan Menara Gading, Taman Connaught",
+                city: "Kuala Lumpur",
+                area: "Cheras",
+                university: "UCSI University",
+                lat: 3.0800,
+                lng: 101.6200
             },
             propertyType: "house",
-            amenities: ["WiFi", "Furnished", "Kitchen", "Laundry", "Garden", "BBQ Area", "Study Room"],
+            amenities: ["WiFi", "Furnished", "Kitchen", "Laundry", "Study Room", "BBQ Area"],
             images: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800"],
             bedrooms: 4,
             bathrooms: 2,
@@ -133,8 +138,8 @@ async function seed() {
             availableUntil: new Date("2027-08-31"),
             isActive: true,
             isFeatured: false,
-            whatsappNumber: "1234567890",
-            agentName: "Lisa Park"
+            whatsappNumber: "+60123456789",
+            agentName: "Lisa Wong"
         }
     ];
 

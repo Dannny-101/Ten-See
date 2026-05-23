@@ -693,11 +693,17 @@
         </div>
         <div class="form-group">
           <label class="form-label">City *</label>
-          <input class="form-input" id="lCity" required>
+          <input class="form-input" id="lCity" value="Kuala Lumpur" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Area *</label>
+          <input class="form-input" id="lArea" placeholder="e.g. Subang Jaya, Cheras" required>
         </div>
         <div class="form-group">
           <label class="form-label">University</label>
-          <input class="form-input" id="lUniversity">
+          <select class="form-input" id="lUniversity" onchange="autoPopulateArea()">
+            <option value="">Select University</option>
+          </select>
         </div>
         <div class="form-group">
           <label class="form-label">Address</label>
@@ -1243,13 +1249,13 @@ function filterListings(search) {
   renderListingsBody(S.listings.filter(l => !q || l.title?.toLowerCase().includes(q) || l.location?.city?.toLowerCase().includes(q)));
 }
 
-function openListingModal(l = null) {
+async function openListingModal(l = null) {
   document.getElementById('listingModalTitle').textContent = l ? 'Edit Listing' : 'Add Listing';
   document.getElementById('listingId').value = l?._id || '';
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v ?? ''; };
   set('lTitle', l?.title); set('lDesc', l?.description); set('lPrice', l?.price);
   set('lPeriod', l?.pricePeriod || 'month'); set('lType', l?.propertyType || 'apartment');
-  set('lCity', l?.location?.city); set('lUniversity', l?.location?.university);
+  set('lCity', l?.location?.city); set('lArea', l?.location?.area); set('lUniversity', l?.location?.university);
   set('lAddress', l?.location?.address); set('lBedrooms', l?.bedrooms);
   set('lBathrooms', l?.bathrooms); set('lOccupants', l?.maxOccupants);
   set('lWhatsapp', l?.whatsappNumber);
@@ -1258,6 +1264,7 @@ function openListingModal(l = null) {
   set('lFrom', l?.availableFrom?.split('T')[0]); set('lUntil', l?.availableUntil?.split('T')[0]);
   document.getElementById('lActive').checked = l ? l.isActive : true;
   document.getElementById('lFeatured').checked = l?.isFeatured || false;
+  await loadUniversities(); // Load university dropdown
   openModal('listingModal');
 }
 
@@ -1271,7 +1278,7 @@ async function saveListing() {
     price: parseInt(document.getElementById('lPrice').value),
     pricePeriod: document.getElementById('lPeriod').value,
     propertyType: document.getElementById('lType').value,
-    location: { city: document.getElementById('lCity').value, university: document.getElementById('lUniversity').value, address: document.getElementById('lAddress').value },
+    location: { city: document.getElementById('lCity').value, area: document.getElementById('lArea').value, university: document.getElementById('lUniversity').value, address: document.getElementById('lAddress').value },
     bedrooms: parseInt(document.getElementById('lBedrooms').value)||0,
     bathrooms: parseFloat(document.getElementById('lBathrooms').value)||0,
     maxOccupants: parseInt(document.getElementById('lOccupants').value)||1,
@@ -1295,6 +1302,44 @@ async function deleteListing(id) {
   const r = await api(`/api/listings/${id}`, { method: 'DELETE' });
   if (r.success) { toast('Listing deleted'); loadListings(); }
   else toast('Error deleting listing', 'error');
+}
+
+// ── UNIVERSITY/AREA HELPERS ──
+let universityAreaMap = {}; // Cache for university to area mapping
+
+async function loadUniversities() {
+  try {
+    const r = await api('/api/listings/lookup/universities');
+    if (r.success && r.data?.universities) {
+      universityAreaMap = r.data.map || {};
+      const select = document.getElementById('lUniversity');
+      const currentValue = select.value;
+      
+      // Build options
+      let options = '<option value="">Select University</option>';
+      r.data.universities.forEach(uni => {
+        options += `<option value="${uni}">${uni}</option>`;
+      });
+      select.innerHTML = options;
+      
+      // Restore selection if editing
+      if (currentValue) select.value = currentValue;
+    }
+  } catch (e) {
+    console.error('Failed to load universities:', e);
+  }
+}
+
+function autoPopulateArea() {
+  const university = document.getElementById('lUniversity').value;
+  const areaInput = document.getElementById('lArea');
+  
+  if (university && universityAreaMap[university] && !areaInput.value) {
+    const areas = universityAreaMap[university];
+    if (areas && areas.length > 0) {
+      areaInput.value = areas[0]; // Use first area as default
+    }
+  }
 }
 
 // ── LEADS ──
