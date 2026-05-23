@@ -561,7 +561,7 @@
             </div>
             <div class="filter-group">
                 <select id="areaFilter" onchange="applyFilters()">
-                    <option value="">All Areas (Klang Valley)</option>
+                    <option value="">Select Area</option>
                 </select>
             </div>
             <div class="filter-group">
@@ -828,11 +828,11 @@
             }
             
             // Build options
-            let options = '<option value="">All Areas (Klang Valley)</option>';
+            let optionsHtml = '<option value="">Select Area</option>';
             areas.forEach(area => {
-                options += `<option value="${area}">${area}</option>`;
+                optionsHtml += `<option value="${area}">${area}</option>`;
             });
-            areaSelect.innerHTML = options;
+            areaSelect.innerHTML = optionsHtml;
             
             // Restore selection if still valid
             if (areas.includes(currentArea)) {
@@ -866,7 +866,7 @@
 
                 // Populate area dropdown with all areas initially
                 const areaSelect = document.getElementById('areaFilter');
-                let areaOptions = '<option value="">All Areas (Klang Valley)</option>';
+                let areaOptions = '<option value="">Select Area</option>';
                 (options.areas || ALL_AREAS).forEach(area => {
                     areaOptions += `<option value="${area}">${area}</option>`;
                 });
