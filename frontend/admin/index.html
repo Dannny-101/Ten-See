@@ -816,7 +816,7 @@
     .toolbar .search-box { flex: 1; min-width: 200px; }
 
     /* ── TOAST ── */
-    .toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
+    .toast-container { position: fixed; top: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
     .toast {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -832,6 +832,46 @@
     .toast.success i { color: var(--success); }
     .toast.error i { color: var(--danger); }
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: none; opacity: 1; } }
+
+    /* ── STATUS PILLS ── */
+    .status-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.4rem 0.75rem; border-radius: 100px;
+      font-size: 0.75rem; font-weight: 500; cursor: pointer;
+      border: 2px solid transparent; transition: all 0.2s ease;
+      user-select: none;
+    }
+    .status-pill:hover { transform: translateY(-1px); }
+    .status-pill.selected { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(201,168,76,0.2); }
+    .status-pill.updating { opacity: 0.7; pointer-events: none; }
+    .status-pill.updating::after {
+      content: ''; width: 10px; height: 10px;
+      border: 2px solid transparent; border-top-color: currentColor;
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+      margin-left: 0.25rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Status colors */
+    .status-pill.new { background: #dbeafe; color: #1e40af; }
+    .status-pill.contacted { background: #fef3c7; color: #92400e; }
+    .status-pill.viewing_scheduled { background: #e0e7ff; color: #3730a3; }
+    .status-pill.converted { background: #d1fae5; color: #065f46; }
+    .status-pill.closed { background: #f3f4f6; color: #4b5563; }
+    .status-pill.not_interested { background: #fee2e2; color: #991b1b; }
+
+    /* ── STAT CARD HOVER ── */
+    .stat-card { cursor: pointer; transition: all 0.2s ease; }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-admin), 0 4px 12px rgba(0,0,0,0.15); }
+    .stat-card:active { transform: translateY(-1px); }
+
+    /* ── SECTION HIGHLIGHT ── */
+    @keyframes highlightFlash {
+      0% { box-shadow: 0 0 0 0 rgba(201,168,76,0.7); }
+      50% { box-shadow: 0 0 0 8px rgba(201,168,76,0.3); background: rgba(201,168,76,0.1); }
+      100% { box-shadow: 0 0 0 0 rgba(201,168,76,0); background: transparent; }
+    }
+    .highlight-flash { animation: highlightFlash 1s ease-out; }
 
     /* ── LOGIN PAGE ── */
     .login-page {
@@ -1398,13 +1438,13 @@ async function loadDashboard() {
     const d = dash.data; const c = comp.data;
 
     sec.innerHTML = `
-      <div class="stats-grid">
-        ${statCard('fa-users', 'si-gold', d.totalLeads, 'Total Leads', c?.changes?.leads, '%')}
-        ${statCard('fa-star', 'si-blue', d.newLeads, 'New Leads (7d)', null)}
-        ${statCard('fa-building', 'si-green', d.totalListings, 'Active Listings', null)}
-        ${statCard('fa-eye', 'si-orange', (d.totalViews||0).toLocaleString(), 'Total Views', c?.changes?.views, '%')}
-        ${statCard('fa-calendar-check', 'si-purple', d.totalBookings ?? '-', 'Total Bookings', c?.changes?.bookings, '%')}
-        ${statCard('fa-comments', 'si-gold', d.totalChats ?? '-', 'Chat Sessions', null)}
+      <div class="stats-grid" id="dashStatsGrid">
+        ${statCard('fa-users', 'si-gold', d.totalLeads, 'Total Leads', c?.changes?.leads, '%', "navigateFromStat('leads')")}
+        ${statCard('fa-star', 'si-blue', d.newLeads, 'New Leads (7d)', null, '', null)}
+        ${statCard('fa-building', 'si-green', d.totalListings, 'Active Listings', null, '', "navigateFromStat('listings')")}
+        ${statCard('fa-eye', 'si-orange', (d.totalViews||0).toLocaleString(), 'Total Views', c?.changes?.views, '%', "navigateFromStat('analytics')")}
+        ${statCard('fa-calendar-check', 'si-purple', d.totalBookings ?? '-', 'Total Bookings', c?.changes?.bookings, '%', "navigateFromStat('bookings')")}
+        ${statCard('fa-comments', 'si-gold', d.totalChats ?? '-', 'Chat Sessions', null, '', "navigateFromStat('chat')")}
       </div>
       <div class="two-col">
         <div class="card">
@@ -1490,15 +1530,16 @@ async function loadDashboard() {
   } catch(e) { sec.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load dashboard</p></div>`; }
 }
 
-function statCard(icon, iconClass, value, label, change, unit='') {
+function statCard(icon, iconClass, value, label, change, unit='', onClick=null) {
   let badge = '';
   if (change !== null && change !== undefined) {
     const n = parseFloat(change);
     const dir = n >= 0 ? 'up' : 'down';
     badge = `<span class="stat-badge badge-${dir}"><i class="fas fa-arrow-${dir}"></i> ${Math.abs(n)}${unit}</span>`;
   }
+  const clickAttr = onClick ? `onclick="${onClick}"` : '';
   return `
-    <div class="stat-card">
+    <div class="stat-card" ${clickAttr}>
       <div class="stat-row">
         <div class="stat-icon ${iconClass}"><i class="fas ${icon}"></i></div>
         ${badge}
@@ -1507,6 +1548,24 @@ function statCard(icon, iconClass, value, label, change, unit='') {
       <div class="stat-label">${label}</div>
     </div>
   `;
+}
+
+// Navigate from stat card click with highlight flash
+function navigateFromStat(targetSection, highlightId=null) {
+  // Switch to target section if different
+  if (S.section !== targetSection) {
+    showSection(targetSection);
+  }
+  
+  // Wait for section to render then scroll and highlight
+  setTimeout(() => {
+    const targetEl = highlightId ? document.getElementById(highlightId) : document.getElementById('sec-' + targetSection);
+    if (targetEl) {
+      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      targetEl.classList.add('highlight-flash');
+      setTimeout(() => targetEl.classList.remove('highlight-flash'), 1000);
+    }
+  }, 100);
 }
 
 // ── LISTINGS ──
@@ -1816,9 +1875,17 @@ function viewLead(id) {
     <div class="lead-actions">
       <div class="form-group">
         <label class="form-label">Status</label>
-        <select class="form-select" id="lStatusSel">
-          ${['new','contacted','viewing_scheduled','converted','closed'].map(s=>`<option value="${s}"${l.status===s?' selected':''}>${cap(s)}</option>`).join('')}
-        </select>
+        <div class="status-pills" id="statusPills">
+          ${['new','contacted','viewing_scheduled','converted','closed','not_interested'].map(s => `
+            <div class="status-pill ${s} ${l.status===s?'selected':''}" 
+                 data-status="${s}"
+                 onclick="selectLeadStatus('${s}', '${l._id}')">
+              ${l.status===s?'<i class="fas fa-check"></i>':''}
+              ${cap(s.replace('_',' '))}
+            </div>
+          `).join('')}
+        </div>
+        <input type="hidden" id="lStatusSel" value="${l.status}">
       </div>
       <div class="form-group">
         <label class="form-label">Notes</label>
@@ -1830,6 +1897,91 @@ function viewLead(id) {
     </div>
   `;
   openModal('leadModal');
+}
+
+// Original lead status for revert on failure
+let originalLeadStatus = null;
+let currentLeadId = null;
+
+function selectLeadStatus(status, leadId) {
+  // Store original status and lead ID for potential revert
+  if (!originalLeadStatus) {
+    originalLeadStatus = document.getElementById('lStatusSel').value;
+    currentLeadId = leadId;
+  }
+  
+  // Update hidden input
+  document.getElementById('lStatusSel').value = status;
+  
+  // Update pills UI
+  document.querySelectorAll('.status-pill').forEach(pill => {
+    const pillStatus = pill.dataset.status;
+    const isSelected = pillStatus === status;
+    pill.classList.toggle('selected', isSelected);
+    pill.innerHTML = isSelected ? `<i class="fas fa-check"></i> ${cap(pillStatus.replace('_',' '))}` : cap(pillStatus.replace('_',' '));
+  });
+  
+  // Update header badge instantly
+  const headerBadge = document.getElementById('leadModalStatus');
+  headerBadge.textContent = status;
+  headerBadge.className = `lead-status-badge ${status}`;
+  
+  // Show updating state on selected pill
+  const selectedPill = document.querySelector(`.status-pill[data-status="${status}"]`);
+  selectedPill.classList.add('updating');
+  
+  // Auto-save status immediately
+  saveLeadStatus(leadId, status, selectedPill);
+}
+
+async function saveLeadStatus(id, status, pillElement) {
+  try {
+    const r = await api(`/api/leads/${id}`, { method: 'PUT', body: JSON.stringify({ status }) });
+    
+    if (r.success) {
+      // Success: remove updating state, show toast, refresh last updated
+      pillElement.classList.remove('updating');
+      toast('Status updated', 'success');
+      
+      // Update the lead in S.leads array
+      const lead = S.leads.find(l => l._id === id);
+      if (lead) {
+        lead.status = status;
+        lead.updatedAt = new Date().toISOString();
+      }
+      
+      // Reset original status tracker
+      originalLeadStatus = null;
+      currentLeadId = null;
+      
+      // Refresh leads list if visible
+      if (S.section === 'leads') loadLeads();
+    } else {
+      throw new Error(r.error || 'Update failed');
+    }
+  } catch (e) {
+    // Failure: revert UI
+    pillElement.classList.remove('updating');
+    toast('Failed to update status', 'error');
+    
+    // Revert to original status
+    if (originalLeadStatus) {
+      document.getElementById('lStatusSel').value = originalLeadStatus;
+      
+      // Revert pills
+      document.querySelectorAll('.status-pill').forEach(pill => {
+        const pillStatus = pill.dataset.status;
+        const isSelected = pillStatus === originalLeadStatus;
+        pill.classList.toggle('selected', isSelected);
+        pill.innerHTML = isSelected ? `<i class="fas fa-check"></i> ${cap(pillStatus.replace('_',' '))}` : cap(pillStatus.replace('_',' '));
+      });
+      
+      // Revert header badge
+      const headerBadge = document.getElementById('leadModalStatus');
+      headerBadge.textContent = originalLeadStatus;
+      headerBadge.className = `lead-status-badge ${originalLeadStatus}`;
+    }
+  }
 }
 
 async function updateLead(id) {
