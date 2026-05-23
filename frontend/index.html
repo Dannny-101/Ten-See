@@ -1280,7 +1280,7 @@
                 <div class="chat-bubble">Hi! 👋 Looking for a room near your uni? Tell us your university and budget and we'll help you find something.</div>
             </div>
             <div class="chat-input-row">
-                <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()">
+                <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()" oninput="onTyping()">
                 <button class="chat-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
@@ -1471,16 +1471,53 @@
                 }
             });
             
-            // Listen for admin replies
-            chatSocket.on('admin_reply', (data) => {
-                console.log('Admin reply received:', data);
+            // Listen for all messages (both own and admin replies)
+            chatSocket.on('message_received', (data) => {
+                console.log('Message received:', data);
                 const area = document.querySelector('.chat-messages-area');
-                const reply = document.createElement('div');
-                reply.className = 'chat-bubble';
-                reply.style.cssText = 'background:var(--color-surface);border:1px solid var(--color-border);border-radius:12px 12px 12px 4px;';
-                reply.textContent = data.message;
-                area.appendChild(reply);
+                
+                // Remove typing indicator if present
+                const typingIndicator = document.querySelector('.chat-typing-indicator');
+                if (typingIndicator) typingIndicator.remove();
+                
+                // Don't re-render own messages (they're added optimistically)
+                // isAdmin=true means it's from admin, isAdmin=false means it's our own echoed back
+                const bubble = document.createElement('div');
+                bubble.className = 'chat-bubble';
+                
+                if (data.isAdmin) {
+                    // Admin message - left side
+                    bubble.style.cssText = 'background:var(--color-surface);border:1px solid var(--color-border);border-radius:12px 12px 12px 4px;';
+                } else {
+                    // Own message echoed back - already shown optimistically, skip
+                    return;
+                }
+                
+                bubble.textContent = data.message;
+                area.appendChild(bubble);
                 area.scrollTop = area.scrollHeight;
+            });
+            
+            // Typing indicator from admin
+            chatSocket.on('typing', (data) => {
+                if (data.isAdmin && data.sessionId === chatSessionId) {
+                    const area = document.querySelector('.chat-messages-area');
+                    if (!document.querySelector('.chat-typing-indicator')) {
+                        const indicator = document.createElement('div');
+                        indicator.className = 'chat-typing-indicator chat-bubble';
+                        indicator.style.cssText = 'background:var(--color-surface);border:1px solid var(--color-border);border-radius:12px 12px 12px 4px;font-style:italic;color:var(--color-text-muted);';
+                        indicator.innerHTML = '<i class="fas fa-ellipsis-h" style="animation:pulse 1s infinite;"></i> typing...';
+                        area.appendChild(indicator);
+                        area.scrollTop = area.scrollHeight;
+                    }
+                }
+            });
+            
+            chatSocket.on('stop_typing', (data) => {
+                if (data.isAdmin) {
+                    const indicator = document.querySelector('.chat-typing-indicator');
+                    if (indicator) indicator.remove();
+                }
             });
             
             chatSocket.on('connect_error', (err) => {
@@ -1505,42 +1542,71 @@
             document.getElementById('chatIcon').className = chatOpen ? 'fas fa-times' : 'fas fa-comments';
         }
 
+        // Typing indicator timeout
+        let typingTimeout = null;
+        
+        function onTyping() {
+            if (chatSocket && chatSocket.connected && chatSessionId) {
+                chatSocket.emit('typing', { sessionId: chatSessionId, isAdmin: false });
+                clearTimeout(typingTimeout);
+                typingTimeout = setTimeout(() => {
+                    chatSocket.emit('stop_typing', { sessionId: chatSessionId, isAdmin: false });
+                }, 2000);
+            }
+        }
+
         async function sendChat() {
             const input = document.getElementById('chatInput');
             const msg = input.value.trim();
             if (!msg) return;
             input.value = '';
+            clearTimeout(typingTimeout);
+            if (chatSocket && chatSocket.connected) {
+                chatSocket.emit('stop_typing', { sessionId: chatSessionId, isAdmin: false });
+            }
 
             const area = document.querySelector('.chat-messages-area');
+            
+            // Create session if needed
+            if (!chatSessionId) {
+                try {
+                    const s = await fetch('/api/chat/session', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ source: 'landing_page' }) });
+                    const sd = await s.json();
+                    chatSessionId = sd.data?._id;
+                    if (chatSocket && chatSocket.connected) {
+                        chatSocket.emit('join_chat', chatSessionId);
+                    }
+                } catch (e) {
+                    console.error('Failed to create session:', e);
+                    return;
+                }
+            }
+            
+            // Show own message optimistically
             const userBubble = document.createElement('div');
             userBubble.className = 'chat-bubble';
             userBubble.style.cssText = 'background:var(--color-accent);color:var(--color-primary);margin-left:auto;border-radius:12px 12px 4px 12px;font-weight:500;';
             userBubble.textContent = msg;
             area.appendChild(userBubble);
+            area.scrollTop = area.scrollHeight;
 
-            try {
-                if (!chatSessionId) {
-                    const s = await fetch('/api/chat/session', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ source: 'landing_page' }) });
-                    const sd = await s.json();
-                    chatSessionId = sd.data?._id;
-                    // Join socket room for this session
-                    if (chatSocket && chatSocket.connected) {
-                        chatSocket.emit('join_chat', chatSessionId);
-                    }
-                }
-                await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ sessionId: chatSessionId, message: msg, isAdmin: false })
+            // Send via socket (real-time)
+            if (chatSocket && chatSocket.connected) {
+                chatSocket.emit('send_message', {
+                    sessionId: chatSessionId,
+                    message: msg,
+                    name: 'Visitor'
                 });
-                setTimeout(() => {
-                    const reply = document.createElement('div');
-                    reply.className = 'chat-bubble';
-                    reply.textContent = 'Thanks for your message! Our team will reply shortly. You can also reach us on WhatsApp for a faster response.';
-                    area.appendChild(reply);
-                    area.scrollTop = area.scrollHeight;
-                }, 800);
-            } catch { console.error('Chat error'); }
+            } else {
+                // Fallback to REST if socket unavailable
+                try {
+                    await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ sessionId: chatSessionId, message: msg, isAdmin: false })
+                    });
+                } catch { console.error('Chat error'); }
+            }
 
             area.scrollTop = area.scrollHeight;
         }

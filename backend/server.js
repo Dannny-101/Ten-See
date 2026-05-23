@@ -7,6 +7,8 @@ const http = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config();
 
+const ChatMessage = require('./models/ChatMessage');
+
 const app = express();
 const server = http.createServer(app);
 
@@ -38,16 +40,76 @@ io.on('connection', (socket) => {
         console.log(`Session ${sessionId} joined chat room`);
     });
     
+    // Visitor sends message - save to DB and notify admins
+    socket.on('send_message', async (data) => {
+        const { sessionId, message, name, email } = data;
+        if (!sessionId || !message) return;
+        
+        try {
+            // Save to database
+            const chatMessage = await ChatMessage.create({
+                sessionId,
+                name: name || 'Anonymous',
+                email,
+                message,
+                isAdmin: false,
+                ipAddress: socket.handshake.address
+            });
+            
+            // Emit to admin room
+            emitToAdmins('new_chat_message', {
+                sessionId,
+                name: name || 'Anonymous',
+                email,
+                message,
+                createdAt: chatMessage.createdAt,
+                isAdmin: false
+            });
+            
+            // Emit back to visitor as 'message_received'
+            io.to(`chat_${sessionId}`).emit('message_received', {
+                sessionId,
+                message,
+                isAdmin: false,
+                createdAt: chatMessage.createdAt
+            });
+            
+            console.log(`Visitor message saved and emitted for session ${sessionId}`);
+        } catch (err) {
+            console.error('Failed to save visitor message:', err.message);
+        }
+    });
+    
     // Admin sends reply - broadcast to visitor's room
     socket.on('admin_reply', (data) => {
         const { sessionId, message } = data;
         if (sessionId && message) {
-            io.to(`chat_${sessionId}`).emit('admin_reply', {
+            // Emit as 'message_received' so visitor listener catches it
+            io.to(`chat_${sessionId}`).emit('message_received', {
                 sessionId,
                 message,
+                isAdmin: true,
                 createdAt: new Date().toISOString()
             });
-            console.log(`Admin reply emitted to chat_${sessionId}`);
+            console.log(`Admin reply emitted to chat_${sessionId} as message_received`);
+        }
+    });
+    
+    // Typing indicators
+    socket.on('typing', (data) => {
+        const { sessionId, isAdmin } = data;
+        if (sessionId) {
+            // Forward to the other party
+            const targetRoom = isAdmin ? `chat_${sessionId}` : 'all_admins';
+            io.to(targetRoom).emit('typing', { sessionId, isAdmin });
+        }
+    });
+    
+    socket.on('stop_typing', (data) => {
+        const { sessionId, isAdmin } = data;
+        if (sessionId) {
+            const targetRoom = isAdmin ? `chat_${sessionId}` : 'all_admins';
+            io.to(targetRoom).emit('stop_typing', { sessionId, isAdmin });
         }
     });
     

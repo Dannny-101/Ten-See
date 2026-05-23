@@ -2095,8 +2095,9 @@ async function loadChat() {
               <span>Select a conversation to begin</span>
             </div>
           </div>
+          <div id="typingIndicator" style="display:none;padding:0.5rem 1rem;font-size:0.75rem;color:var(--text-muted);font-style:italic;"><i class="fas fa-ellipsis-h"></i> Visitor is typing...</div>
           <div class="chat-input-area" id="chatInputArea" style="display:none;">
-            <input class="form-input" id="chatInput" placeholder="Type a reply..." onkeydown="if(event.key==='Enter')sendReply()">
+            <input class="form-input" id="chatInput" placeholder="Type a reply..." onkeydown="if(event.key==='Enter')sendReply()" oninput="onAdminTyping()">
             <button class="btn btn-gold" onclick="sendReply()"><i class="fas fa-paper-plane"></i></button>
           </div>
         </div>
@@ -2156,11 +2157,28 @@ async function loadMessages(sessionId) {
   container.scrollTop = container.scrollHeight;
 }
 
+// Admin typing indicator
+let adminTypingTimeout = null;
+
+function onAdminTyping() {
+  if (socket && socket.connected && S.currentSession) {
+    socket.emit('typing', { sessionId: S.currentSession, isAdmin: true });
+    clearTimeout(adminTypingTimeout);
+    adminTypingTimeout = setTimeout(() => {
+      socket.emit('stop_typing', { sessionId: S.currentSession, isAdmin: true });
+    }, 2000);
+  }
+}
+
 async function sendReply() {
   const input = document.getElementById('chatInput');
   const msg = input.value.trim();
   if (!msg || !S.currentSession) return;
   input.value = '';
+  clearTimeout(adminTypingTimeout);
+  if (socket && socket.connected) {
+    socket.emit('stop_typing', { sessionId: S.currentSession, isAdmin: true });
+  }
   
   // Optimistically add message to UI
   const container = document.getElementById('chatMessages');
@@ -2652,6 +2670,21 @@ function initSocket() {
       }
     } else {
       console.error('notifSound element not found');
+    }
+  });
+  
+  // Visitor typing indicator
+  socket.on('typing', (data) => {
+    if (!data.isAdmin && data.sessionId === S.currentSession) {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) indicator.style.display = 'block';
+    }
+  });
+  
+  socket.on('stop_typing', (data) => {
+    if (!data.isAdmin) {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) indicator.style.display = 'none';
     }
   });
 }
