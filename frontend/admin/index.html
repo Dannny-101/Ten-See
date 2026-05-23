@@ -2539,7 +2539,13 @@ async function sendReply() {
   
   // Always save to database via REST (socket just notifies the visitor)
   try {
-    await api('/api/chat', { method: 'POST', body: JSON.stringify({ sessionId: S.currentSession, message: msg, isAdmin: true, senderType: 'human' }) });
+    await api('/api/chat', { method: 'POST', body: JSON.stringify({ 
+      sessionId: S.currentSession, 
+      message: msg, 
+      isAdmin: true, 
+      senderType: 'human',
+      name: S.user?.name || 'Agent'
+    }) });
     if (!sentViaSocket) {
       console.log('Admin reply saved via REST (socket unavailable)');
     }

@@ -19,6 +19,8 @@ router.post('/', async (req, res) => {
       ipAddress: req.ip
     });
 
+    const io = req.app.get('io');
+    
     if (!isAdmin) {
       await createNotification(
         'new_chat',
@@ -45,8 +47,38 @@ router.post('/', async (req, res) => {
           senderType: 'visitor'
         });
       }
+    } else {
+      // ADMIN message via REST - emit to visitor's room as message_received (failsafe)
+      if (io) {
+        const room = io.sockets.adapter.rooms.get(`chat_${chatSession}`);
+        const roomSize = room?.size || 0;
+        console.log(`📨 Admin REST message for chat_${chatSession} - room has ${roomSize} members`);
+        
+        io.to(`chat_${chatSession}`).emit('message_received', {
+          _id: chatMessage._id.toString(),
+          sessionId: chatSession,
+          message,
+          name: name || 'Agent',
+          isAdmin: true,
+          senderType: senderType || 'human',
+          createdAt: chatMessage.createdAt
+        });
+        console.log(`✅ Admin REST message emitted to chat_${chatSession} (${roomSize} recipients)`);
+        
+        // Also notify other admins so chat list updates
+        const emitToAdmins = req.app.get('emitToAdmins');
+        if (emitToAdmins) {
+          emitToAdmins('new_chat_message', {
+            sessionId: chatSession,
+            name: name || 'Agent',
+            message,
+            createdAt: chatMessage.createdAt,
+            isAdmin: true,
+            senderType: senderType || 'human'
+          });
+        }
+      }
     }
-    // Note: Admin replies are emitted via socket 'admin_reply' event to avoid duplication
 
     res.status(201).json({ success: true, data: chatMessage, sessionId: chatSession });
   } catch (error) {
