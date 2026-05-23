@@ -1680,6 +1680,16 @@ function viewLead(id) {
   // Copy to clipboard function
   const copyBtn = (text) => `<button class="lead-copy-btn" onclick="navigator.clipboard.writeText('${text}');toast('Copied!')" title="Copy"><i class="fas fa-copy"></i></button>`;
   
+  // Clean message - remove metadata prefixes like "Enquiry for..." and "Move-in:..."
+  const cleanMessage = (msg) => {
+    if (!msg) return '';
+    // Remove patterns like 'Enquiry for "trial". Move-in: 2026-05-28.'
+    let cleaned = msg.replace(/Enquiry for\s+["'][^"']+["']\.?\s*/gi, '');
+    cleaned = cleaned.replace(/Move-in:\s*\d{4}-\d{2}-\d{2}\.?\s*/gi, '');
+    cleaned = cleaned.trim();
+    return cleaned;
+  };
+  
   document.getElementById('leadModalBody').innerHTML = `
     <!-- Contact Card -->
     <div class="lead-card">
@@ -1732,38 +1742,17 @@ function viewLead(id) {
     ` : ''}
     
     <!-- Message Card - Most Prominent -->
-    ${l.message ? `
+    ${l.message && cleanMessage(l.message) ? `
     <div class="lead-message-card">
       <div class="lead-message-label"><i class="fas fa-comment-dots"></i> Visitor's Message</div>
-      <div class="lead-message-text">${l.message}</div>
+      <div class="lead-message-text">${cleanMessage(l.message)}</div>
     </div>
     ` : ''}
     
-    <!-- Metadata Card -->
-    <div class="lead-card">
-      <div class="lead-card-title"><i class="fas fa-info-circle"></i> Metadata</div>
-      <div class="lead-meta-grid">
-        <div class="lead-meta-item">
-          <div class="lead-meta-label">Source</div>
-          ${valMeta(l.source ? l.source.replace(/_/g, ' ') : null)}
-        </div>
-        <div class="lead-meta-item">
-          <div class="lead-meta-label">IP Address</div>
-          ${valMeta(l.ipAddress)}
-        </div>
-        <div class="lead-meta-item">
-          <div class="lead-meta-label">User Agent</div>
-          ${valMeta(l.userAgent)}
-        </div>
-        <div class="lead-meta-item">
-          <div class="lead-meta-label">Created</div>
-          <span class="lead-meta-value">${fmtDateLong(l.createdAt) || 'Not provided'}</span>
-        </div>
-        <div class="lead-meta-item">
-          <div class="lead-meta-label">Last Updated</div>
-          <span class="lead-meta-value">${fmtDateLong(l.updatedAt) || 'Not provided'}</span>
-        </div>
-      </div>
+    <!-- Dates -->
+    <div style="display:flex;gap:1.5rem;justify-content:center;padding:0.5rem 0;font-size:0.75rem;color:var(--text-muted);">
+      <span>${fmtDateLong(l.createdAt) || ''}</span>
+      ${l.updatedAt && l.updatedAt !== l.createdAt ? `<span>${fmtDateLong(l.updatedAt)}</span>` : ''}
     </div>
     
     <!-- Actions Section -->
