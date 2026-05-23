@@ -67,6 +67,15 @@ router.get('/:sessionId', async (req, res) => {
   }
 });
 
+router.post('/session', async (req, res) => {
+  try {
+    const sessionId = uuidv4();
+    res.status(201).json({ success: true, data: { _id: sessionId, createdAt: new Date() } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 router.get('/admin/sessions', async (req, res) => {
   try {
     const sessions = await ChatMessage.aggregate([
