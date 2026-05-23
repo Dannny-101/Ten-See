@@ -67,7 +67,8 @@
   apply(resolveTheme());
 
   mq.addEventListener('change', () => {
-    if (!getStored()) apply(systemTheme());
+    localStorage.removeItem(STORAGE_KEY);
+    apply(systemTheme());
   });
 
   if (document.readyState === 'loading') {
