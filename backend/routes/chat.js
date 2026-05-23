@@ -7,13 +7,15 @@ const emailService = require('../utils/email');
 
 router.post('/', async (req, res) => {
   try {
-    const { sessionId, name, email, message, isAdmin } = req.body;
+    const { sessionId, name, email, phone, message, isAdmin, senderType } = req.body;
     let chatSession = sessionId;
     if (!chatSession) chatSession = uuidv4();
 
     const chatMessage = await ChatMessage.create({
-      sessionId: chatSession, name, email, message,
-      isAdmin: isAdmin || false, ipAddress: req.ip
+      sessionId: chatSession, name, email, phone, message,
+      isAdmin: isAdmin || false,
+      senderType: senderType || (isAdmin ? 'human' : 'visitor'),
+      ipAddress: req.ip
     });
 
     if (!isAdmin) {
@@ -25,7 +27,7 @@ router.post('/', async (req, res) => {
       );
       await emailService.sendChatAlert(
         process.env.ADMIN_EMAIL || 'admin@tenandsee.com',
-        { name, email, message }
+        { name, email, phone, message }
       );
       
       // Emit socket event to all admins for real-time updates
@@ -35,18 +37,22 @@ router.post('/', async (req, res) => {
           sessionId: chatSession,
           name: name || 'Anonymous',
           email,
+          phone,
           message,
           createdAt: chatMessage.createdAt,
-          isAdmin: false
+          isAdmin: false,
+          senderType: 'visitor'
         });
       }
     } else {
-      // Emit admin reply to refresh visitor session (if visitor is connected)
+      // Emit admin reply to visitor using message_received event
       const io = req.app.get('io');
       if (io) {
-        io.to(`chat_${chatSession}`).emit('admin_reply', {
+        io.to(`chat_${chatSession}`).emit('message_received', {
           sessionId: chatSession,
           message,
+          isAdmin: true,
+          senderType: senderType || 'human',
           createdAt: chatMessage.createdAt
         });
       }
@@ -70,7 +76,23 @@ router.get('/:sessionId', async (req, res) => {
 router.post('/session', async (req, res) => {
   try {
     const sessionId = uuidv4();
-    res.status(201).json({ success: true, data: { _id: sessionId, createdAt: new Date() } });
+    const { name, phone, email } = req.body;
+    
+    // Store initial user info in first message (system message)
+    if (name || phone || email) {
+      await ChatMessage.create({
+        sessionId,
+        name: name || 'Visitor',
+        email,
+        phone,
+        message: 'Chat session started',
+        isAdmin: true,
+        senderType: 'system',
+        ipAddress: req.ip
+      });
+    }
+    
+    res.status(201).json({ success: true, data: { _id: sessionId, createdAt: new Date(), name, phone, email } });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -86,8 +108,10 @@ router.get('/admin/sessions', async (req, res) => {
         lastMessageAt: { $first: '$createdAt' },
         name: { $first: '$name' },
         email: { $first: '$email' },
+        phone: { $first: '$phone' },
         unreadCount: { $sum: { $cond: [{ $eq: ['$isAdmin', false] }, { $cond: [{ $eq: ['$isRead', false] }, 1, 0] }, 0] } }
       }},
+      { $match: { name: { $ne: null } } }, // Only show sessions with user info
       { $sort: { lastMessageAt: -1 } }
     ]);
     res.json({ success: true, data: sessions });

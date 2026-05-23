@@ -2118,11 +2118,18 @@ async function loadChatSessions() {
   if (badge) { badge.textContent = totalUnread; badge.style.display = totalUnread > 0 ? '' : 'none'; }
 
   if (!sessions.length) { container.innerHTML = `<div class="empty-state"><i class="fas fa-comments"></i><p>No conversations yet</p></div>`; return; }
-  container.innerHTML = sessions.map(s => `
+  container.innerHTML = sessions.map(s => {
+    const contactInfo = [];
+    if (s.phone) contactInfo.push(`📞 ${s.phone}`);
+    if (s.email) contactInfo.push(`✉️ ${s.email}`);
+    const contactStr = contactInfo.join(' • ');
+    
+    return `
     <div class="chat-session-item ${S.currentSession===s._id?'active':''}" onclick="openSession('${s._id}','${(s.name||'Anonymous').replace(/'/g,"\\'")}')">
       <div class="session-avatar">${(s.name||'A').charAt(0).toUpperCase()}</div>
       <div class="session-info">
         <div class="session-name">${s.name||'Anonymous'}</div>
+        ${contactStr ? `<div class="session-contact" style="font-size:0.7rem;color:var(--gold);margin-bottom:2px;">${contactStr}</div>` : ''}
         <div class="session-preview">${s.lastMessage||'...'}</div>
       </div>
       <div class="session-meta">
@@ -2130,12 +2137,26 @@ async function loadChatSessions() {
         ${s.unreadCount>0?`<div class="unread-count">${s.unreadCount}</div>`:''}
       </div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
 async function openSession(id, name) {
   S.currentSession = id;
-  document.getElementById('chatHeaderName').textContent = name;
+  
+  // Fetch session details to get contact info
+  const sessionData = await api(`/api/chat/${id}`);
+  const msgs = sessionData.data || [];
+  const firstMsg = msgs[0] || {};
+  
+  // Build header with contact info
+  const contactInfo = [];
+  if (firstMsg.phone) contactInfo.push(`📞 ${firstMsg.phone}`);
+  if (firstMsg.email) contactInfo.push(`✉️ ${firstMsg.email}`);
+  const headerText = contactInfo.length > 0 
+    ? `${name} <span style="font-size:0.75rem;color:var(--text-muted);margin-left:8px;">${contactInfo.join(' • ')}</span>`
+    : name;
+  
+  document.getElementById('chatHeaderName').innerHTML = headerText;
   document.getElementById('chatInputArea').style.display = 'flex';
   await loadMessages(id);
   await api(`/api/chat/read/${id}`, { method: 'PUT' });
@@ -2148,12 +2169,20 @@ async function loadMessages(sessionId) {
   if (!container) return;
   const msgs = data.data || [];
   if (!msgs.length) { container.innerHTML = `<div class="chat-empty"><i class="fas fa-comment-slash"></i><span>No messages yet</span></div>`; return; }
-  container.innerHTML = msgs.map(m => `
+  container.innerHTML = msgs.filter(m => m.senderType !== 'system').map(m => {
+    const senderType = m.senderType || (m.isAdmin ? 'human' : 'visitor');
+    let senderLabel = '';
+    if (senderType === 'ai') senderLabel = '<span style="font-size:0.7rem;color:#6366f1;"><i class="fas fa-robot"></i> AI</span>';
+    else if (senderType === 'human') senderLabel = '<span style="font-size:0.7rem;color:var(--text-muted);"><i class="fas fa-user-headset"></i> Agent</span>';
+    else senderLabel = '<span style="font-size:0.7rem;color:var(--gold);"><i class="fas fa-user"></i> Visitor</span>';
+    
+    return `
     <div class="msg-bubble ${m.isAdmin?'admin':''}">
+      <div style="margin-bottom:2px;">${senderLabel}</div>
       <div class="msg-content">${m.message}</div>
       <div class="msg-time">${fmtTime(m.createdAt)}</div>
     </div>
-  `).join('');
+  `}).join('');
   container.scrollTop = container.scrollHeight;
 }
 
@@ -2185,6 +2214,7 @@ async function sendReply() {
   const bubble = document.createElement('div');
   bubble.className = 'msg-bubble msg-admin';
   bubble.innerHTML = `
+    <div style="margin-bottom:2px;font-size:0.7rem;color:var(--text-muted);"><i class="fas fa-user-headset"></i> You</div>
     <div class="msg-content">${msg}</div>
     <div class="msg-time">Just now</div>
   `;
@@ -2194,14 +2224,14 @@ async function sendReply() {
   // Try socket first, fallback to REST
   let sentViaSocket = false;
   if (socket && socket.connected) {
-    socket.emit('admin_reply', { sessionId: S.currentSession, message: msg });
+    socket.emit('admin_reply', { sessionId: S.currentSession, message: msg, senderType: 'human' });
     sentViaSocket = true;
     console.log('Admin reply sent via socket');
   }
   
   // Always save to database via REST (socket just notifies the visitor)
   try {
-    await api('/api/chat', { method: 'POST', body: JSON.stringify({ sessionId: S.currentSession, message: msg, isAdmin: true }) });
+    await api('/api/chat', { method: 'POST', body: JSON.stringify({ sessionId: S.currentSession, message: msg, isAdmin: true, senderType: 'human' }) });
     if (!sentViaSocket) {
       console.log('Admin reply saved via REST (socket unavailable)');
     }

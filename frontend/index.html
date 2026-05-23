@@ -767,6 +767,69 @@
             margin-bottom: 0.25rem; font-weight: 600;
             display: flex; align-items: center; gap: 0.3rem;
         }
+        /* Pre-chat form */
+        .chat-pre-form {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .chat-pre-form h5 {
+            font-size: 1rem;
+            color: var(--color-text-main);
+            margin: 0;
+        }
+        .chat-pre-form p {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            margin: 0 0 0.5rem 0;
+        }
+        .chat-pre-form input {
+            padding: 0.625rem 0.875rem;
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            font-size: 0.85rem;
+            background: var(--color-bg);
+            color: var(--color-text-main);
+            font-family: inherit;
+        }
+        .chat-pre-form input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+        .chat-start-btn {
+            background: var(--color-accent);
+            color: var(--color-primary);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: filter 0.2s;
+        }
+        .chat-start-btn:hover { filter: brightness(1.1); }
+        /* Chat close button */
+        .chat-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            margin-left: 0.5rem;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .chat-close:hover { opacity: 1; }
+        .chat-welcome {
+            padding: 1rem;
+            background: var(--color-bg);
+            border-radius: 12px 12px 12px 4px;
+            font-size: 0.85rem;
+            margin: 0 1rem 0.5rem 1rem;
+        }
         .chat-input-row { padding: 0.75rem; display: flex; gap: 0.5rem; border-top: 1px solid var(--color-border); }
         .chat-input-row input {
             flex: 1; background: var(--color-bg);
@@ -1300,14 +1363,27 @@
                 <div class="chat-avatar">T</div>
                 <div>
                     <h4>Ten&See Support</h4>
-                    <p>Usually replies within minutes</p>
+                    <p id="chatHeaderStatus">Usually replies within minutes</p>
                 </div>
                 <div class="chat-online"></div>
+                <button class="chat-close" onclick="exitChat()" title="End chat"><i class="fas fa-times"></i></button>
             </div>
-            <div class="chat-messages-area">
-                <div class="chat-bubble">Hi! 👋 Looking for a room near your uni? Tell us your university and budget and we'll help you find something.</div>
+            
+            <!-- Pre-chat form -->
+            <div class="chat-pre-form" id="chatPreForm">
+                <h5>Start a conversation</h5>
+                <p>Please enter your details to chat with us</p>
+                <input type="text" id="chatUserName" placeholder="Your name *" required>
+                <input type="tel" id="chatUserPhone" placeholder="Phone number *" required>
+                <input type="email" id="chatUserEmail" placeholder="Email (optional)">
+                <button class="chat-start-btn" onclick="startChatSession()">Start Chat</button>
             </div>
-            <div class="chat-input-row">
+            
+            <!-- Chat messages area (hidden initially) -->
+            <div class="chat-messages-area" id="chatMessagesArea" style="display:none;">
+                <div class="chat-welcome">Hi! 👋 Looking for a room near your uni? Tell us your university and budget and we'll help you find something.</div>
+            </div>
+            <div class="chat-input-row" id="chatInputRow" style="display:none;">
                 <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()" oninput="onTyping()">
                 <button class="chat-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
             </div>
@@ -1481,11 +1557,174 @@
         let chatOpen = false;
         let chatSessionId = null;
         let chatSocket = null;
+        let chatUserInfo = { name: '', phone: '', email: '' };
+        let typingTimeout = null;
 
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        // Load saved session from localStorage
+        function loadChatSession() {
+            const saved = localStorage.getItem('chatSession');
+            if (saved) {
+                try {
+                    const session = JSON.parse(saved);
+                    chatSessionId = session.sessionId;
+                    chatUserInfo = session.userInfo || { name: '', phone: '', email: '' };
+                    return true;
+                } catch (e) {
+                    console.error('Failed to load chat session:', e);
+                }
+            }
+            return false;
+        }
+
+        // Save session to localStorage
+        function saveChatSession() {
+            if (chatSessionId) {
+                localStorage.setItem('chatSession', JSON.stringify({
+                    sessionId: chatSessionId,
+                    userInfo: chatUserInfo,
+                    savedAt: new Date().toISOString()
+                }));
+            }
+        }
+
+        // Clear session (exit chat)
+        function clearChatSession() {
+            localStorage.removeItem('chatSession');
+            chatSessionId = null;
+            chatUserInfo = { name: '', phone: '', email: '' };
+        }
+
+        // Load chat history from server
+        async function loadChatHistory(sessionId) {
+            try {
+                const res = await fetch(`/api/chat/${sessionId}`);
+                const data = await res.json();
+                if (data.success && data.data) {
+                    renderChatHistory(data.data);
+                }
+            } catch (e) {
+                console.error('Failed to load chat history:', e);
+            }
+        }
+
+        // Render chat history
+        function renderChatHistory(messages) {
+            const area = document.getElementById('chatMessagesArea');
+            area.innerHTML = '<div class="chat-welcome">Welcome back! Continuing your conversation...</div>';
+            
+            messages.forEach(msg => {
+                const bubble = document.createElement('div');
+                const senderType = msg.senderType || (msg.isAdmin ? 'human' : 'visitor');
+                
+                if (senderType === 'visitor') {
+                    bubble.className = 'chat-bubble chat-bubble-visitor';
+                    bubble.textContent = msg.message;
+                } else if (senderType === 'ai') {
+                    bubble.className = 'chat-bubble chat-bubble-ai';
+                    bubble.innerHTML = `
+                        <div class="sender-label"><i class="fas fa-robot"></i> AI Assistant</div>
+                        <div>${escapeHtml(msg.message)}</div>
+                    `;
+                } else {
+                    bubble.className = 'chat-bubble chat-bubble-human';
+                    bubble.innerHTML = `
+                        <div class="sender-label"><i class="fas fa-user-headset"></i> Agent</div>
+                        <div>${escapeHtml(msg.message)}</div>
+                    `;
+                }
+                area.appendChild(bubble);
+            });
+            
+            area.scrollTop = area.scrollHeight;
+        }
+
+        // Start new chat session with user info
+        async function startChatSession() {
+            const name = document.getElementById('chatUserName').value.trim();
+            const phone = document.getElementById('chatUserPhone').value.trim();
+            const email = document.getElementById('chatUserEmail').value.trim();
+            
+            if (!name || !phone) {
+                alert('Please enter your name and phone number');
+                return;
+            }
+            
+            chatUserInfo = { name, phone, email };
+            
+            // Create session on server
+            try {
+                const res = await fetch('/api/chat/session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ source: 'landing_page', name, phone, email })
+                });
+                const data = await res.json();
+                chatSessionId = data.data?._id;
+                
+                // Save to localStorage
+                saveChatSession();
+                
+                // Join socket room
+                if (chatSocket && chatSocket.connected) {
+                    chatSocket.emit('join_chat', chatSessionId);
+                }
+                
+                // Show chat interface
+                showChatInterface();
+                
+                // Send welcome message from user to trigger AI response
+                const welcomeMsg = `Hi, my name is ${name}. I'm looking for a room.`;
+                const area = document.getElementById('chatMessagesArea');
+                const bubble = document.createElement('div');
+                bubble.className = 'chat-bubble chat-bubble-visitor';
+                bubble.textContent = welcomeMsg;
+                area.appendChild(bubble);
+                
+                if (chatSocket && chatSocket.connected) {
+                    chatSocket.emit('send_message', {
+                        sessionId: chatSessionId,
+                        message: welcomeMsg,
+                        name: name,
+                        email: email,
+                        phone: phone
+                    });
+                }
+            } catch (e) {
+                console.error('Failed to start chat session:', e);
+                alert('Failed to start chat. Please try again.');
+            }
+        }
+
+        // Show chat interface (hide pre-form, show messages)
+        function showChatInterface() {
+            document.getElementById('chatPreForm').style.display = 'none';
+            document.getElementById('chatMessagesArea').style.display = 'block';
+            document.getElementById('chatInputRow').style.display = 'flex';
+            document.getElementById('chatHeaderStatus').textContent = chatUserInfo.name || 'Online';
+        }
+
+        // Show pre-chat form
+        function showPreChatForm() {
+            document.getElementById('chatPreForm').style.display = 'flex';
+            document.getElementById('chatMessagesArea').style.display = 'none';
+            document.getElementById('chatInputRow').style.display = 'none';
+            document.getElementById('chatHeaderStatus').textContent = 'Usually replies within minutes';
+            document.getElementById('chatMessagesArea').innerHTML = '<div class="chat-welcome">Hi! 👋 Looking for a room near your uni? Tell us your university and budget and we\'ll help you find something.</div>';
+        }
+
+        // Exit chat
+        function exitChat() {
+            if (confirm('End this chat session? Your conversation history will be saved.')) {
+                clearChatSession();
+                showPreChatForm();
+                toggleChat(); // Close popup
+            }
         }
 
         // Initialize chat socket for real-time updates
@@ -1502,13 +1741,16 @@
                 // Join room once we have a session
                 if (chatSessionId) {
                     chatSocket.emit('join_chat', chatSessionId);
+                    // Reload history to catch any missed messages
+                    loadChatHistory(chatSessionId);
                 }
             });
             
             // Listen for all messages (both own and admin replies)
             chatSocket.on('message_received', (data) => {
                 console.log('Message received:', data);
-                const area = document.querySelector('.chat-messages-area');
+                const area = document.getElementById('chatMessagesArea');
+                if (!area || area.style.display === 'none') return;
                 
                 // Remove typing indicator if present
                 const typingIndicator = document.querySelector('.chat-typing-indicator');
@@ -1545,7 +1787,8 @@
             // Typing indicator from admin
             chatSocket.on('typing', (data) => {
                 if (data.isAdmin && data.sessionId === chatSessionId) {
-                    const area = document.querySelector('.chat-messages-area');
+                    const area = document.getElementById('chatMessagesArea');
+                    if (!area || area.style.display === 'none') return;
                     if (!document.querySelector('.chat-typing-indicator')) {
                         const indicator = document.createElement('div');
                         indicator.className = 'chat-typing-indicator chat-bubble';
@@ -1575,14 +1818,28 @@
             if (popup) popup.classList.toggle('active', chatOpen);
             const icon = document.getElementById('chatIcon');
             if (icon) icon.className = chatOpen ? 'fas fa-times' : 'fas fa-comments';
-            if (chatOpen && !chatSocket) {
-                initChatSocket();
+            
+            if (chatOpen) {
+                if (!chatSocket) initChatSocket();
+                
+                // Check if we have a saved session
+                const hasSession = loadChatSession();
+                if (hasSession && chatSessionId) {
+                    // Show chat interface with saved session
+                    showChatInterface();
+                    // Load history
+                    loadChatHistory(chatSessionId);
+                    // Re-join socket room
+                    if (chatSocket && chatSocket.connected) {
+                        chatSocket.emit('join_chat', chatSessionId);
+                    }
+                } else {
+                    // Show pre-chat form
+                    showPreChatForm();
+                }
             }
         }
 
-        // Typing indicator timeout
-        let typingTimeout = null;
-        
         function onTyping() {
             if (chatSocket && chatSocket.connected && chatSessionId) {
                 chatSocket.emit('typing', { sessionId: chatSessionId, isAdmin: false });
@@ -1603,22 +1860,7 @@
                 chatSocket.emit('stop_typing', { sessionId: chatSessionId, isAdmin: false });
             }
 
-            const area = document.querySelector('.chat-messages-area');
-            
-            // Create session if needed
-            if (!chatSessionId) {
-                try {
-                    const s = await fetch('/api/chat/session', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ source: 'landing_page' }) });
-                    const sd = await s.json();
-                    chatSessionId = sd.data?._id;
-                    if (chatSocket && chatSocket.connected) {
-                        chatSocket.emit('join_chat', chatSessionId);
-                    }
-                } catch (e) {
-                    console.error('Failed to create session:', e);
-                    return;
-                }
-            }
+            const area = document.getElementById('chatMessagesArea');
             
             // Show own message optimistically
             const userBubble = document.createElement('div');
@@ -1632,17 +1874,10 @@
                 chatSocket.emit('send_message', {
                     sessionId: chatSessionId,
                     message: msg,
-                    name: 'Visitor'
+                    name: chatUserInfo.name,
+                    email: chatUserInfo.email,
+                    phone: chatUserInfo.phone
                 });
-            } else {
-                // Fallback to REST if socket unavailable
-                try {
-                    await fetch('/api/chat', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ sessionId: chatSessionId, message: msg, isAdmin: false })
-                    });
-                } catch { console.error('Chat error'); }
             }
 
             area.scrollTop = area.scrollHeight;
