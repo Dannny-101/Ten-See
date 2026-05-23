@@ -29,9 +29,9 @@ router.post('/', async (req, res) => {
       );
       
       // Emit socket event to all admins for real-time updates
-      const io = req.app.get('io');
-      if (io) {
-        io.to('all_admins').emit('new_chat_message', {
+      const emitToAdmins = req.app.get('emitToAdmins');
+      if (emitToAdmins) {
+        emitToAdmins('new_chat_message', {
           sessionId: chatSession,
           name: name || 'Anonymous',
           email,

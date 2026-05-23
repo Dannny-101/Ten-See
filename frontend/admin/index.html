@@ -2505,7 +2505,27 @@ let socket = null;
 
 function initSocket() {
   socket = io();
-  socket.emit('join_admin', S.adminId);
+  
+  // Ensure adminId is valid
+  const adminId = S.adminId || localStorage.getItem('adminId');
+  if (!adminId) {
+    console.error('Socket: No adminId available');
+    return;
+  }
+  S.adminId = adminId;
+  
+  socket.on('connect', () => {
+    console.log('Socket connected:', socket.id);
+    socket.emit('join_admin', adminId);
+  });
+  
+  socket.on('connect_error', (err) => {
+    console.error('Socket connection error:', err.message);
+  });
+  
+  socket.on('disconnect', (reason) => {
+    console.log('Socket disconnected:', reason);
+  });
   
   socket.on('task_created', (data) => {
     toast(`New task: ${data.title} by ${data.createdBy.name || data.createdBy.username}`);

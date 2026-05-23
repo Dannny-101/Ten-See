@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
     socket.on('join_admin', (adminId) => {
         socket.join('all_admins');
         socket.adminId = adminId;
-        console.log(`Admin ${adminId} joined all_admins room`);
+        console.log(`Admin ${adminId} joined all_admins room. Socket rooms:`, Array.from(socket.rooms));
     });
     
     // Visitor joins their chat session room
@@ -42,6 +42,22 @@ io.on('connection', (socket) => {
         console.log('Client disconnected:', socket.id);
     });
 });
+
+// Helper function to emit to all admins with fallback
+function emitToAdmins(event, data) {
+    const adminRoom = io.sockets.adapter.rooms.get('all_admins');
+    if (adminRoom && adminRoom.size > 0) {
+        io.to('all_admins').emit(event, data);
+        console.log(`Emitted ${event} to ${adminRoom.size} admin(s)`);
+    } else {
+        // Fallback: broadcast to all connected sockets
+        io.emit(event, data);
+        console.log(`Emitted ${event} to all sockets (no admin room found)`);
+    }
+}
+
+// Make emitToAdmins accessible to routes
+app.set('emitToAdmins', emitToAdmins);
 
 // Middleware
 app.use(cors());
