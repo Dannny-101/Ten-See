@@ -1721,6 +1721,7 @@ async function loadDashboard() {
     });
 
   } catch(e) { sec.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load dashboard</p></div>`; }
+  setTimeout(animateDashboardStats, 150);
 }
 
 function statCard(icon, iconClass, value, label, change, unit='', onClick=null) {
@@ -2347,7 +2348,13 @@ async function loadChatSessions() {
 
   const totalUnread = sessions.reduce((a, s) => a + (s.unreadCount || 0), 0);
   const badge = document.getElementById('chatBadge');
-  if (badge) { badge.textContent = totalUnread; badge.style.display = totalUnread > 0 ? '' : 'none'; }
+  if (badge) {
+    const prev = parseInt(badge.textContent) || 0;
+    badge.textContent = totalUnread;
+    badge.style.display = totalUnread > 0 ? '' : 'none';
+    if (totalUnread > prev && typeof badgeBounce === 'function') badgeBounce(badge);
+  }
+  if (typeof updateMobNav === 'function') updateMobNav(S.section);
 
   if (!sessions.length) { 
     container.innerHTML = `<div class="empty-state" style="padding:2rem;text-align:center;color:var(--text-muted);"><i class="fas fa-comments" style="font-size:2rem;margin-bottom:0.5rem;opacity:0.5;"></i><p>No ${chatFilter === 'all' ? '' : chatFilter} conversations</p></div>`; 
@@ -3918,12 +3925,12 @@ function animateCountUp(el, target) {
   requestAnimationFrame(step);
 }
 
-// Patch statCard to animate values on dashboard load
-const _origStatCard = statCard;
-function statCard(icon, iconClass, value, label, change, unit='', onClick=null) {
-  const html = _origStatCard(icon, iconClass, value, label, change, unit, onClick);
-  // Animate after insert - use MutationObserver trigger from loadDashboard
-  return html;
+function badgeBounce(el) {
+  if (!el) return;
+  el.classList.remove('bounce');
+  void el.offsetWidth;
+  el.classList.add('bounce');
+  setTimeout(() => el.classList.remove('bounce'), 500);
 }
 
 function animateDashboardStats() {
@@ -4047,25 +4054,6 @@ function initPullToRefresh() {
   }, { passive: true });
 }
 
-// Patch loadDashboard to animate stats after render
-const _origLoadDashboard = loadDashboard;
-async function loadDashboard() {
-  await _origLoadDashboard();
-  setTimeout(animateDashboardStats, 100);
-}
-
-// Patch chat badge update to bounce
-const _origLoadChatSessions = loadChatSessions;
-async function loadChatSessions() {
-  const prevBadge = parseInt(document.getElementById('chatBadge')?.textContent) || 0;
-  await _origLoadChatSessions.apply(this, arguments);
-  const newBadge = parseInt(document.getElementById('chatBadge')?.textContent) || 0;
-  if (newBadge > prevBadge) {
-    const badge = document.getElementById('chatBadge');
-    if (badge) { badge.classList.remove('bounce'); void badge.offsetWidth; badge.classList.add('bounce'); setTimeout(() => badge.classList.remove('bounce'), 500); }
-  }
-  updateMobNav(S.section);
-}
 </script>
 </body>
 </html>
