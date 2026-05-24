@@ -976,6 +976,103 @@
 .notif-item { cursor: pointer; }
 .notif-item.unread { background: var(--gold-dim); }
 .notif-item:hover { background: rgba(255,255,255,0.03); }
+
+/* ── PRO FEATURES ── */
+
+/* Toast progress bar */
+.toast { position: relative; overflow: hidden; }
+.toast-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--gold); animation: toastProgress 3.5s linear forwards; }
+@keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
+.toast.info { border-color: rgba(59,130,246,0.4); }
+.toast.info i { color: #3b82f6; }
+.toast.warn { border-color: rgba(245,158,11,0.4); }
+.toast.warn i { color: #f59e0b; }
+
+/* Keyboard palette */
+.kpal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 10000; display: flex; align-items: flex-start; justify-content: center; padding-top: 10vh; animation: fadeIn 0.15s ease; }
+.kpal-overlay.hidden { display: none; }
+.kpal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 560px; max-width: 95vw; box-shadow: 0 24px 80px rgba(0,0,0,0.4); overflow: hidden; }
+.kpal-search { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+.kpal-search i { color: var(--text-muted); font-size: 1rem; }
+.kpal-search input { flex: 1; background: none; border: none; outline: none; font-size: 1rem; color: var(--text); font-family: inherit; }
+.kpal-search kbd { background: var(--bg); border: 1px solid var(--border); border-radius: 5px; padding: 2px 7px; font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; }
+.kpal-list { max-height: 340px; overflow-y: auto; padding: 0.5rem; }
+.kpal-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.75rem; border-radius: 8px; cursor: pointer; transition: background 0.15s; }
+.kpal-item:hover, .kpal-item.kpal-active { background: var(--gold-dim); }
+.kpal-item i { width: 20px; text-align: center; color: var(--gold); font-size: 0.85rem; }
+.kpal-item-label { flex: 1; font-size: 0.875rem; }
+.kpal-item-shortcut { font-size: 0.72rem; color: var(--text-muted); background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; }
+.kpal-section { padding: 0.35rem 0.75rem 0.15rem; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); }
+.kpal-footer { padding: 0.6rem 1.25rem; border-top: 1px solid var(--border); display: flex; gap: 1.25rem; font-size: 0.72rem; color: var(--text-muted); }
+.kpal-footer kbd { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
+
+/* Shortcuts help modal */
+.shortcuts-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 10000; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.15s ease; }
+.shortcuts-modal.hidden { display: none; }
+.shortcuts-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 500px; max-width: 95vw; max-height: 80vh; overflow-y: auto; padding: 1.5rem; box-shadow: 0 24px 80px rgba(0,0,0,0.4); }
+.shortcuts-box h3 { font-size: 1rem; margin-bottom: 1rem; color: var(--gold); }
+.shortcut-group { margin-bottom: 1rem; }
+.shortcut-group-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 0.5rem; }
+.shortcut-row { display: flex; justify-content: space-between; align-items: center; padding: 0.3rem 0; font-size: 0.82rem; }
+.shortcut-keys { display: flex; gap: 4px; }
+.shortcut-keys kbd { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px; font-size: 0.72rem; }
+
+/* Inline status edit */
+.inline-status-select { font-size: 0.78rem; border: 1.5px solid var(--gold); border-radius: 6px; background: var(--surface); color: var(--text); padding: 3px 6px; cursor: pointer; outline: none; }
+.inline-status-select:focus { box-shadow: 0 0 0 2px rgba(201,168,76,0.25); }
+.inline-edit-cell { cursor: text; }
+.inline-edit-cell:hover { background: rgba(201,168,76,0.07); border-radius: 4px; }
+.inline-edit-input { background: var(--surface); border: 1.5px solid var(--gold); border-radius: 6px; padding: 3px 7px; font-size: 0.82rem; color: var(--text); outline: none; width: 100%; min-width: 80px; }
+.lead-row-new { animation: rowPulse 1.2s ease; }
+@keyframes rowPulse { 0% { background: rgba(201,168,76,0.25); } 100% { background: transparent; } }
+
+/* Smart notification priority */
+.smart-notif { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 9998; display: flex; flex-direction: column; gap: 0.5rem; align-items: center; pointer-events: none; }
+.smart-notif-item { pointer-events: all; display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1.1rem; border-radius: 12px; font-size: 0.82rem; font-weight: 500; box-shadow: 0 8px 24px rgba(0,0,0,0.25); animation: slideDown 0.35s cubic-bezier(0.34,1.56,0.64,1); cursor: pointer; min-width: 280px; max-width: 420px; }
+@keyframes slideDown { from { transform: translateY(-20px); opacity:0; } to { transform: none; opacity:1; } }
+.smart-notif-item.hot { background: #fef2f2; border: 1.5px solid #fca5a5; color: #dc2626; }
+.smart-notif-item.warm { background: #fff7ed; border: 1.5px solid #fdba74; color: #c2410c; }
+.smart-notif-item.cold { background: #eff6ff; border: 1.5px solid #93c5fd; color: #1d4ed8; }
+.smart-notif-item.info-notif { background: var(--surface); border: 1.5px solid var(--gold); color: var(--text); }
+[data-theme="dark"] .smart-notif-item.hot { background: rgba(220,38,38,0.15); color: #fca5a5; }
+[data-theme="dark"] .smart-notif-item.warm { background: rgba(194,65,12,0.15); color: #fdba74; }
+[data-theme="dark"] .smart-notif-item.cold { background: rgba(29,78,216,0.15); color: #93c5fd; }
+
+/* Count-up animation for stat values */
+.stat-value { transition: color 0.3s; }
+.stat-value.counting { color: var(--gold) !important; }
+
+/* Chat badge bounce */
+@keyframes badgeBounce { 0%,100%{transform:scale(1)} 30%{transform:scale(1.5)} 60%{transform:scale(0.9)} }
+.nav-badge.bounce { animation: badgeBounce 0.5s ease; }
+
+/* Mobile bottom nav */
+.mobile-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 500; background: var(--surface); border-top: 1px solid var(--border); padding: 0.5rem 0 env(safe-area-inset-bottom, 0.5rem); }
+.mobile-bottom-nav-inner { display: flex; justify-content: space-around; }
+.mob-nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 0.35rem 0.75rem; border-radius: 10px; cursor: pointer; font-size: 0.65rem; color: var(--text-muted); min-width: 44px; min-height: 44px; justify-content: center; transition: color 0.2s; border: none; background: none; }
+.mob-nav-item i { font-size: 1.1rem; }
+.mob-nav-item.active { color: var(--gold); }
+.mob-nav-badge { background: var(--danger); color: white; border-radius: 100px; font-size: 0.6rem; padding: 0 5px; min-width: 16px; text-align: center; line-height: 16px; }
+
+/* Swipe action reveal on mobile */
+.lead-swipe-row { position: relative; overflow: hidden; }
+.lead-swipe-actions { position: absolute; right: 0; top: 0; bottom: 0; display: flex; align-items: stretch; transform: translateX(100%); transition: transform 0.25s ease; }
+.lead-swipe-actions button { padding: 0 1.1rem; border: none; font-size: 0.78rem; font-weight: 600; cursor: pointer; min-width: 64px; }
+.lead-swipe-btn-call { background: #3b82f6; color: white; }
+.lead-swipe-btn-wa { background: #25d366; color: white; }
+.lead-swipe-btn-contacted { background: var(--gold); color: var(--navy); }
+.lead-swipe-row.swiped .lead-swipe-actions { transform: translateX(0); }
+
+/* Pull-to-refresh indicator */
+.ptr-indicator { position: fixed; top: 0; left: 50%; transform: translateX(-50%) translateY(-60px); background: var(--surface); border: 1px solid var(--border); border-radius: 0 0 12px 12px; padding: 0.4rem 1.25rem; font-size: 0.8rem; color: var(--gold); z-index: 9997; transition: transform 0.3s; display: flex; align-items: center; gap: 0.5rem; }
+.ptr-indicator.visible { transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 600px) {
+  .mobile-bottom-nav { display: block; }
+  .sidebar { display: none !important; }
+  .main { margin-left: 0 !important; padding-bottom: 70px; }
+  .content { padding: 1rem; }
+}
   </style>
 <base target="_blank">
 </head>
@@ -983,6 +1080,71 @@
 
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
+
+<!-- Keyboard Command Palette -->
+<div class="kpal-overlay hidden" id="kpalOverlay" onclick="if(event.target===this)closeKpal()">
+  <div class="kpal-box">
+    <div class="kpal-search">
+      <i class="fas fa-search"></i>
+      <input type="text" id="kpalInput" placeholder="Search commands..." autocomplete="off" oninput="renderKpal(this.value)" onkeydown="kpalKeyDown(event)">
+      <kbd>Esc</kbd>
+    </div>
+    <div class="kpal-list" id="kpalList"></div>
+    <div class="kpal-footer">
+      <span><kbd>↑↓</kbd> navigate</span>
+      <span><kbd>Enter</kbd> select</span>
+      <span><kbd>Esc</kbd> close</span>
+    </div>
+  </div>
+</div>
+
+<!-- Keyboard Shortcuts Reference -->
+<div class="shortcuts-modal hidden" id="shortcutsModal" onclick="if(event.target===this)closeShortcuts()">
+  <div class="shortcuts-box">
+    <h3><i class="fas fa-keyboard" style="margin-right:0.5rem;"></i>Keyboard Shortcuts</h3>
+    <div class="shortcut-group">
+      <div class="shortcut-group-title">Global</div>
+      <div class="shortcut-row"><span>Command palette</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>K</kbd></div></div>
+      <div class="shortcut-row"><span>Show shortcuts</span><div class="shortcut-keys"><kbd>?</kbd></div></div>
+    </div>
+    <div class="shortcut-group">
+      <div class="shortcut-group-title">Navigation</div>
+      <div class="shortcut-row"><span>Dashboard</span><div class="shortcut-keys"><kbd>G</kbd><kbd>D</kbd></div></div>
+      <div class="shortcut-row"><span>Leads</span><div class="shortcut-keys"><kbd>G</kbd><kbd>L</kbd></div></div>
+      <div class="shortcut-row"><span>Chat</span><div class="shortcut-keys"><kbd>G</kbd><kbd>C</kbd></div></div>
+      <div class="shortcut-row"><span>Bookings</span><div class="shortcut-keys"><kbd>G</kbd><kbd>B</kbd></div></div>
+      <div class="shortcut-row"><span>Analytics</span><div class="shortcut-keys"><kbd>G</kbd><kbd>A</kbd></div></div>
+    </div>
+    <div class="shortcut-group">
+      <div class="shortcut-group-title">Actions</div>
+      <div class="shortcut-row"><span>New listing</span><div class="shortcut-keys"><kbd>N</kbd><kbd>L</kbd></div></div>
+      <div class="shortcut-row"><span>New task</span><div class="shortcut-keys"><kbd>N</kbd><kbd>T</kbd></div></div>
+    </div>
+    <div class="shortcut-group">
+      <div class="shortcut-group-title">Modals</div>
+      <div class="shortcut-row"><span>Close modal</span><div class="shortcut-keys"><kbd>Esc</kbd></div></div>
+      <div class="shortcut-row"><span>Save / confirm</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>Enter</kbd></div></div>
+    </div>
+    <button onclick="closeShortcuts()" style="margin-top:0.5rem;width:100%;" class="btn btn-gold">Close</button>
+  </div>
+</div>
+
+<!-- Smart Priority Notifications -->
+<div class="smart-notif" id="smartNotifContainer"></div>
+
+<!-- Pull-to-Refresh Indicator -->
+<div class="ptr-indicator" id="ptrIndicator"><i class="fas fa-sync-alt fa-spin"></i> Refreshing…</div>
+
+<!-- Mobile Bottom Nav (injected by JS after login) -->
+<div class="mobile-bottom-nav" id="mobileBottomNav" style="display:none;">
+  <div class="mobile-bottom-nav-inner">
+    <button class="mob-nav-item active" id="mobnav-dashboard" onclick="showSection('dashboard');updateMobNav('dashboard')"><i class="fas fa-tachometer-alt"></i>Dashboard</button>
+    <button class="mob-nav-item" id="mobnav-leads" onclick="showSection('leads');updateMobNav('leads')"><i class="fas fa-users"></i>Leads</button>
+    <button class="mob-nav-item" id="mobnav-chat" onclick="showSection('chat');updateMobNav('chat')"><i class="fas fa-comments"></i>Chat<span class="mob-nav-badge" id="mobChatBadge" style="display:none">0</span></button>
+    <button class="mob-nav-item" id="mobnav-bookings" onclick="showSection('bookings');updateMobNav('bookings')"><i class="fas fa-calendar-check"></i>Bookings</button>
+    <button class="mob-nav-item" id="mobnav-more" onclick="showSection('analytics');updateMobNav('analytics')"><i class="fas fa-ellipsis-h"></i>More</button>
+  </div>
+</div>
 
 <!-- Notification Sound -->
 <audio id="notifSound" preload="auto"><source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg"></audio>
@@ -1265,10 +1427,15 @@ async function api(path, opts = {}) {
 
 // ── TOAST ──
 function toast(msg, type = 'success') {
+  const iconMap = { success: 'check-circle', error: 'exclamation-circle', info: 'info-circle', warn: 'exclamation-triangle' };
   const el = document.createElement('div');
   el.className = `toast ${type}`;
-  el.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i><span>${msg}</span>`;
-  document.getElementById('toastContainer').appendChild(el);
+  el.innerHTML = `<i class="fas fa-${iconMap[type]||'check-circle'}"></i><span>${msg}</span><div class="toast-progress"></div>`;
+  const container = document.getElementById('toastContainer');
+  container.appendChild(el);
+  // Stack limit: keep max 5
+  const toasts = container.querySelectorAll('.toast');
+  if (toasts.length > 5) toasts[0].remove();
   setTimeout(() => el.remove(), 3500);
 }
 
@@ -1405,6 +1572,12 @@ function renderApp() {
   S.notifInterval = setInterval(pollNotifications, 30000);
   initSocket();
   window.TenSeeTheme?.bindToggles?.();
+  // Show mobile nav
+  document.getElementById('mobileBottomNav').style.display = '';
+  // Init pro features
+  initKeyboardShortcuts();
+  initPullToRefresh();
+  initSmartNotifPoller();
 }
 
 // ── NAVIGATION ──
@@ -1442,6 +1615,8 @@ function showSection(sec) {
 
   // Close notif panel
   document.getElementById('notifPanel').classList.remove('active');
+  // Sync mobile bottom nav
+  updateMobNav(sec);
 }
 
 // ── DASHBOARD ──
@@ -1777,16 +1952,25 @@ function renderLeadsBody() {
   if (q) list = list.filter(l => l.name?.toLowerCase().includes(q) || l.email?.toLowerCase().includes(q));
   if (!list.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-users"></i><p>No leads found</p></div></td></tr>`; return; }
   tbody.innerHTML = list.map(l => `
-    <tr>
-      <td><div class="cell-primary">${l.name}</div><div class="cell-muted">${l.email}</div></td>
+    <tr class="lead-swipe-row" id="lead-row-${l._id}" data-id="${l._id}">
+      <td class="inline-edit-cell" ondblclick="inlineEditName('${l._id}', this, '${(l.name||'').replace(/'/g,"\\'")}')"><div class="cell-primary">${l.name}</div><div class="cell-muted">${l.email}</div></td>
       <td style="font-size:0.82rem;">${l.phone||'-'}</td>
       <td><span style="font-size:0.78rem;color:var(--text-muted);text-transform:capitalize;">${l.source?.replace(/_/g,' ')}</span></td>
       <td style="font-size:0.8rem;color:var(--text-muted);">${l.listingTitle||'-'}</td>
-      <td>${statusBadge(l.status)}</td>
+      <td><select class="inline-status-select" onchange="inlineUpdateStatus('${l._id}', this.value)" title="Click to change status">
+        ${['new','contacted','viewing_scheduled','converted','closed'].map(s=>`<option value="${s}"${l.status===s?' selected':''}>${cap(s)}</option>`).join('')}
+      </select></td>
       <td style="font-size:0.78rem;color:var(--text-muted);">${fmtDate(l.createdAt)}</td>
       <td><button class="btn btn-ghost btn-sm btn-icon" onclick="viewLead('${l._id}')" title="View"><i class="fas fa-eye"></i></button></td>
+      <div class="lead-swipe-actions">
+        <button class="lead-swipe-btn-call" onclick="window.location='tel:${l.phone||''}'"><i class="fas fa-phone"></i><br>Call</button>
+        <button class="lead-swipe-btn-wa" onclick="window.open('https://wa.me/${(l.phone||'').replace(/\D/g,'')}')"><i class="fab fa-whatsapp"></i><br>WA</button>
+        <button class="lead-swipe-btn-contacted" onclick="inlineUpdateStatus('${l._id}','contacted');document.getElementById('lead-row-${l._id}').classList.remove('swiped')"><i class="fas fa-check"></i><br>Contacted</button>
+      </div>
     </tr>
   `).join('');
+  // Attach touch swipe handlers
+  tbody.querySelectorAll('.lead-swipe-row').forEach(row => attachSwipe(row));
 }
 
 function filterLeads() { renderLeadsBody(); }
@@ -3545,6 +3729,342 @@ if (!S.token) {
   renderLogin();
 } else {
   renderApp();
+}
+
+// ════════════════════════════════════════════
+//  PRO FEATURES
+// ════════════════════════════════════════════
+
+// ── 1. KEYBOARD SHORTCUTS ──────────────────
+const KPAL_COMMANDS = [
+  { section: 'Navigate', label: 'Dashboard', icon: 'fa-tachometer-alt', shortcut: 'G D', action: () => showSection('dashboard') },
+  { section: 'Navigate', label: 'Leads', icon: 'fa-users', shortcut: 'G L', action: () => showSection('leads') },
+  { section: 'Navigate', label: 'Chat', icon: 'fa-comments', shortcut: 'G C', action: () => showSection('chat') },
+  { section: 'Navigate', label: 'Bookings', icon: 'fa-calendar-check', shortcut: 'G B', action: () => showSection('bookings') },
+  { section: 'Navigate', label: 'Analytics', icon: 'fa-chart-bar', shortcut: 'G A', action: () => showSection('analytics') },
+  { section: 'Navigate', label: 'Listings', icon: 'fa-building', shortcut: '', action: () => showSection('listings') },
+  { section: 'Navigate', label: 'Tasks', icon: 'fa-tasks', shortcut: '', action: () => showSection('tasks') },
+  { section: 'Actions', label: 'New Listing', icon: 'fa-plus', shortcut: 'N L', action: () => { showSection('listings'); setTimeout(() => openListingModal(), 300); } },
+  { section: 'Actions', label: 'New Task', icon: 'fa-plus-circle', shortcut: 'N T', action: () => { showSection('tasks'); setTimeout(() => openModal('taskModal'), 300); } },
+  { section: 'Actions', label: 'Show Shortcuts', icon: 'fa-keyboard', shortcut: '?', action: () => { closeKpal(); openShortcuts(); } },
+  { section: 'Actions', label: 'Logout', icon: 'fa-sign-out-alt', shortcut: '', action: () => logout() },
+];
+
+let kpalActive = 0;
+
+function openKpal() {
+  document.getElementById('kpalOverlay').classList.remove('hidden');
+  setTimeout(() => document.getElementById('kpalInput').focus(), 50);
+  renderKpal('');
+}
+
+function closeKpal() {
+  document.getElementById('kpalOverlay').classList.add('hidden');
+  document.getElementById('kpalInput').value = '';
+}
+
+function renderKpal(q) {
+  const list = document.getElementById('kpalList');
+  const filtered = KPAL_COMMANDS.filter(c => !q || c.label.toLowerCase().includes(q.toLowerCase()) || c.section.toLowerCase().includes(q.toLowerCase()));
+  kpalActive = 0;
+  if (!filtered.length) { list.innerHTML = `<div style="padding:1rem;text-align:center;color:var(--text-muted);font-size:0.85rem;">No commands found</div>`; return; }
+  let lastSection = '';
+  list.innerHTML = filtered.map((c, i) => {
+    let html = '';
+    if (c.section !== lastSection) {
+      html += `<div class="kpal-section">${c.section}</div>`;
+      lastSection = c.section;
+    }
+    return html + `<div class="kpal-item${i === 0 ? ' kpal-active' : ''}" data-idx="${i}" onclick="kpalRun(${KPAL_COMMANDS.indexOf(c)})">
+      <i class="fas ${c.icon}"></i>
+      <span class="kpal-item-label">${c.label}</span>
+      ${c.shortcut ? `<span class="kpal-item-shortcut">${c.shortcut}</span>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function kpalKeyDown(e) {
+  const items = document.querySelectorAll('.kpal-item');
+  if (!items.length) return;
+  if (e.key === 'ArrowDown') { e.preventDefault(); kpalActive = Math.min(kpalActive + 1, items.length - 1); items.forEach((el, i) => el.classList.toggle('kpal-active', i === kpalActive)); items[kpalActive].scrollIntoView({ block: 'nearest' }); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); kpalActive = Math.max(kpalActive - 1, 0); items.forEach((el, i) => el.classList.toggle('kpal-active', i === kpalActive)); items[kpalActive].scrollIntoView({ block: 'nearest' }); }
+  else if (e.key === 'Enter') { e.preventDefault(); const active = document.querySelector('.kpal-item.kpal-active'); if (active) { const idx = parseInt(active.dataset.idx); kpalRun(idx); } }
+  else if (e.key === 'Escape') closeKpal();
+}
+
+function kpalRun(idx) {
+  closeKpal();
+  KPAL_COMMANDS[idx]?.action();
+}
+
+function openShortcuts() { document.getElementById('shortcutsModal').classList.remove('hidden'); }
+function closeShortcuts() { document.getElementById('shortcutsModal').classList.add('hidden'); }
+
+function initKeyboardShortcuts() {
+  let seqBuffer = '';
+  let seqTimer = null;
+
+  document.addEventListener('keydown', (e) => {
+    // Skip if typing in an input
+    if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) {
+      // Only allow Escape in inputs (close modals)
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+        closeKpal();
+        closeShortcuts();
+      }
+      return;
+    }
+
+    // Ctrl+K: command palette
+    if (e.ctrlKey && e.key === 'k') { e.preventDefault(); openKpal(); return; }
+    // Ctrl+Enter: save active modal
+    if (e.ctrlKey && e.key === 'Enter') {
+      const activeModal = document.querySelector('.modal-overlay.active');
+      if (activeModal) activeModal.querySelector('.btn-gold')?.click();
+      return;
+    }
+    // Escape: close any open modal/palette/shortcuts
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+      closeKpal();
+      closeShortcuts();
+      return;
+    }
+    // ? key: show shortcuts
+    if (e.key === '?') { openShortcuts(); return; }
+
+    // Two-key sequences (G+x, N+x)
+    const key = e.key.toLowerCase();
+    seqBuffer += key;
+    clearTimeout(seqTimer);
+    seqTimer = setTimeout(() => { seqBuffer = ''; }, 800);
+
+    const sequences = {
+      'gd': () => showSection('dashboard'),
+      'gl': () => showSection('leads'),
+      'gc': () => showSection('chat'),
+      'gb': () => showSection('bookings'),
+      'ga': () => showSection('analytics'),
+      'nl': () => { showSection('listings'); setTimeout(() => openListingModal(), 300); },
+      'nt': () => { showSection('tasks'); setTimeout(() => openModal('taskModal'), 300); },
+    };
+
+    if (sequences[seqBuffer]) {
+      sequences[seqBuffer]();
+      seqBuffer = '';
+      clearTimeout(seqTimer);
+    }
+  });
+}
+
+// ── 2. INLINE LEAD EDITING ─────────────────
+async function inlineUpdateStatus(id, newStatus) {
+  try {
+    const r = await api(`/api/leads/${id}`, { method: 'PUT', body: JSON.stringify({ status: newStatus }) });
+    if (r.success) {
+      const lead = S.leads.find(l => l._id === id);
+      if (lead) lead.status = newStatus;
+      const row = document.getElementById(`lead-row-${id}`);
+      if (row) { row.classList.add('lead-row-new'); setTimeout(() => row.classList.remove('lead-row-new'), 1200); }
+      toast(`Status → ${cap(newStatus)}`, 'success');
+    } else toast(r.error || 'Failed to update', 'error');
+  } catch { toast('Error updating status', 'error'); }
+}
+
+function inlineEditName(id, cell, currentName) {
+  const input = document.createElement('input');
+  input.className = 'inline-edit-input';
+  input.value = currentName;
+  const original = cell.innerHTML;
+  cell.innerHTML = '';
+  cell.appendChild(input);
+  input.focus();
+  input.select();
+
+  const save = async () => {
+    const newName = input.value.trim();
+    if (!newName || newName === currentName) { cell.innerHTML = original; return; }
+    try {
+      const r = await api(`/api/leads/${id}`, { method: 'PUT', body: JSON.stringify({ name: newName }) });
+      if (r.success) {
+        const lead = S.leads.find(l => l._id === id);
+        if (lead) lead.name = newName;
+        cell.innerHTML = `<div class="cell-primary">${newName}</div><div class="cell-muted">${r.data?.email || ''}</div>`;
+        toast('Name updated', 'success');
+      } else { cell.innerHTML = original; toast('Failed', 'error'); }
+    } catch { cell.innerHTML = original; }
+  };
+
+  input.addEventListener('blur', save);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } if (e.key === 'Escape') { cell.innerHTML = original; } });
+}
+
+// ── 3. COUNT-UP ANIMATION ──────────────────
+function animateCountUp(el, target) {
+  if (!el || isNaN(target)) return;
+  const start = 0;
+  const duration = 700;
+  const startTime = performance.now();
+  el.classList.add('counting');
+  const step = (now) => {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(start + (target - start) * eased);
+    if (progress < 1) requestAnimationFrame(step);
+    else { el.textContent = target; el.classList.remove('counting'); }
+  };
+  requestAnimationFrame(step);
+}
+
+// Patch statCard to animate values on dashboard load
+const _origStatCard = statCard;
+function statCard(icon, iconClass, value, label, change, unit='', onClick=null) {
+  const html = _origStatCard(icon, iconClass, value, label, change, unit, onClick);
+  // Animate after insert - use MutationObserver trigger from loadDashboard
+  return html;
+}
+
+function animateDashboardStats() {
+  document.querySelectorAll('.stat-value').forEach(el => {
+    const num = parseInt(el.textContent);
+    if (!isNaN(num) && num > 0) animateCountUp(el, num);
+  });
+}
+
+// ── 4. SMART NOTIFICATIONS ─────────────────
+let _smartNotifShown = new Set();
+
+function showSmartNotif(msg, type = 'info-notif', icon = 'fa-bell', onClick = null) {
+  const container = document.getElementById('smartNotifContainer');
+  if (!container) return;
+  const key = msg.substring(0, 40);
+  if (_smartNotifShown.has(key)) return;
+  _smartNotifShown.add(key);
+  setTimeout(() => _smartNotifShown.delete(key), 60000);
+
+  const el = document.createElement('div');
+  el.className = `smart-notif-item ${type}`;
+  el.innerHTML = `<i class="fas ${icon}"></i><span>${msg}</span><i class="fas fa-times" style="margin-left:auto;opacity:0.5;font-size:0.75rem;" onclick="this.parentElement.remove()"></i>`;
+  if (onClick) el.addEventListener('click', (e) => { if (!e.target.classList.contains('fa-times')) { onClick(); el.remove(); } });
+  container.appendChild(el);
+  setTimeout(() => { if (el.parentElement) el.remove(); }, 8000);
+}
+
+async function initSmartNotifPoller() {
+  await runSmartNotifCheck();
+  setInterval(runSmartNotifCheck, 120000);
+}
+
+async function runSmartNotifCheck() {
+  if (!S.token) return;
+  try {
+    // Check leads for hot leads
+    const leadsData = await api('/api/leads?limit=20');
+    const leads = leadsData.data || [];
+    leads.forEach(l => {
+      if (l.status === 'new' && l.budget && l.preferredMoveIn && l.location?.area) {
+        showSmartNotif(`New lead from ${l.location.area} — Hot 🔥 (budget + date + area)`, 'hot', 'fa-fire', () => { showSection('leads'); setTimeout(() => viewLead(l._id), 400); });
+      }
+    });
+
+    // Check chat sessions for high unread count
+    const chatData = await api('/api/chat/admin/sessions');
+    const sessions = chatData.data || [];
+    sessions.forEach(s => {
+      if ((s.unreadCount || 0) >= 3) {
+        showSmartNotif(`${s.visitorName || 'Visitor'} sent ${s.unreadCount} messages — respond now`, 'warm', 'fa-comment-dots', () => showSection('chat'));
+      }
+    });
+
+    // Check pending bookings
+    const bookData = await api('/api/bookings?status=pending&limit=10');
+    const bookings = bookData.data || [];
+    bookings.forEach(b => {
+      const age = (Date.now() - new Date(b.createdAt).getTime()) / 3600000;
+      if (age >= 24) {
+        showSmartNotif(`Booking pending 24h — follow up with ${b.name || 'client'}`, 'cold', 'fa-clock', () => showSection('bookings'));
+      }
+    });
+  } catch {}
+}
+
+// ── 5. MOBILE FEATURES ─────────────────────
+
+function updateMobNav(sec) {
+  const keys = ['dashboard', 'leads', 'chat', 'bookings', 'analytics'];
+  keys.forEach(k => {
+    const btn = document.getElementById(`mobnav-${k === 'analytics' ? 'more' : k}`);
+    if (btn) btn.classList.toggle('active', k === sec);
+  });
+  // Sync chat badge
+  const mobBadge = document.getElementById('mobChatBadge');
+  const desktopBadge = document.getElementById('chatBadge');
+  if (mobBadge && desktopBadge) {
+    const count = desktopBadge.textContent;
+    mobBadge.textContent = count;
+    mobBadge.style.display = parseInt(count) > 0 ? '' : 'none';
+  }
+}
+
+function attachSwipe(row) {
+  let startX = 0;
+  row.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  row.addEventListener('touchend', e => {
+    const diff = startX - e.changedTouches[0].clientX;
+    if (diff > 60) row.classList.add('swiped');
+    else if (diff < -30) row.classList.remove('swiped');
+  }, { passive: true });
+}
+
+function initPullToRefresh() {
+  let startY = 0;
+  let pulling = false;
+  const indicator = document.getElementById('ptrIndicator');
+
+  document.addEventListener('touchstart', e => {
+    if (window.scrollY === 0) startY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    if (!startY) return;
+    const diff = e.touches[0].clientY - startY;
+    if (diff > 60 && !pulling) {
+      pulling = true;
+      indicator.classList.add('visible');
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', () => {
+    if (pulling) {
+      pulling = false;
+      const loaders = { dashboard: loadDashboard, leads: loadLeads, bookings: loadBookings, chat: loadChatSessions, analytics: loadAnalytics };
+      loaders[S.section]?.();
+      setTimeout(() => indicator.classList.remove('visible'), 1200);
+    }
+    startY = 0;
+  }, { passive: true });
+}
+
+// Patch loadDashboard to animate stats after render
+const _origLoadDashboard = loadDashboard;
+async function loadDashboard() {
+  await _origLoadDashboard();
+  setTimeout(animateDashboardStats, 100);
+}
+
+// Patch chat badge update to bounce
+const _origLoadChatSessions = loadChatSessions;
+async function loadChatSessions() {
+  const prevBadge = parseInt(document.getElementById('chatBadge')?.textContent) || 0;
+  await _origLoadChatSessions.apply(this, arguments);
+  const newBadge = parseInt(document.getElementById('chatBadge')?.textContent) || 0;
+  if (newBadge > prevBadge) {
+    const badge = document.getElementById('chatBadge');
+    if (badge) { badge.classList.remove('bounce'); void badge.offsetWidth; badge.classList.add('bounce'); setTimeout(() => badge.classList.remove('bounce'), 500); }
+  }
+  updateMobNav(S.section);
 }
 </script>
 </body>
