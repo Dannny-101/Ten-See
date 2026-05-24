@@ -108,19 +108,232 @@
         .btn-whatsapp:hover { background: #128c7e; }
         .btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; }
 
-        /* Page Header */
-        .page-header {
+        /* ── ANIMATED BANNER LOOP ── */
+        .banner-loop {
+            position: relative;
+            height: 280px; /* Fixed height - locked down */
             padding: 8rem 2rem 3rem;
-            text-align: center;
             background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 6%, transparent) 0%, transparent 100%);
+            overflow: hidden;
         }
-        .page-header h1 {
+
+        /* Banner container for both states - fixed height */
+        .banner-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 140px; /* Fixed height prevents jumping */
+        }
+
+        /* Banner States - Overlapping for smooth crossfade */
+        .banner-state {
+            width: 100%;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .banner-state.visible {
+            opacity: 1;
+            visibility: visible;
+            position: relative;
+        }
+
+        /* Clickable banner feedback */
+        .banner-pathway,
+        .banner-title {
+            cursor: pointer;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out, transform 0.3s ease;
+        }
+
+        .banner-pathway:hover,
+        .banner-title:hover {
+            transform: scale(1.01);
+        }
+
+        .banner-pathway:active,
+        .banner-title:active {
+            transform: scale(0.99);
+        }
+
+        /* State B: Static Title */
+        .banner-title h1 {
             font-size: clamp(2rem, 4vw, 3rem);
             margin-bottom: 0.75rem;
             color: var(--color-text-main);
         }
-        .page-header h1 .accent-text { color: var(--color-accent); }
-        .page-header p { color: var(--color-text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        .banner-title h1 .accent-text { color: var(--color-accent); }
+        .banner-title p {
+            color: var(--color-text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* State A: Pathway - Clean minimal design */
+        .banner-pathway {
+            padding: 0 1rem;
+        }
+
+        .pathway-track {
+            position: relative;
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        /* Single clean line - centered and shorter */
+        .pathway-line-bg {
+            position: absolute;
+            top: 26px;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: rgba(184, 149, 74, 0.2);
+            z-index: 0;
+        }
+
+        .pathway-line-fill {
+            position: absolute;
+            top: 26px;
+            left: 20%;
+            height: 2px;
+            background: var(--color-accent);
+            width: 0;
+            max-width: 60%;
+            z-index: 1;
+            transition: width 0.5s ease-out;
+        }
+
+        .pathway-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pathway-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        }
+
+        .pathway-step.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .step-indicator {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--color-surface);
+            border: 2px solid var(--color-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 12px rgba(184, 149, 74, 0.2);
+        }
+
+        .step-num {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-accent);
+        }
+
+        .step-content h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-text-main);
+            margin-bottom: 0.25rem;
+        }
+
+        .step-content p {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            line-height: 1.35;
+            max-width: 140px;
+            margin: 0 auto;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .banner-loop {
+                height: 240px; /* Fixed height on mobile */
+                padding: 6rem 1rem 2rem;
+            }
+
+            .banner-container {
+                height: 120px; /* Fixed height prevents jumping */
+            }
+
+            .banner-pathway:hover,
+            .banner-title:hover {
+                transform: none; /* Disable scale on mobile */
+            }
+
+            .pathway-line-bg,
+            .pathway-line-fill {
+                left: 22%;
+                right: 22%;
+            }
+
+            .pathway-line-fill {
+                max-width: 56%;
+            }
+
+            .pathway-steps {
+                display: flex;
+                gap: 1rem;
+                min-width: max-content;
+                padding: 0 0.5rem;
+            }
+
+            .pathway-step {
+                min-width: 120px;
+            }
+
+            .pathway-step.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .step-indicator {
+                width: 44px;
+                height: 44px;
+            }
+
+            .step-num {
+                font-size: 0.9rem;
+            }
+
+            .step-content h4 {
+                font-size: 0.85rem;
+            }
+
+            .step-content p {
+                font-size: 0.7rem;
+                max-width: 110px;
+            }
+
+            .banner-title h1 {
+                font-size: 1.6rem;
+            }
+
+            .banner-title p {
+                font-size: 0.85rem;
+            }
+        }
 
         /* Filters */
         .filters-section {
@@ -921,9 +1134,63 @@
         </div>
     </nav>
 
-    <div class="page-header">
-        <h1>Find Your <span class="accent-text">Perfect Home</span></h1>
-        <p>Browse our curated collection of student-friendly accommodations</p>
+    <!-- Animated Banner Loop -->
+    <div class="banner-loop" id="bannerLoop">
+        <div class="banner-container">
+            <!-- State A: 4-Step Pathway (8s) -->
+            <div class="banner-state banner-pathway" id="bannerPathway">
+                <div class="pathway-track">
+                    <!-- Background line (full width, dim) -->
+                    <div class="pathway-line-bg"></div>
+                    <!-- Fill line (grows with steps) -->
+                    <div class="pathway-line-fill" id="pathwayLineFill"></div>
+                    <div class="pathway-steps">
+                        <div class="pathway-step" data-step="1">
+                            <div class="step-indicator">
+                                <span class="step-num">01</span>
+                            </div>
+                            <div class="step-content">
+                                <h4>Search</h4>
+                                <p>Find verified rooms near your campus</p>
+                            </div>
+                        </div>
+                        <div class="pathway-step" data-step="2">
+                            <div class="step-indicator">
+                                <span class="step-num">02</span>
+                            </div>
+                            <div class="step-content">
+                                <h4>Connect</h4>
+                                <p>Message us on WhatsApp instantly</p>
+                            </div>
+                        </div>
+                        <div class="pathway-step" data-step="3">
+                            <div class="step-indicator">
+                                <span class="step-num">03</span>
+                            </div>
+                            <div class="step-content">
+                                <h4>View & Finalize</h4>
+                                <p>Tour and confirm with first month's rent</p>
+                            </div>
+                        </div>
+                        <div class="pathway-step" data-step="4">
+                            <div class="step-indicator">
+                                <span class="step-num">04</span>
+                            </div>
+                            <div class="step-content">
+                                <h4>Move In</h4>
+                                <p>Sign, pay deposit, collect keys</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- State B: Static Title (8s) -->
+            <div class="banner-state banner-title" id="bannerTitle">
+                <h1>Find Your <span class="accent-text">Perfect Home</span></h1>
+                <p>Browse our curated collection of student-friendly accommodations</p>
+            </div>
+        </div>
     </div>
 
     <div class="filters-section">
@@ -1287,7 +1554,117 @@
         // Load listings on page load
         document.addEventListener('DOMContentLoaded', () => {
             initIntro();
+            initBannerLoop();
         });
+
+        // ── BANNER LOOP ANIMATION ──
+        // Cycles between 4-step pathway (8s) and title (8s) infinitely
+        // Click on banner to manually switch and reset loop timer
+        function initBannerLoop() {
+            const pathway = document.getElementById('bannerPathway');
+            const title = document.getElementById('bannerTitle');
+            const steps = document.querySelectorAll('.pathway-step');
+            const lineFill = document.getElementById('pathwayLineFill');
+
+            if (!pathway || !title) return;
+
+            const STATE_DURATION = 8000;
+            const STEP_DELAY = 1500;
+            const FADE_DURATION = 800;
+
+            let currentState = 'pathway';
+            let stepTimeouts = [];
+            let nextLoopTimeout = null;
+
+            // Clear only step animation timeouts
+            function clearStepTimeouts() {
+                stepTimeouts.forEach(t => clearTimeout(t));
+                stepTimeouts = [];
+            }
+
+            // Clear and restart the main loop timer
+            function resetLoopTimer() {
+                if (nextLoopTimeout) {
+                    clearTimeout(nextLoopTimeout);
+                }
+                nextLoopTimeout = setTimeout(runLoop, STATE_DURATION);
+            }
+
+            // Reset pathway visual state
+            function resetPathway() {
+                clearStepTimeouts();
+                steps.forEach(step => step.classList.remove('visible'));
+                if (lineFill) lineFill.style.width = '0%';
+            }
+
+            // Animate pathway steps with line progression
+            function animatePathway() {
+                stepTimeouts.push(setTimeout(() => {
+                    steps[0]?.classList.add('visible');
+                    if (lineFill) lineFill.style.width = '0%';
+                }, 100));
+                stepTimeouts.push(setTimeout(() => {
+                    steps[1]?.classList.add('visible');
+                    if (lineFill) lineFill.style.width = '20%';
+                }, STEP_DELAY));
+                stepTimeouts.push(setTimeout(() => {
+                    steps[2]?.classList.add('visible');
+                    if (lineFill) lineFill.style.width = '40%';
+                }, STEP_DELAY * 2));
+                stepTimeouts.push(setTimeout(() => {
+                    steps[3]?.classList.add('visible');
+                    if (lineFill) lineFill.style.width = '60%';
+                }, STEP_DELAY * 3));
+            }
+
+            // Crossfade between states
+            function crossfade(fromEl, toEl, onComplete) {
+                fromEl.classList.remove('visible');
+                setTimeout(() => {
+                    toEl.classList.add('visible');
+                    if (onComplete) onComplete();
+                }, FADE_DURATION / 2);
+            }
+
+            // Manual switch triggered by click
+            function manualSwitch() {
+                // Reset the loop timer first
+                resetLoopTimer();
+
+                if (currentState === 'pathway') {
+                    crossfade(pathway, title, () => {
+                        resetPathway();
+                    });
+                    currentState = 'title';
+                } else {
+                    crossfade(title, pathway, () => {
+                        animatePathway();
+                    });
+                    currentState = 'pathway';
+                }
+            }
+
+            // Auto loop
+            function runLoop() {
+                if (currentState === 'pathway') {
+                    crossfade(pathway, title, () => resetPathway());
+                    currentState = 'title';
+                } else {
+                    crossfade(title, pathway, () => animatePathway());
+                    currentState = 'pathway';
+                }
+                nextLoopTimeout = setTimeout(runLoop, STATE_DURATION);
+            }
+
+            // Add click handlers
+            pathway.addEventListener('click', manualSwitch);
+            title.addEventListener('click', manualSwitch);
+
+            // Start: show pathway, animate, begin loop
+            pathway.classList.add('visible');
+            animatePathway();
+            nextLoopTimeout = setTimeout(runLoop, STATE_DURATION);
+        }
 
         // Apply URL parameters from quick search
         function applyUrlParams() {
