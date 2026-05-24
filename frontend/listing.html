@@ -27,7 +27,9 @@
         }
         .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.75rem; font-weight: 700; color: var(--color-accent); text-decoration: none; display: inline-flex; align-items: center; }
         .logo span { font-weight: 300; color: white; }
-        .logo img { width: 54px; height: 54px; object-fit: contain; display: block; border-radius: 10px; }
+        .logo img { width: 72px; height: 72px; object-fit: contain; display: block; border-radius: 0; background: transparent; }
+        .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 600; color: white; margin-left: 0.75rem; letter-spacing: -0.02em; display: flex; align-items: center; }
+        .logo-text span { color: var(--color-accent); font-weight: 700; }
         .nav-back { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s; }
         .nav-back:hover { color: var(--color-accent); }
 
@@ -181,7 +183,7 @@
 
 <nav class="navbar">
     <div class="nav-container">
-        <a href="/" class="logo" aria-label="Ten&See home"><img src="/assets/logo.png" alt="Ten&See logo"></a>
+        <a href="/" class="logo" aria-label="Ten&See home"><img src="/assets/logo.png" alt="Ten&See logo"><span class="logo-text">Ten<span>&</span>See</span></a>
         <div class="nav-actions">
             <a href="/listings.html" class="nav-back"><i class="fas fa-arrow-left"></i> Back to Listings</a>
             <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to dark mode">
