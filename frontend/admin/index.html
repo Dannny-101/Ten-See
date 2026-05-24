@@ -1162,6 +1162,70 @@
 
 <!-- ── MODALS ── -->
 
+<!-- Property Modal -->
+<div class="modal-overlay" id="propertyModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="propertyModalTitle">Add Property</span>
+      <button class="modal-close" onclick="closeModal('propertyModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="propertyId">
+      <div class="form-row">
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Property Name *</label>
+          <input class="form-input" id="pName" placeholder="e.g. Dlatour Residences" required>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" id="pDesc" placeholder="About this property..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">City</label>
+          <input class="form-input" id="pCity" value="Kuala Lumpur">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Area</label>
+          <input class="form-input" id="pArea" placeholder="e.g. Subang Jaya">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Near University</label>
+          <select class="form-input" id="pUniversity" onchange="autoPropArea()">
+            <option value="">Select University</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <input class="form-input" id="pAddress">
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Amenities (comma separated)</label>
+          <input class="form-input" id="pAmenities" placeholder="WiFi, Parking, Gym, Swimming Pool...">
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Image URLs (comma separated)</label>
+          <input class="form-input" id="pImages" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp Number</label>
+          <input class="form-input" id="pWhatsapp" placeholder="+601x...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Agent Name</label>
+          <input class="form-input" id="pAgent">
+        </div>
+        <div class="form-group">
+          <label class="form-check"><input type="checkbox" id="pActive" checked> Active</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('propertyModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveProperty()">Save Property</button>
+    </div>
+  </div>
+</div>
+
 <!-- Listing Modal -->
 <div class="modal-overlay" id="listingModal">
   <div class="modal">
@@ -1209,6 +1273,12 @@
         <div class="form-group">
           <label class="form-label">Area *</label>
           <input class="form-input" id="lArea" placeholder="e.g. Subang Jaya, Cheras" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Property <span style="font-size:0.75rem;color:var(--text-muted);">(optional – link to a property)</span></label>
+          <select class="form-select" id="lProperty" onchange="autoFillFromProperty()">
+            <option value="">— Standalone listing —</option>
+          </select>
         </div>
         <div class="form-group">
           <label class="form-label">University</label>
@@ -1512,7 +1582,8 @@ function renderApp() {
           <div class="nav-section-label">Overview</div>
           <div class="nav-item active" id="nav-dashboard" onclick="showSection('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</div>
           <div class="nav-section-label">Manage</div>
-          <div class="nav-item" id="nav-listings" onclick="showSection('listings')"><i class="fas fa-building"></i> Listings</div>
+          <div class="nav-item" id="nav-properties" onclick="showSection('properties')"><i class="fas fa-city"></i> Properties</div>
+          <div class="nav-item" id="nav-listings" onclick="showSection('listings')"><i class="fas fa-building"></i> All Rooms</div>
           <div class="nav-item" id="nav-leads" onclick="showSection('leads')"><i class="fas fa-users"></i> Leads</div>
           <div class="nav-item" id="nav-bookings" onclick="showSection('bookings')"><i class="fas fa-calendar-check"></i> Bookings</div>
           <div class="nav-item" id="nav-chat" onclick="showSection('chat')"><i class="fas fa-comments"></i> Live Chat <span class="nav-badge" id="chatBadge" style="display:none">0</span></div>
@@ -1554,6 +1625,7 @@ function renderApp() {
         </header>
         <div class="content">
           <div class="section active" id="sec-dashboard"></div>
+          <div class="section" id="sec-properties"></div>
           <div class="section" id="sec-listings"></div>
           <div class="section" id="sec-leads"></div>
           <div class="section" id="sec-bookings"></div>
@@ -1591,6 +1663,7 @@ const TITLES = {
   reports: ['Reports', 'Detailed data reports'],
   audit: ['Audit Log', 'Admin activity history'],
   tasks: ['Task Board', 'Team task management'],
+  properties: ['Properties', 'Manage properties and rooms'],
   team: ['Team', 'Manage admin users']
 };
 
@@ -1606,7 +1679,7 @@ function showSection(sec) {
   clearInterval(S.chatInterval);
 
   const loaders = {
-    dashboard: loadDashboard, listings: loadListings, leads: loadLeads,
+    dashboard: loadDashboard, properties: loadProperties, listings: loadListings, leads: loadLeads,
     bookings: loadBookings, chat: () => { loadChat(); S.chatInterval = setInterval(() => { loadChatSessions(); if (S.currentSession) loadMessages(S.currentSession); }, 5000); },
     analytics: loadAnalytics, reports: loadReports, audit: loadAudit, tasks: loadTasks,
     team: loadTeam
@@ -1762,12 +1835,191 @@ function navigateFromStat(targetSection, highlightId=null) {
   }, 100);
 }
 
+// ── PROPERTIES ──
+let S_properties = [];
+
+async function loadProperties() {
+  const sec = document.getElementById('sec-properties');
+  sec.innerHTML = `
+    <div class="toolbar" style="margin-bottom:1rem;">
+      <div class="search-box"><i class="fas fa-search"></i><input placeholder="Search properties..." oninput="filterProperties(this.value)" id="propertySearch"></div>
+      <button class="btn btn-gold" onclick="openPropertyModal()"><i class="fas fa-plus"></i> Add Property</button>
+    </div>
+    <div id="propertiesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:1.5rem;">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+  `;
+  const data = await api('/api/properties?isActive=true');
+  S_properties = data.data || [];
+  renderPropertiesGrid(S_properties);
+}
+
+function renderPropertiesGrid(list) {
+  const el = document.getElementById('propertiesGrid');
+  if (!el) return;
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i class="fas fa-city"></i><p>No properties yet. Add one to get started.</p></div>`;
+    return;
+  }
+  el.innerHTML = list.map(p => `
+    <div class="card" style="overflow:hidden;">
+      ${p.images?.[0] ? `<img src="${p.images[0]}" style="width:100%;height:160px;object-fit:cover;" alt="">` : `<div style="width:100%;height:80px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--text-muted);"><i class="fas fa-city fa-2x"></i></div>`}
+      <div class="card-body">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.5rem;">
+          <h3 style="font-size:1rem;font-weight:700;color:var(--text);">${p.name}</h3>
+          <span style="background:var(--gold-muted,rgba(201,168,76,0.15));color:var(--gold);padding:0.25rem 0.6rem;border-radius:20px;font-size:0.72rem;font-weight:600;">${p.totalRooms || 0} rooms</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.75rem;">
+          <i class="fas fa-map-marker-alt" style="color:var(--gold);margin-right:0.3rem;"></i>${p.location?.area || p.location?.city || 'Klang Valley'}
+          ${p.location?.university ? `&nbsp;·&nbsp;<i class="fas fa-university" style="color:var(--gold);"></i> ${p.location.university}` : ''}
+        </div>
+        ${p.roomTypes && Object.keys(p.roomTypes).length ? `
+          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1rem;">
+            ${Object.entries(p.roomTypes).map(([t,c]) => `<span style="background:var(--surface-2,rgba(0,0,0,0.05));padding:0.2rem 0.6rem;border-radius:8px;font-size:0.72rem;font-weight:600;text-transform:capitalize;">${t.replace('_',' ')} ×${c}</span>`).join('')}
+          </div>
+        ` : ''}
+        <div style="display:flex;gap:0.5rem;">
+          <button class="btn btn-gold btn-sm" style="flex:1;" onclick="openAddRoomUnderProperty('${p._id}','${p.name.replace(/'/g,"\\'")}')"><i class="fas fa-plus"></i> Add Room</button>
+          <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="viewPropertyRooms('${p._id}','${p.name.replace(/'/g,"\\'")}')"><i class="fas fa-door-open"></i> View Rooms</button>
+          <button class="btn btn-ghost btn-sm btn-icon" onclick="editProperty('${p._id}')" title="Edit"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-danger-ghost btn-sm btn-icon" onclick="deleteProperty('${p._id}')" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterProperties(q) {
+  const query = (q || '').toLowerCase();
+  renderPropertiesGrid(S_properties.filter(p => !query || p.name?.toLowerCase().includes(query) || p.location?.area?.toLowerCase().includes(query)));
+}
+
+async function openPropertyModal(p = null) {
+  document.getElementById('propertyModalTitle').textContent = p ? 'Edit Property' : 'Add Property';
+  document.getElementById('propertyId').value = p?._id || '';
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v ?? ''; };
+  set('pName', p?.name); set('pDesc', p?.description); set('pCity', p?.location?.city || 'Kuala Lumpur');
+  set('pArea', p?.location?.area); set('pAddress', p?.location?.address);
+  set('pAmenities', (p?.amenities || []).join(', ')); set('pImages', (p?.images || []).join(', '));
+  set('pWhatsapp', p?.whatsappNumber); set('pAgent', p?.agentName);
+  document.getElementById('pActive').checked = p ? p.isActive : true;
+  await loadUniversitiesFor('pUniversity');
+  if (p?.location?.university) document.getElementById('pUniversity').value = p.location.university;
+  openModal('propertyModal');
+}
+
+function editProperty(id) { openPropertyModal(S_properties.find(p => p._id === id)); }
+
+async function saveProperty() {
+  const id = document.getElementById('propertyId').value;
+  const body = {
+    name: document.getElementById('pName').value,
+    description: document.getElementById('pDesc').value,
+    location: { city: document.getElementById('pCity').value, area: document.getElementById('pArea').value, university: document.getElementById('pUniversity').value, address: document.getElementById('pAddress').value },
+    amenities: document.getElementById('pAmenities').value.split(',').map(s=>s.trim()).filter(Boolean),
+    images: document.getElementById('pImages').value.split(',').map(s=>s.trim()).filter(Boolean),
+    whatsappNumber: document.getElementById('pWhatsapp').value,
+    agentName: document.getElementById('pAgent').value,
+    isActive: document.getElementById('pActive').checked
+  };
+  try {
+    const r = await api(id ? `/api/properties/${id}` : '/api/properties', { method: id ? 'PUT' : 'POST', body: JSON.stringify(body) });
+    if (r.success) { closeModal('propertyModal'); toast('Property saved!'); loadProperties(); }
+    else toast(r.error || 'Error saving property', 'error');
+  } catch { toast('Error saving property', 'error'); }
+}
+
+async function deleteProperty(id) {
+  if (!confirm('Delete this property? All linked rooms will be unlinked.')) return;
+  const r = await api(`/api/properties/${id}`, { method: 'DELETE' });
+  if (r.success) { toast('Property deleted'); loadProperties(); }
+  else toast('Error deleting property', 'error');
+}
+
+async function openAddRoomUnderProperty(propertyId, propertyName) {
+  // Pre-fill property when opening listing modal from Properties section
+  await openListingModal();
+  await loadPropertiesDropdown();
+  const sel = document.getElementById('lProperty');
+  if (sel) sel.value = propertyId;
+  document.getElementById('listingModalTitle').textContent = `Add Room — ${propertyName}`;
+}
+
+async function viewPropertyRooms(propertyId, propertyName) {
+  // Switch to All Rooms section filtered by this property
+  showSection('listings');
+  setTimeout(async () => {
+    const data = await api(`/api/properties/${propertyId}/listings`);
+    S.listings = data.data || [];
+    const sec = document.getElementById('sec-listings');
+    const title = sec.querySelector('h2') || sec;
+    document.getElementById('listingSearch').value = '';
+    renderListingsBody(S.listings);
+    // Update section title
+    const toolbar = sec.querySelector('.toolbar');
+    if (toolbar) {
+      const existing = toolbar.querySelector('.prop-context');
+      if (existing) existing.remove();
+      const ctx = document.createElement('span');
+      ctx.className = 'prop-context';
+      ctx.style.cssText = 'font-size:0.85rem;color:var(--gold);font-weight:600;padding:0.4rem 0.8rem;background:rgba(201,168,76,0.1);border-radius:8px;';
+      ctx.innerHTML = `<i class="fas fa-city"></i> ${propertyName}`;
+      toolbar.insertBefore(ctx, toolbar.firstChild);
+    }
+  }, 100);
+}
+
+async function loadPropertiesDropdown() {
+  try {
+    const r = await api('/api/properties?isActive=true');
+    const sel = document.getElementById('lProperty');
+    if (!sel) return;
+    let opts = '<option value="">— Standalone listing —</option>';
+    (r.data || []).forEach(p => { opts += `<option value="${p._id}">${p.name}</option>`; });
+    sel.innerHTML = opts;
+  } catch(e) { console.error(e); }
+}
+
+async function autoFillFromProperty() {
+  const pid = document.getElementById('lProperty').value;
+  if (!pid) return;
+  const prop = S_properties.find(p => p._id === pid);
+  if (!prop) return;
+  if (prop.location?.university) document.getElementById('lUniversity').value = prop.location.university;
+  if (prop.location?.area) document.getElementById('lArea').value = prop.location.area;
+  if (prop.location?.city) document.getElementById('lCity').value = prop.location.city;
+}
+
+async function loadUniversitiesFor(selectId) {
+  try {
+    const r = await api('/api/listings/lookup/universities');
+    if (r.success && r.data?.universities) {
+      universityAreaMap = r.data.map || {};
+      const select = document.getElementById(selectId);
+      const currentValue = select.value;
+      let options = '<option value="">Select University</option>';
+      r.data.universities.forEach(uni => { options += `<option value="${uni}">${uni}</option>`; });
+      select.innerHTML = options;
+      if (currentValue) select.value = currentValue;
+    }
+  } catch(e) { console.error(e); }
+}
+
+function autoPropArea() {
+  const university = document.getElementById('pUniversity').value;
+  const areaInput = document.getElementById('pArea');
+  if (university && universityAreaMap[university]) {
+    const areas = universityAreaMap[university];
+    if (areas?.length > 0) areaInput.value = areas[0];
+  }
+}
+
 // ── LISTINGS ──
 async function loadListings() {
   const sec = document.getElementById('sec-listings');
   sec.innerHTML = `
     <div class="toolbar" style="margin-bottom:1rem;">
-      <div class="search-box"><i class="fas fa-search"></i><input placeholder="Search listings..." oninput="filterListings(this.value)" id="listingSearch"></div>
+      <div class="search-box"><i class="fas fa-search"></i><input placeholder="Search rooms..." oninput="filterListings(this.value)" id="listingSearch"></div>
       <select class="form-select" style="width:160px;" onchange="filterListings()">
         <option value="">All Types</option>
         <option value="apartment">Apartment</option>
@@ -1776,19 +2028,22 @@ async function loadListings() {
         <option value="private_room">Private Room</option>
         <option value="house">House</option>
       </select>
-      <button class="btn btn-gold" onclick="openListingModal()"><i class="fas fa-plus"></i> Add Listing</button>
+      <button class="btn btn-gold" onclick="openListingModal()"><i class="fas fa-plus"></i> Add Room</button>
     </div>
     <div class="card">
       <div class="card-body no-pad">
         <table class="data-table">
-          <thead><tr><th>Property</th><th>Type</th><th>Price</th><th>Location</th><th>Views</th><th>Inquiries</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Title</th><th>Property</th><th>Type</th><th>Price</th><th>Location</th><th>Views</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="listingsBody"><tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
         </table>
       </div>
     </div>
   `;
-  const data = await api('/api/listings?isActive=true');
+  const data = await api('/api/listings?isActive=true&includeAllCities=true');
   S.listings = data.data || [];
+  // Load properties for display
+  const pd = await api('/api/properties');
+  S_properties = pd.data || [];
   renderListingsBody(S.listings);
 }
 
@@ -1796,14 +2051,16 @@ function renderListingsBody(list) {
   const tbody = document.getElementById('listingsBody');
   if (!tbody) return;
   if (!list.length) { tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-building"></i><p>No listings found</p></div></td></tr>`; return; }
-  tbody.innerHTML = list.map(l => `
+  tbody.innerHTML = list.map(l => {
+    const propName = l.property ? (S_properties.find(p => p._id === (l.property._id || l.property))?.name || '—') : '—';
+    return `
     <tr>
-      <td><div class="cell-primary">${l.title}</div><div class="cell-muted">${l.agentName||''}</div></td>
+      <td><div class="cell-primary">${l.title}</div></td>
+      <td style="font-size:0.8rem;color:var(--gold);font-weight:600;">${propName}</td>
       <td><span style="text-transform:capitalize;font-size:0.8rem;color:var(--text-dim);">${l.propertyType?.replace('_',' ')}</span></td>
       <td style="font-family:'DM Mono',monospace;font-size:0.82rem;">RM ${l.price}/${l.pricePeriod}</td>
-      <td style="font-size:0.82rem;color:var(--text-muted);">${l.location?.city||'-'}</td>
+      <td style="font-size:0.82rem;color:var(--text-muted);">${l.location?.area || l.location?.city || '-'}</td>
       <td style="font-family:'DM Mono',monospace;font-size:0.82rem;">${l.views}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:0.82rem;">${l.inquiries}</td>
       <td>${l.isActive ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-inactive">Inactive</span>'}</td>
       <td>
         <div style="display:flex;gap:4px;">
@@ -1811,8 +2068,8 @@ function renderListingsBody(list) {
           <button class="btn btn-danger-ghost btn-sm btn-icon" onclick="deleteListing('${l._id}')" title="Delete"><i class="fas fa-trash"></i></button>
         </div>
       </td>
-    </tr>
-  `).join('');
+    </tr>`;
+  }).join('');
 }
 
 function filterListings(search) {
@@ -1835,7 +2092,10 @@ async function openListingModal(l = null) {
   set('lFrom', l?.availableFrom?.split('T')[0]); set('lUntil', l?.availableUntil?.split('T')[0]);
   document.getElementById('lActive').checked = l ? l.isActive : true;
   document.getElementById('lFeatured').checked = l?.isFeatured || false;
-  await loadUniversities(); // Load university dropdown
+  await loadUniversities();
+  await loadPropertiesDropdown();
+  const propId = l?.property?._id || l?.property || '';
+  if (propId) document.getElementById('lProperty').value = propId;
   openModal('listingModal');
 }
 
@@ -1860,7 +2120,8 @@ async function saveListing() {
     availableFrom: document.getElementById('lFrom').value,
     availableUntil: document.getElementById('lUntil').value,
     isActive: document.getElementById('lActive').checked,
-    isFeatured: document.getElementById('lFeatured').checked
+    isFeatured: document.getElementById('lFeatured').checked,
+    property: document.getElementById('lProperty').value || null
   };
   try {
     const r = await api(id ? `/api/listings/${id}` : '/api/listings', { method: id ? 'PUT' : 'POST', body: JSON.stringify(body) });

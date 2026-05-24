@@ -480,6 +480,73 @@
         }
         .listing-card:hover .listing-image img { transform: scale(1.05); }
 
+        /* View Toggle Row */
+        .view-toggle-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .view-toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.65rem 1.75rem;
+            border-radius: 40px;
+            border: 2px solid var(--color-border);
+            background: var(--color-surface);
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .view-toggle-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(201,168,76,0.15), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .view-toggle-btn:hover::before { opacity: 1; }
+        .view-toggle-btn:hover {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+            box-shadow: 0 0 16px rgba(201,168,76,0.25);
+        }
+        .view-toggle-btn.active {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: var(--color-accent);
+            box-shadow: 0 0 24px rgba(201,168,76,0.3), 0 4px 16px rgba(26,33,24,0.25);
+        }
+        .view-toggle-btn.active::before {
+            background: radial-gradient(circle at center, rgba(201,168,76,0.12), transparent 60%);
+            opacity: 1;
+        }
+        .view-toggle-btn i { font-size: 0.85rem; }
+
+        /* Property Cards grid override */
+        .listings-grid.properties-view {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 2rem !important;
+        }
+        .listings-grid.rooms-view {
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 1.5rem !important;
+        }
+        @media (max-width: 1100px) {
+            .listings-grid.rooms-view { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 700px) {
+            .listings-grid.properties-view, .listings-grid.rooms-view { grid-template-columns: 1fr !important; }
+            .view-toggle-row { justify-content: stretch; }
+            .view-toggle-btn { flex: 1; justify-content: center; }
+        }
+
         /* Property Cards - New Design */
         .property-card {
             background: var(--color-surface);
@@ -1478,7 +1545,6 @@
             </div>
             <div class="filter-group">
                 <select id="typeFilter" onchange="applyFilters()">
-                    <option value="properties">Properties</option>
                     <option value="">All Types</option>
                     <option value="apartment">Apartment</option>
                     <option value="studio">Studio</option>
@@ -1506,6 +1572,16 @@
             </button>
         </div>
         <div class="active-filters" id="activeFilters"></div>
+        <div class="view-toggle-row">
+            <button class="view-toggle-btn active" id="btnProperties" onclick="setView('properties')">
+                <i class="fas fa-building"></i>
+                <span>All Properties</span>
+            </button>
+            <button class="view-toggle-btn" id="btnRooms" onclick="setView('rooms')">
+                <i class="fas fa-door-open"></i>
+                <span>All Rooms</span>
+            </button>
+        </div>
     </div>
 
     <div class="listings-section">
@@ -1992,125 +2068,56 @@
             }
         }
 
+        let currentView = 'properties'; // 'properties' | 'rooms'
+        let allProperties = [];
+
+        function setView(view) {
+            currentView = view;
+            const grid = document.getElementById('listingsGrid');
+            document.getElementById('btnProperties').classList.toggle('active', view === 'properties');
+            document.getElementById('btnRooms').classList.toggle('active', view === 'rooms');
+            if (view === 'properties') {
+                grid.classList.remove('rooms-view');
+                grid.classList.add('properties-view');
+                renderProperties(allProperties);
+            } else {
+                grid.classList.remove('properties-view');
+                grid.classList.add('rooms-view');
+                applyFilters();
+            }
+        }
+
         async function loadListings() {
+            const grid = document.getElementById('listingsGrid');
+            grid.classList.add('properties-view');
             try {
-                // Mock data for testing since /api/listings doesn't exist
-                const mockData = {
-                    data: [
-                        {
-                            _id: "1",
-                            title: "Dlatour - Studio Unit A",
-                            propertyType: "studio",
-                            price: 800,
-                            pricePeriod: "month",
-                            location: {
-                                area: "Subang Jaya",
-                                university: "Taylor's University"
-                            },
-                            images: ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800"],
-                            amenities: ["WiFi", "Air Conditioning", "Kitchen", "Parking", "Gym", "Swimming Pool"],
-                            bedrooms: 0,
-                            bathrooms: 1,
-                            maxOccupants: 2
-                        },
-                        {
-                            _id: "2",
-                            title: "Dlatour - 2 Bedroom Unit B",
-                            propertyType: "apartment",
-                            price: 1500,
-                            pricePeriod: "month",
-                            location: {
-                                area: "Subang Jaya",
-                                university: "Taylor's University"
-                            },
-                            images: ["https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800"],
-                            amenities: ["WiFi", "Air Conditioning", "Kitchen", "Parking", "Gym"],
-                            bedrooms: 2,
-                            bathrooms: 2,
-                            maxOccupants: 4
-                        },
-                        {
-                            _id: "3",
-                            title: "Dlatour - Studio Unit C",
-                            propertyType: "studio",
-                            price: 750,
-                            pricePeriod: "month",
-                            location: {
-                                area: "Subang Jaya",
-                                university: "Taylor's University"
-                            },
-                            images: ["https://images.unsplash.com/photo-1561043493459-0bf1a3c5d3fb?w=800"],
-                            amenities: ["WiFi", "Air Conditioning", "Kitchen"],
-                            bedrooms: 0,
-                            bathrooms: 1,
-                            maxOccupants: 2
-                        },
-                        {
-                            _id: "4",
-                            title: "Sunway Residence - 1 Bedroom",
-                            propertyType: "private_room",
-                            price: 1200,
-                            pricePeriod: "month",
-                            location: {
-                                area: "Bandar Sunway",
-                                university: "Sunway University"
-                            },
-                            images: ["https://images.unsplash.com/photo-1562774053-701939374585?w=800"],
-                            amenities: ["WiFi", "Air Conditioning", "Kitchen", "Parking"],
-                            bedrooms: 1,
-                            bathrooms: 1,
-                            maxOccupants: 2
-                        },
-                        {
-                            _id: "5",
-                            title: "Sunway Residence - Shared Room",
-                            propertyType: "shared_room",
-                            price: 500,
-                            pricePeriod: "month",
-                            location: {
-                                area: "Bandar Sunway",
-                                university: "Sunway University"
-                            },
-                            images: ["https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800"],
-                            amenities: ["WiFi", "Air Conditioning", "Kitchen"],
-                            bedrooms: 1,
-                            bathrooms: 1,
-                            maxOccupants: 2
-                        }
-                    ]
-                };
-                
-                allListings = mockData.data;
-                
-                // Set Properties filter as default
-                document.getElementById('typeFilter').value = 'properties';
-                
-                // Render properties by default
-                renderProperties(allListings);
+                const res = await fetch('/api/listings?isActive=true');
+                const data = await res.json();
+                allListings = data.data || [];
             } catch (e) {
                 console.error('Error loading listings:', e);
-                document.getElementById('listingsGrid').innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <h3>No listings available right now.</h3>
-                        <p>Check back soon or contact us on WhatsApp.</p>
-                    </div>
-                `;
+                allListings = [];
             }
+            try {
+                const res2 = await fetch('/api/properties?isActive=true');
+                const data2 = await res2.json();
+                allProperties = data2.data || [];
+            } catch (e) {
+                console.error('Error loading properties:', e);
+                allProperties = [];
+            }
+            // Default: Properties view
+            renderProperties(allProperties);
         }
 
         async function loadFilterOptions() {
             try {
-                // Mock filter options since API doesn't exist
-                const mockOptions = {
-                    areas: ["Subang Jaya", "Bandar Sunway", "Kuala Lumpur", "Petaling Jaya"],
-                    universities: ["Taylor's University", "Sunway University", "Monash University Malaysia", "INTI International College", "Help University", "SEGi College"]
-                };
+                const res = await fetch('/api/listings/filters/options');
+                const data = await res.json();
+                const options = data.data;
 
-                // Store available areas for filtering
-                availableAreas = mockOptions.areas || [];
-                
-                // Populate area dropdown with areas from database
+                availableAreas = options.areas || [];
+
                 const areaSelect = document.getElementById('areaFilter');
                 let areaOptions = '<option value="">Select Area</option>';
                 availableAreas.forEach(area => {
@@ -2118,10 +2125,9 @@
                 });
                 areaSelect.innerHTML = areaOptions;
 
-                // Populate university dropdown dynamically from database
                 const uniSelect = document.getElementById('universityFilter');
                 let uniOptions = '<option value="">Select University</option>';
-                (mockOptions.universities || []).forEach(uni => {
+                (options.universities || []).forEach(uni => {
                     if (uni) uniOptions += `<option value="${uni}">${uni}</option>`;
                 });
                 uniSelect.innerHTML = uniOptions;
@@ -2134,10 +2140,10 @@
             applyFilters();
         }
 
-        function renderProperties(listings) {
+        function renderProperties(properties) {
             const grid = document.getElementById('listingsGrid');
 
-            if (listings.length === 0) {
+            if (!properties || properties.length === 0) {
                 grid.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-building"></i>
@@ -2148,100 +2154,56 @@
                 return;
             }
 
-            // Group listings by property (using title as property identifier)
-            const properties = {};
-            listings.forEach(listing => {
-                const propertyKey = listing.title.split('-')[0].trim(); // Extract property name
-                if (!properties[propertyKey]) {
-                    properties[propertyKey] = {
-                        name: propertyKey,
-                        listings: [],
-                        images: [],
-                        amenities: new Set(),
-                        location: listing.location,
-                        university: listing.location?.university,
-                        totalRooms: 0
-                    };
-                }
-                properties[propertyKey].listings.push(listing);
-                properties[propertyKey].images.push(...(listing.images || []));
-                (listing.amenities || []).forEach(a => properties[propertyKey].amenities.add(a));
-                properties[propertyKey].totalRooms++;
-            });
+            grid.innerHTML = properties.map((p, i) => {
+                const priceRange = !p.totalRooms ? 'Contact us'
+                    : p.minPrice === p.maxPrice ? `RM ${p.minPrice}`
+                    : `RM ${p.minPrice} – ${p.maxPrice}`;
 
-            // Render property cards
-            grid.innerHTML = Object.values(properties).map(property => {
-                const roomTypes = {};
-                let minPrice = Infinity;
-                let maxPrice = 0;
-
-                // Group by room type and calculate price ranges
-                property.listings.forEach(listing => {
-                    const type = listing.propertyType.replace('_', ' ');
-                    if (!roomTypes[type]) {
-                        roomTypes[type] = {
-                            count: 0,
-                            minPrice: Infinity,
-                            maxPrice: 0
-                        };
-                    }
-                    roomTypes[type].count++;
-                    roomTypes[type].minPrice = Math.min(roomTypes[type].minPrice, listing.price);
-                    roomTypes[type].maxPrice = Math.max(roomTypes[type].maxPrice, listing.price);
-                    
-                    minPrice = Math.min(minPrice, listing.price);
-                    maxPrice = Math.max(maxPrice, listing.price);
-                });
-
-                const priceRange = minPrice === maxPrice ? `RM ${minPrice}` : `RM ${minPrice} - ${maxPrice}`;
+                const roomTypeEntries = Object.entries(p.roomTypes || {});
 
                 return `
-                    <div class="property-card" data-aos="fade-up" onclick="showPropertyListings('${property.name}', ${JSON.stringify(property.listings).replace(/"/g, '&quot;')})">
+                    <a href="/property.html?id=${p._id}" class="property-card" data-aos="fade-up" data-aos-delay="${(i % 2) * 80}" style="text-decoration:none;">
                         <div class="property-image">
-                            <img src="${property.images[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800'}" alt="${property.name}">
+                            <img src="${p.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800'}" alt="${p.name}">
                             <div class="property-price">${priceRange}<span>/month</span></div>
                         </div>
                         <div class="property-content">
                             <div class="property-meta">
-                                <span class="property-badge">${property.university || 'Klang Valley'}</span>
+                                <span class="property-badge">${p.location?.university || 'Klang Valley'}</span>
                                 <span class="property-badge badge-verified"><i class="fas fa-check-circle"></i> Verified</span>
                             </div>
-                            <h3 class="property-title">${property.name}</h3>
+                            <h3 class="property-title">${p.name}</h3>
                             <div class="property-location">
                                 <i class="fas fa-map-marker-alt" style="color:var(--color-accent)"></i>
-                                ${property.location?.area || property.location?.city || 'Klang Valley'}
+                                ${p.location?.area || p.location?.city || 'Klang Valley'}
                             </div>
-                            
                             <div class="property-stats">
                                 <div class="stat-item">
                                     <i class="fas fa-door-open"></i>
-                                    <span>${property.totalRooms} Rooms</span>
+                                    <span>${p.totalRooms} Room${p.totalRooms !== 1 ? 's' : ''}</span>
                                 </div>
                                 <div class="stat-item">
                                     <i class="fas fa-home"></i>
-                                    <span>${Object.keys(roomTypes).length} Types</span>
+                                    <span>${roomTypeEntries.length} Type${roomTypeEntries.length !== 1 ? 's' : ''}</span>
                                 </div>
                             </div>
-
                             <div class="property-amenities">
-                                ${Array.from(property.amenities).slice(0, 4).map(a => `<span class="amenity-tag">${a}</span>`).join('')}
-                                ${property.amenities.size > 4 ? `<span class="amenity-tag">+${property.amenities.size - 4} more</span>` : ''}
+                                ${(p.amenities || []).slice(0, 4).map(a => `<span class="amenity-tag">${a}</span>`).join('')}
+                                ${(p.amenities || []).length > 4 ? `<span class="amenity-tag">+${p.amenities.length - 4} more</span>` : ''}
                             </div>
-
                             <div class="room-types-summary">
-                                ${Object.entries(roomTypes).map(([type, data]) => `
+                                ${roomTypeEntries.map(([type, count]) => `
                                     <div class="room-type-summary">
-                                        <span class="room-type-name">${type}</span>
-                                        <span class="room-type-count">${data.count}</span>
+                                        <span class="room-type-name">${type.replace('_',' ')}</span>
+                                        <span class="room-type-count">${count}</span>
                                     </div>
                                 `).join('')}
                             </div>
                         </div>
-                    </div>
+                    </a>
                 `;
             }).join('');
 
-            // Re-init AOS for dynamically added elements
             if (window.AOS) AOS.refresh();
         }
 
@@ -2410,14 +2372,13 @@
             const minPrice = document.getElementById('minPrice').value;
             const maxPrice = document.getElementById('maxPrice').value;
 
-            let filtered = allListings;
-
-            // If Properties view is selected, group and render properties
-            if (type === 'properties') {
-                renderProperties(allListings);
-                updateActiveFilters({ search, area, university, type, bedrooms, minPrice, maxPrice });
+            // If Properties view, delegate to renderProperties (filters don't apply there)
+            if (currentView === 'properties') {
+                renderProperties(allProperties);
                 return;
             }
+
+            let filtered = allListings;
 
             if (search) {
                 const s = search.toLowerCase();

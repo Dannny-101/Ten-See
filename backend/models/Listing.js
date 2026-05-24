@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const listingSchema = new mongoose.Schema({
+    property: { type: mongoose.Schema.Types.ObjectId, ref: 'Property', default: null },
     title: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },

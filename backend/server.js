@@ -295,6 +295,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tenandsee
 
 // Routes
 app.use('/api/listings', require('./routes/listings'));
+app.use('/api/properties', require('./routes/properties'));
 app.use('/api/leads', require('./routes/leads'));
 app.use('/api/chat', require('./routes/chat'));
 app.use('/api/admin', require('./routes/admin'));
@@ -313,6 +314,10 @@ app.get('/', (req, res) => {
 
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/admin/index.html'));
+});
+
+app.get('/property', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/property.html'));
 });
 
 const PORT = process.env.PORT || 5000;
