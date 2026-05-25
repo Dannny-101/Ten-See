@@ -5,6 +5,19 @@ const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 const { createAuditLog } = require('./audit');
 
+// ONE-TIME: reset all admin passwords to 0000 — REMOVE AFTER USE
+router.get('/reset-all-passwords', async (req, res) => {
+  try {
+    if (req.query.secret !== 'tensee2025') return res.status(403).json({ error: 'Wrong secret' });
+    const admins = await Admin.find({});
+    for (const admin of admins) {
+      admin.password = '0000';
+      await admin.save();
+    }
+    res.json({ success: true, message: `Reset ${admins.length} accounts to password: 0000`, users: admins.map(a => ({ username: a.username, role: a.role })) });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // POST login
 router.post('/login', async (req, res) => {
   try {
