@@ -1495,6 +1495,70 @@
   </div>
 </div>
 
+<!-- Avatar Picker Modal -->
+<div class="modal-overlay" id="avatarModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">Choose Your Avatar</span>
+      <button class="modal-close" onclick="closeModal('avatarModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:1.5rem;">
+        <div id="avatarPreview" style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 0.5rem;cursor:pointer;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">🦁</div>
+        <button class="btn btn-sm" onclick="randomizeAvatar()" style="background:var(--surface2);"><i class="fas fa-dice"></i> Randomize</button>
+      </div>
+      
+      <div style="margin-bottom:1rem;">
+        <label style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;display:block;">Choose Emoji</label>
+        <div id="emojiGrid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:0.5rem;">
+          ${['🦁','🐯','🦊','🐺','🐻','🐼','🐨','🐸','🐙','🦉','🦅','🦜','🐉','🦕','🦖','🐳','🐬','🦈','🐊','🐅','🦓','🦒','🦌','🦌','🐘','🦏','🦛','🐪','🦙','🦘','🦡','🦦','🐿️','🦔','🐇','🦫','🦭','🐧','🦆','🦢'].map(e => `<div class="emoji-option" data-emoji="${e}" onclick="selectEmoji('${e}')" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer;border-radius:8px;transition:all 0.2s;background:var(--surface2);" onmouseover="this.style.background='var(--gold-dim)'" onmouseout="this.style.background='var(--surface2)'">${e}</div>`).join('')}
+        </div>
+      </div>
+      
+      <div style="margin-bottom:1rem;">
+        <label style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;display:block;">Background Color</label>
+        <div id="colorGrid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:0.5rem;">
+          ${['#c9a84c','#e74c3c','#3498db','#2ecc71','#9b59b6','#f39c12','#1abc9c','#34495e'].map(c => `<div class="color-option" data-color="${c}" onclick="selectAvatarColor('${c}')" style="aspect-ratio:1;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.2s;background:${c};"></div>`).join('')}
+        </div>
+      </div>
+      
+      <button class="btn btn-gold" style="width:100%;" onclick="saveAvatar()"><i class="fas fa-check"></i> Save Avatar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Avatar Picker Modal -->
+<div class="modal-overlay" id="avatarModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">Choose Your Avatar</span>
+      <button class="modal-close" onclick="closeModal('avatarModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:1.5rem;">
+        <div id="avatarPreview" style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 0.5rem;cursor:pointer;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">🦁</div>
+        <button class="btn btn-sm" onclick="randomizeAvatar()" style="background:var(--surface2);"><i class="fas fa-dice"></i> Randomize</button>
+      </div>
+      
+      <div style="margin-bottom:1rem;">
+        <label style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;display:block;">Choose Emoji</label>
+        <div id="emojiGrid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:0.5rem;">
+          ${['🦁','🐯','🦊','🐺','🐻','🐼','🐨','🐸','🐙','🦉','🦅','🦜','🐉','🦕','🦖','🐳','🐬','🦈','🐊','🐅','🦓','🦒','🦌','🦌','🐘','🦏','🦛','🐪','🦙','🦘','🦡','🦦','🐿️','🦔','🐇','🦫','🦭','🐧','🦆','🦢'].map(e => `<div class="emoji-option" data-emoji="${e}" onclick="selectEmoji('${e}')" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer;border-radius:8px;transition:all 0.2s;background:var(--surface2);" onmouseover="this.style.background='var(--gold-dim)'" onmouseout="this.style.background='var(--surface2)'">${e}</div>`).join('')}
+        </div>
+      </div>
+      
+      <div style="margin-bottom:1rem;">
+        <label style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;display:block;">Background Color</label>
+        <div id="colorGrid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:0.5rem;">
+          ${['#c9a84c','#e74c3c','#3498db','#2ecc71','#9b59b6','#f39c12','#1abc9c','#34495e'].map(c => `<div class="color-option" data-color="${c}" onclick="selectAvatarColor('${c}')" style="aspect-ratio:1;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.2s;background:${c};"></div>`).join('')}
+        </div>
+      </div>
+      
+      <button class="btn btn-gold" style="width:100%;" onclick="saveAvatar()"><i class="fas fa-check"></i> Save Avatar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Booking Modal -->
 <div class="modal-overlay" id="bookingModal">
   <div class="modal modal-sm">
@@ -4074,6 +4138,71 @@ async function deactivateAdmin(id) {
   const r = await api(`/api/admin/${id}`, { method: 'DELETE' });
   if (r.success) { toast('Admin deactivated'); loadTeam(); }
   else toast('Error', 'error');
+}
+
+// ── AVATAR PICKER ──
+let selectedEmoji = '🦁';
+let selectedBg = '#c9a84c';
+const EMOJIS = ['🦁','🐯','🦊','🐺','🐻','🐼','🐨','🐸','🐙','🦉','🦅','🦜','🐉','🦕','🦖','🐳','🐬','🦈','🐊','🐅','🦓','🦒','🦌','🐫','🐪','🦙','🦘','🦡','🦦','🐿️','🦔','🐇','🦫','🦭','🐧','🦆','🦢','🦩','🦚','🦜'];
+const COLORS = ['#c9a84c','#e74c3c','#3498db','#2ecc71','#9b59b6','#f39c12','#1abc9c','#34495e'];
+
+function initAvatarModal() {
+  const saved = JSON.parse(localStorage.getItem('myAvatar') || '{"emoji":"🦁","bg":"#c9a84c"}');
+  selectedEmoji = saved.emoji;
+  selectedBg = saved.bg;
+  updateAvatarPreview();
+  highlightSelections();
+}
+
+function selectEmoji(e) {
+  selectedEmoji = e;
+  updateAvatarPreview();
+  highlightSelections();
+}
+
+function selectAvatarColor(c) {
+  selectedBg = c;
+  updateAvatarPreview();
+  highlightSelections();
+}
+
+function updateAvatarPreview() {
+  const preview = document.getElementById('avatarPreview');
+  if (preview) {
+    preview.textContent = selectedEmoji;
+    preview.style.background = selectedBg;
+  }
+}
+
+function highlightSelections() {
+  document.querySelectorAll('.emoji-option').forEach(el => {
+    el.style.border = el.dataset.emoji === selectedEmoji ? '2px solid var(--gold)' : '2px solid transparent';
+  });
+  document.querySelectorAll('.color-option').forEach(el => {
+    el.style.border = el.dataset.color === selectedBg ? '3px solid white' : '3px solid transparent';
+  });
+}
+
+function randomizeAvatar() {
+  selectedEmoji = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+  selectedBg = COLORS[Math.floor(Math.random() * COLORS.length)];
+  updateAvatarPreview();
+  highlightSelections();
+}
+
+async function saveAvatar() {
+  const r = await api('/api/admin/avatar', { 
+    method: 'PUT', 
+    body: JSON.stringify({ emoji: selectedEmoji, bg: selectedBg }) 
+  });
+  if (r.success) {
+    localStorage.setItem('myAvatar', JSON.stringify({ emoji: selectedEmoji, bg: selectedBg }));
+    closeModal('avatarModal');
+    toast('Avatar saved!');
+    renderApp();
+  } else {
+    toast(r.error || 'Error saving avatar', 'error');
+  }
 }
 
 // ── TEAM CHAT ──

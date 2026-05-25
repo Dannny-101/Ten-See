@@ -231,5 +231,27 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   }
 });
 
+// PUT update admin avatar (self only)
+router.put('/avatar', authMiddleware, async (req, res) => {
+  try {
+    const { emoji, bg } = req.body;
+    if (!emoji || !bg) {
+      return res.status(400).json({ success: false, error: 'Emoji and background color required' });
+    }
+    
+    const admin = await Admin.findByIdAndUpdate(
+      req.admin.id,
+      { avatar: { emoji, bg }, updatedAt: Date.now() },
+      { new: true }
+    ).select('-password');
+    
+    if (!admin) return res.status(404).json({ success: false, error: 'Admin not found' });
+    
+    res.json({ success: true, data: admin });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
 module.exports = router;
 module.exports.authMiddleware = authMiddleware;
