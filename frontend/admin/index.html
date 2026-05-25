@@ -1775,16 +1775,12 @@ table tr:hover td:first-child {
       
       <div style="margin-bottom:1rem;">
         <label style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;display:block;">Choose Emoji</label>
-        <div id="emojiGrid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:0.5rem;">
-          ${['🦁','🐯','🦊','🐺','🐻','🐼','🐨','🐸','🐙','🦉','🦅','🦜','🐉','🦕','🦖','🐳','🐬','🦈','🐊','🐅','🦓','🦒','🦌','🦌','🐘','🦏','🦛','🐪','🦙','🦘','🦡','🦦','🐿️','🦔','🐇','🦫','🦭','🐧','🦆','🦢'].map(e => `<div class="emoji-option" data-emoji="${e}" onclick="selectEmoji('${e}')" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer;border-radius:8px;transition:all 0.2s;background:var(--surface2);" onmouseover="this.style.background='var(--gold-dim)'" onmouseout="this.style.background='var(--surface2)'">${e}</div>`).join('')}
-        </div>
+        <div id="emojiGrid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:0.4rem;max-height:180px;overflow-y:auto;"></div>
       </div>
       
       <div style="margin-bottom:1rem;">
         <label style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;display:block;">Background Color</label>
-        <div id="colorGrid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:0.5rem;">
-          ${['#c9a84c','#e74c3c','#3498db','#2ecc71','#9b59b6','#f39c12','#1abc9c','#34495e'].map(c => `<div class="color-option" data-color="${c}" onclick="selectAvatarColor('${c}')" style="aspect-ratio:1;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.2s;background:${c};"></div>`).join('')}
-        </div>
+        <div id="colorGrid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:0.4rem;"></div>
       </div>
       
       <button class="btn btn-gold" style="width:100%;" onclick="saveAvatar()"><i class="fas fa-check"></i> Save Avatar</button>
@@ -4811,8 +4807,26 @@ function initAvatarModal() {
   const saved = S.adminAvatar || JSON.parse(localStorage.getItem('myAvatar') || '{"emoji":"🦁","bg":"#c9a84c"}');
   selectedEmoji = saved.emoji;
   selectedBg = saved.bg;
+
+  // Build emoji grid
+  const emojiGrid = document.getElementById('emojiGrid');
+  if (emojiGrid) {
+    emojiGrid.innerHTML = EMOJIS.map(e => `
+      <div class="emoji-option" data-emoji="${e}" onclick="selectEmoji('${e}')"
+        style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.4rem;cursor:pointer;border-radius:8px;transition:all 0.15s;background:var(--surface2);border:2px solid ${e === selectedEmoji ? 'var(--gold)' : 'transparent'};">${e}</div>
+    `).join('');
+  }
+
+  // Build color grid
+  const colorGrid = document.getElementById('colorGrid');
+  if (colorGrid) {
+    colorGrid.innerHTML = COLORS.map(c => `
+      <div class="color-option" data-color="${c}" onclick="selectAvatarColor('${c}')"
+        style="aspect-ratio:1;border-radius:50%;cursor:pointer;transition:all 0.15s;background:${c};border:3px solid ${c === selectedBg ? '#fff' : 'transparent'};box-shadow:${c === selectedBg ? '0 0 0 2px var(--gold)' : 'none'};"></div>
+    `).join('');
+  }
+
   updateAvatarPreview();
-  highlightSelections();
 }
 
 function selectEmoji(e) {
@@ -4837,10 +4851,12 @@ function updateAvatarPreview() {
 
 function highlightSelections() {
   document.querySelectorAll('.emoji-option').forEach(el => {
-    el.classList.toggle('selected', el.dataset.emoji === selectedEmoji);
+    el.style.border = el.dataset.emoji === selectedEmoji ? '2px solid var(--gold)' : '2px solid transparent';
+    el.style.background = el.dataset.emoji === selectedEmoji ? 'var(--gold-dim, rgba(201,168,76,0.2))' : 'var(--surface2)';
   });
   document.querySelectorAll('.color-option').forEach(el => {
-    el.classList.toggle('selected', el.dataset.color === selectedBg);
+    el.style.border = el.dataset.color === selectedBg ? '3px solid #fff' : '3px solid transparent';
+    el.style.boxShadow = el.dataset.color === selectedBg ? '0 0 0 2px var(--gold)' : 'none';
   });
 }
 
