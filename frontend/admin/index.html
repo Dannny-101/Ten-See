@@ -2024,6 +2024,17 @@ ${S.adminRole === 'superadmin' ? `<div class="nav-section-label">System</div>
   pollNotifications();
   S.notifInterval = setInterval(pollNotifications, 30000);
   initSocket();
+  // Sync avatar from DB so all other admins can see it in real-time
+  api('/api/admin/profile').then(r => {
+    if (r?.data?.avatar?.emoji) {
+      S.adminAvatar = r.data.avatar;
+      localStorage.setItem('myAvatar', JSON.stringify(r.data.avatar));
+    } else {
+      S.adminAvatar = JSON.parse(localStorage.getItem('myAvatar') || '{"emoji":"🦁","bg":"#c9a84c"}');
+    }
+  }).catch(() => {
+    S.adminAvatar = JSON.parse(localStorage.getItem('myAvatar') || '{"emoji":"🦁","bg":"#c9a84c"}');
+  });
   window.TenSeeTheme?.bindToggles?.();
   // Show mobile nav
   document.getElementById('mobileBottomNav').style.display = '';
@@ -4573,7 +4584,7 @@ async function renderStaffChatList() {
     
     list.innerHTML = onlineStaff.map(s => `
       <div class="teamchat-item ${selectedStaffId === s._id ? 'active' : ''}" onclick="selectStaff('${s._id}', '${s.name || s.username}', '${s.role || 'admin'}')">
-        <div class="teamchat-avatar">${(s.name || s.username).charAt(0).toUpperCase()}</div>
+        <div class="teamchat-avatar" style="${s.avatar?.emoji ? `background:${s.avatar.bg||'#c9a84c'};font-size:1.1rem;` : ''}">${s.avatar?.emoji || (s.name || s.username).charAt(0).toUpperCase()}</div>
         <div class="teamchat-info">
           <div class="teamchat-name">${s.name || s.username} ${s._id === S.adminId ? '(You)' : ''}</div>
           <div class="teamchat-meta">${s.role || 'Admin'}</div>
@@ -4695,7 +4706,7 @@ function sendStaffMessage() {
   if (!text) return;
   
   const myName = S.adminName || 'Me';
-  const myAvatar = JSON.parse(localStorage.getItem('myAvatar') || '{"emoji":"🦁","bg":"#c9a84c"}');
+  const myAvatar = S.adminAvatar || JSON.parse(localStorage.getItem('myAvatar') || '{"emoji":"🦁","bg":"#c9a84c"}');
   const message = {
     fromId: S.adminId,
     fromName: myName,
@@ -4846,7 +4857,9 @@ async function saveAvatar() {
     body: JSON.stringify({ emoji: selectedEmoji, bg: selectedBg }) 
   });
   if (r.success) {
-    localStorage.setItem('myAvatar', JSON.stringify({ emoji: selectedEmoji, bg: selectedBg }));
+    const av = { emoji: selectedEmoji, bg: selectedBg };
+    localStorage.setItem('myAvatar', JSON.stringify(av));
+    S.adminAvatar = av;
     closeModal('avatarModal');
     toast('Avatar saved!');
     renderApp();
