@@ -8,10 +8,11 @@ const emailService = require('../utils/email');
 
 router.get('/', async (req, res) => {
   try {
-    const { status, listingId, page = 1, limit = 20 } = req.query;
+    const { status, listingId, source, page = 1, limit = 20 } = req.query;
     let query = {};
     if (status) query.status = status;
     if (listingId) query.listingId = listingId;
+    if (source) query.source = source;
 
     const bookings = await Booking.find(query)
       .populate('listingId', 'title location price images')
@@ -39,13 +40,31 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const { leadId, listingId, checkInDate, checkOutDate, numberOfOccupants } = req.body;
+    const { leadId, listingId, checkInDate, checkOutDate, numberOfOccupants, name, email, phone, message, source } = req.body;
 
     const listing = await Listing.findById(listingId);
     if (!listing) return res.status(404).json({ success: false, error: 'Listing not found' });
 
-    const lead = await Lead.findById(leadId);
-    if (!lead) return res.status(404).json({ success: false, error: 'Lead not found' });
+    let lead;
+    if (leadId) {
+      lead = await Lead.findById(leadId);
+      if (!lead) return res.status(404).json({ success: false, error: 'Lead not found' });
+    } else {
+      // Create or find lead from booking form data
+      lead = await Lead.findOne({ email: email });
+      if (!lead) {
+        lead = await Lead.create({
+          name: name || 'Anonymous',
+          email: email,
+          phone: phone || '',
+          message: message || '',
+          source: source || 'booking_form',
+          listingId: listingId,
+          listingTitle: listing.title,
+          status: 'new'
+        });
+      }
+    }
 
     const overlapping = await Booking.findOne({
       listingId, status: { $nin: ['cancelled'] },
@@ -56,23 +75,42 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ success: false, error: 'These dates are already booked. Please select different dates.' });
     }
 
-    const nights = Math.ceil((new Date(checkOutDate) - new Date(checkInDate)) / (1000 * 60 * 60 * 24));
-    const totalAmount = nights * listing.price;
+    let nights = 0;
+    let totalAmount = 0;
+    if (checkInDate && checkOutDate) {
+      nights = Math.ceil((new Date(checkOutDate) - new Date(checkInDate)) / (1000 * 60 * 60 * 24));
+      totalAmount = nights * listing.price;
+    }
 
     const booking = await Booking.create({
-      leadId, listingId,
+      leadId: lead._id, listingId,
       studentName: lead.name, studentEmail: lead.email, studentPhone: lead.phone,
-      checkInDate, checkOutDate,
+      checkInDate: checkInDate || null, checkOutDate: checkOutDate || null,
       numberOfOccupants: numberOfOccupants || 1,
-      totalAmount, depositAmount: totalAmount * 0.3, remainingAmount: totalAmount * 0.7,
-      status: 'pending'
+      totalAmount, depositAmount: totalAmount ? totalAmount * 0.3 : 0, remainingAmount: totalAmount ? totalAmount * 0.7 : 0,
+      status: 'pending',
+      source: source || 'website'
     });
 
     await createNotification('new_booking', 'New Booking Request',
-      `${lead.name} requested to book ${listing.title} from ${new Date(checkInDate).toLocaleDateString()}`,
+      `${lead.name} requested to book ${listing.title}${checkInDate ? ' from ' + new Date(checkInDate).toLocaleDateString() : ''}`,
       { bookingId: booking._id, listingId: listing._id, leadId: lead._id });
 
-    await emailService.sendStudentConfirmation(lead.email, { name: lead.name, listingTitle: listing.title });
+    // Send confirmation emails
+    const bookingData = {
+      name: lead.name,
+      email: lead.email,
+      phone: lead.phone,
+      listingTitle: listing.title,
+      checkInDate: checkInDate ? new Date(checkInDate).toLocaleDateString() : 'TBD',
+      checkOutDate: checkOutDate ? new Date(checkOutDate).toLocaleDateString() : 'TBD',
+      totalAmount,
+      source: booking.source,
+      bookingId: booking._id
+    };
+
+    await emailService.sendBookingConfirmation(lead.email, bookingData);
+    await emailService.sendBookingAdminNotification(process.env.ADMIN_EMAIL || 'admin@tensee.my', bookingData);
 
     res.status(201).json({ success: true, data: booking });
   } catch (error) {

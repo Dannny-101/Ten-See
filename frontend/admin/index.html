@@ -1482,7 +1482,7 @@ const S = {
   chatSessions: [], currentSession: null,
   chatInterval: null,
   notifInterval: null,
-  leadFilter: 'all', bookingFilter: 'all',
+  leadFilter: 'all', bookingFilter: 'all', bookingSourceFilter: 'all',
   adminName: localStorage.getItem('adminName') || 'Admin'
 };
 
@@ -1710,6 +1710,7 @@ async function loadDashboard() {
         ${statCard('fa-building', 'si-green', d.totalListings, 'Active Listings', null, '', "navigateFromStat('listings')")}
         ${statCard('fa-eye', 'si-orange', (d.totalViews||0).toLocaleString(), 'Total Views', c?.changes?.views, '%', "navigateFromStat('analytics')")}
         ${statCard('fa-calendar-check', 'si-purple', d.totalBookings ?? '-', 'Total Bookings', c?.changes?.bookings, '%', "navigateFromStat('bookings')")}
+        ${statCard('fa-whatsapp', 'si-green', d.whatsappBookings ?? '-', 'WhatsApp Bookings', null, '', "showSection('bookings');setBookingSourceFilter('whatsapp')")}
         ${statCard('fa-comments', 'si-gold', d.totalChats ?? '-', 'Chat Sessions', null, '', "navigateFromStat('chat')")}
       </div>
       <div class="two-col">
@@ -2217,7 +2218,7 @@ function renderLeadsBody() {
     <tr class="lead-swipe-row" id="lead-row-${l._id}" data-id="${l._id}">
       <td class="inline-edit-cell" ondblclick="inlineEditName('${l._id}', this, '${(l.name||'').replace(/'/g,"\\'")}')"><div class="cell-primary">${l.name}</div><div class="cell-muted">${l.email}</div></td>
       <td style="font-size:0.82rem;">${l.phone||'-'}</td>
-      <td><span style="font-size:0.78rem;color:var(--text-muted);text-transform:capitalize;">${l.source?.replace(/_/g,' ')}</span></td>
+      <td>${l.source === 'whatsapp' ? '<span style="background:#25d366;color:white;padding:2px 8px;border-radius:100px;font-size:0.7rem;"><i class="fab fa-whatsapp"></i> WhatsApp</span>' : '<span style="font-size:0.78rem;color:var(--text-muted);">Website</span>'}</td>
       <td style="font-size:0.8rem;color:var(--text-muted);">${l.listingTitle||'-'}</td>
       <td><select class="inline-status-select" onchange="inlineUpdateStatus('${l._id}', this.value)" title="Click to change status">
         ${['new','contacted','viewing_scheduled','converted','closed'].map(s=>`<option value="${s}"${l.status===s?' selected':''}>${cap(s)}</option>`).join('')}
@@ -2246,6 +2247,18 @@ function viewLead(id) {
   const statusBadge = document.getElementById('leadModalStatus');
   statusBadge.textContent = l.status;
   statusBadge.className = `lead-status-badge ${l.status}`;
+  
+  // Add WhatsApp badge to header if source is whatsapp
+  const headerInfo = document.querySelector('.lead-header-info');
+  const existingBadge = headerInfo.querySelector('.whatsapp-badge');
+  if (existingBadge) existingBadge.remove();
+  if (l.source === 'whatsapp') {
+    const waBadge = document.createElement('span');
+    waBadge.className = 'whatsapp-badge';
+    waBadge.innerHTML = '<i class="fab fa-whatsapp"></i> WhatsApp';
+    waBadge.style.cssText = 'background:#25d366;color:white;padding:4px 10px;border-radius:100px;font-size:0.7rem;margin-left:8px;';
+    headerInfo.appendChild(waBadge);
+  }
   
   // Helper to format value or show "Not provided"
   const val = (v) => v ? `<span class="lead-field-value">${v}</span>` : `<span class="lead-field-value not-provided">Not provided</span>`;
@@ -2294,7 +2307,11 @@ function viewLead(id) {
           <div class="lead-field-icon"><i class="fas fa-phone"></i></div>
           <div class="lead-field-content">
             <div class="lead-field-label">Phone</div>
-            ${l.phone ? `<span class="lead-field-value">${l.phone}</span> ${copyBtn(l.phone)}` : val(null)}
+            ${l.phone ? `<span class="lead-field-value">${l.phone}</span> ${copyBtn(l.phone)} 
+            <a href="https://wa.me/${l.phone.replace(/\D/g,'')}?text=${encodeURIComponent(`Hi ${l.name || 'there'}, this is Ten&See regarding your inquiry. How can we help you today?`)}" 
+               target="_blank" class="btn btn-sm" style="background:#25d366;color:white;margin-left:0.5rem;padding:0.25rem 0.5rem;font-size:0.75rem;">
+              <i class="fab fa-whatsapp"></i> Open WhatsApp
+            </a>` : val(null)}
           </div>
         </div>
         <div class="lead-field">
@@ -2466,22 +2483,32 @@ async function loadBookings() {
         `<div class="tab ${S.bookingFilter===s?'active':''}" onclick="setBookingFilter('${s}')">${cap(s)}</div>`
       ).join('')}
     </div>
+    <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+      <button class="btn btn-sm ${S.bookingSourceFilter==='all'||!S.bookingSourceFilter?'btn-gold':''}" onclick="setBookingSourceFilter('all')">All Sources</button>
+      <button class="btn btn-sm ${S.bookingSourceFilter==='website'?'btn-gold':''}" onclick="setBookingSourceFilter('website')">Website</button>
+      <button class="btn btn-sm ${S.bookingSourceFilter==='whatsapp'?'btn-gold':''}" style="background:${S.bookingSourceFilter==='whatsapp'?'#25d366':''}" onclick="setBookingSourceFilter('whatsapp')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+    </div>
     <div class="card">
       <div class="card-body no-pad">
         <table class="data-table">
-          <thead><tr><th>Student</th><th>Property</th><th>Check-in</th><th>Check-out</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+          <thead><tr><th>Student</th><th>Property</th><th>Source</th><th>Check-in</th><th>Amount</th><th>Status</th><th></th></tr></thead>
           <tbody id="bookingsBody"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
         </table>
       </div>
     </div>
   `;
-  const q = S.bookingFilter !== 'all' ? `?status=${S.bookingFilter}` : '';
+  let query = [];
+  if (S.bookingFilter !== 'all') query.push(`status=${S.bookingFilter}`);
+  if (S.bookingSourceFilter && S.bookingSourceFilter !== 'all') query.push(`source=${S.bookingSourceFilter}`);
+  const q = query.length ? `?${query.join('&')}` : '';
   const data = await api(`/api/bookings${q}`);
   S.bookings = data.data || [];
   renderBookingsBody();
 }
 
 function setBookingFilter(f) { S.bookingFilter = f; loadBookings(); }
+
+function setBookingSourceFilter(f) { S.bookingSourceFilter = f; loadBookings(); }
 
 function renderBookingsBody() {
   const tbody = document.getElementById('bookingsBody');
@@ -2491,8 +2518,8 @@ function renderBookingsBody() {
     <tr>
       <td><div class="cell-primary">${b.studentName||'-'}</div><div class="cell-muted">${b.studentEmail||''}</div></td>
       <td style="font-size:0.82rem;color:var(--text-muted);">${b.listingId?.title||'-'}</td>
+      <td>${b.source === 'whatsapp' ? '<span style="background:#25d366;color:white;padding:2px 8px;border-radius:100px;font-size:0.7rem;"><i class="fab fa-whatsapp"></i> WhatsApp</span>' : '<span style="font-size:0.78rem;color:var(--text-muted);">Website</span>'}</td>
       <td style="font-size:0.82rem;">${fmtDate(b.checkInDate)}</td>
-      <td style="font-size:0.82rem;">${fmtDate(b.checkOutDate)}</td>
       <td style="font-family:'DM Mono',monospace;font-size:0.82rem;">RM ${(b.totalAmount||0).toLocaleString()}</td>
       <td>${statusBadge(b.status)}</td>
       <td><button class="btn btn-ghost btn-sm btn-icon" onclick="viewBooking('${b._id}')" title="View"><i class="fas fa-eye"></i></button></td>
@@ -2504,10 +2531,13 @@ function viewBooking(id) {
   const b = S.bookings.find(x => x._id === id);
   if (!b) return;
   const nights = Math.ceil((new Date(b.checkOutDate) - new Date(b.checkInDate)) / 86400000);
+  const waLink = b.studentPhone ? `https://wa.me/${b.studentPhone.replace(/\D/g,'')}?text=${encodeURIComponent(`Hi ${b.studentName}, this is Ten&See regarding your booking for ${b.listingId?.title || 'your room'}. How can we help you today?`)}` : '';
   document.getElementById('bookingModalBody').innerHTML = `
     <div class="form-row">
       <div class="booking-row-detail"><div class="label">Student</div><div class="value">${b.studentName}</div></div>
       <div class="booking-row-detail"><div class="label">Email</div><div class="value" style="font-size:0.8rem;">${b.studentEmail}</div></div>
+      <div class="booking-row-detail"><div class="label">Phone</div><div class="value">${b.studentPhone || '-'}</div>${b.studentPhone && waLink ? `<a href="${waLink}" target="_blank" style="background:#25d366;color:white;padding:4px 10px;border-radius:6px;font-size:0.75rem;text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-top:4px;"><i class="fab fa-whatsapp"></i> Open WhatsApp</a>` : ''}</div>
+      <div class="booking-row-detail"><div class="label">Source</div><div class="value">${b.source === 'whatsapp' ? '<span style="background:#25d366;color:white;padding:2px 8px;border-radius:100px;font-size:0.7rem;"><i class="fab fa-whatsapp"></i> WhatsApp</span>' : 'Website'}</div></div>
       <div class="booking-row-detail"><div class="label">Property</div><div class="value" style="font-size:0.82rem;">${b.listingId?.title||'-'}</div></div>
       <div class="booking-row-detail"><div class="label">Occupants</div><div class="value">${b.numberOfOccupants}</div></div>
       <div class="booking-row-detail"><div class="label">Check-in</div><div class="value">${fmtDate(b.checkInDate)}</div></div>

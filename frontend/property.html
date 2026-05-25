@@ -157,6 +157,7 @@
             <div style="padding:1.5rem 2rem;">
                 <form id="bookingForm" onsubmit="submitBooking(event)">
                     <input type="hidden" id="bookingListingId">
+                    <input type="hidden" id="bookingSource" value="website">
                     <div style="margin-bottom:1rem;"><input class="form-input" type="text" id="bookingName" placeholder="Your Name" required style="width:100%;padding:0.75rem 1rem;border:1px solid var(--color-border);border-radius:10px;font-size:0.9rem;background:var(--color-bg);"></div>
                     <div style="margin-bottom:1rem;"><input class="form-input" type="email" id="bookingEmail" placeholder="Email Address" required style="width:100%;padding:0.75rem 1rem;border:1px solid var(--color-border);border-radius:10px;font-size:0.9rem;background:var(--color-bg);"></div>
                     <div style="margin-bottom:1rem;"><input class="form-input" type="tel" id="bookingPhone" placeholder="Phone / WhatsApp" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--color-border);border-radius:10px;font-size:0.9rem;background:var(--color-bg);"></div>
@@ -304,6 +305,20 @@
 
         function openBooking(id) {
             document.getElementById('bookingListingId').value = id;
+            
+            // Parse URL params for WhatsApp source tracking
+            const params = new URLSearchParams(window.location.search);
+            const source = params.get('source') || 'website';
+            const phone = params.get('phone');
+            const name = params.get('name');
+            
+            // Auto-fill from URL params if provided
+            if (phone) document.getElementById('bookingPhone').value = phone;
+            if (name) document.getElementById('bookingName').value = name;
+            
+            // Store source for submit
+            document.getElementById('bookingSource').value = source;
+            
             document.getElementById('bookingModal').style.display = 'flex';
         }
         function closeBooking() {
@@ -319,7 +334,7 @@
                 email: document.getElementById('bookingEmail').value,
                 phone: document.getElementById('bookingPhone').value,
                 message: document.getElementById('bookingMessage').value,
-                source: 'booking_form',
+                source: document.getElementById('bookingSource').value || 'website',
                 listingId: document.getElementById('bookingListingId').value
             };
             try {

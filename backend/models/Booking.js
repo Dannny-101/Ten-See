@@ -21,6 +21,11 @@ const bookingSchema = new mongoose.Schema({
   remainingAmount: Number,
   remainingPaidAt: Date,
   adminNotes: String,
+  source: {
+    type: String,
+    enum: ['website', 'whatsapp'],
+    default: 'website'
+  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
