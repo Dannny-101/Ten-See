@@ -860,6 +860,53 @@
         }
         .chat-send:hover { filter: brightness(1.1); }
 
+        /* ── DARK MODE SECTION GRADIENTS ── */
+        [data-theme="dark"] .why-section {
+            background: linear-gradient(135deg, #1a2420 0%, #161c1a 100%);
+        }
+        [data-theme="dark"] .unis-section {
+            background: linear-gradient(135deg, #1c2620 0%, #141a18 100%);
+        }
+        [data-theme="dark"] .cta-section {
+            background: linear-gradient(135deg, #182018 0%, #1a2420 100%);
+        }
+        [data-theme="dark"] .search-section .search-card {
+            background: linear-gradient(135deg, #1e2820 0%, #161c1a 100%);
+        }
+        [data-theme="dark"] .why-visual {
+            background: linear-gradient(135deg, #1c2820 0%, #141c18 100%);
+        }
+        [data-theme="dark"] .contact-form-card,
+        [data-theme="dark"] .contact-card {
+            background: linear-gradient(135deg, #1a2420 0%, #161a1a 100%);
+        }
+        [data-theme="dark"] .why-item,
+        [data-theme="dark"] .feature-card {
+            background: linear-gradient(135deg, #1c2620 0%, #181c1a 100%);
+        }
+        [data-theme="dark"] .float-badge,
+        [data-theme="dark"] .chat-popup {
+            background: linear-gradient(135deg, #1e2a22 0%, #161e1a 100%);
+        }
+
+        /* ── BUTTON HOVER GLOW ── */
+        .btn, .btn-primary, .btn-outline, .btn-outline-dark, .filter-btn, .tab-btn, .pill-btn {
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .btn:hover, .btn-primary:hover, .btn-outline:hover, .btn-outline-dark:hover, .filter-btn:hover, .tab-btn:hover, .pill-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 14px 4px rgba(44, 56, 48, 0.35), 0 0 4px 1px rgba(44, 56, 48, 0.2);
+        }
+        [data-theme="dark"] .btn:hover,
+        [data-theme="dark"] .btn-primary:hover,
+        [data-theme="dark"] .btn-outline:hover,
+        [data-theme="dark"] .btn-outline-dark:hover,
+        [data-theme="dark"] .filter-btn:hover,
+        [data-theme="dark"] .tab-btn:hover,
+        [data-theme="dark"] .pill-btn:hover {
+            box-shadow: 0 0 14px 4px rgba(44, 80, 55, 0.5), 0 0 4px 1px rgba(44, 80, 55, 0.3);
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 1100px) {
             .hero-grid { grid-template-columns: 1fr; }
