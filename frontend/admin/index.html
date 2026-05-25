@@ -1976,10 +1976,10 @@ ${S.adminRole === 'superadmin' ? `<div class="nav-section-label">System</div>
         </nav>
         <div class="sidebar-footer">
           <div class="admin-profile">
-            <div class="admin-avatar">${S.adminName.charAt(0)}</div>
+            <div class="admin-avatar" id="sidebarAvatar" onclick="openModal('avatarModal');initAvatarModal();" title="Edit Avatar" style="cursor:pointer;position:relative;overflow:visible;font-size:${S.adminAvatar?.emoji ? '1.4rem' : '1rem'};background:${S.adminAvatar?.bg || 'var(--gold)'};transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">${S.adminAvatar?.emoji || S.adminName.charAt(0)}<span style="position:absolute;bottom:-2px;right:-2px;background:var(--surface2);border-radius:50%;width:14px;height:14px;font-size:8px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-pencil-alt"></i></span></div>
             <div>
               <div class="admin-name">${S.adminName}</div>
-              <div class="admin-role">Administrator</div>
+              <div class="admin-role">${S.adminRole === 'superadmin' ? 'Super Admin' : 'Admin'}</div>
             </div>
             <button class="btn-logout" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
           </div>
@@ -4808,7 +4808,7 @@ const EMOJIS = ['🦁','🐯','🦊','🐺','🐻','🐼','🐨','🐸','🐙','
 const COLORS = ['#c9a84c','#e74c3c','#3498db','#2ecc71','#9b59b6','#f39c12','#1abc9c','#34495e'];
 
 function initAvatarModal() {
-  const saved = JSON.parse(localStorage.getItem('myAvatar') || '{"emoji":"🦁","bg":"#c9a84c"}');
+  const saved = S.adminAvatar || JSON.parse(localStorage.getItem('myAvatar') || '{"emoji":"🦁","bg":"#c9a84c"}');
   selectedEmoji = saved.emoji;
   selectedBg = saved.bg;
   updateAvatarPreview();
@@ -4861,8 +4861,14 @@ async function saveAvatar() {
     localStorage.setItem('myAvatar', JSON.stringify(av));
     S.adminAvatar = av;
     closeModal('avatarModal');
-    toast('Avatar saved!');
-    renderApp();
+    toast('Avatar saved! ✨');
+    // Update sidebar avatar in place without full re-render
+    const el = document.getElementById('sidebarAvatar');
+    if (el) {
+      el.style.background = av.bg;
+      el.style.fontSize = '1.4rem';
+      el.childNodes[0].textContent = av.emoji;
+    }
   } else {
     toast(r.error || 'Error saving avatar', 'error');
   }
