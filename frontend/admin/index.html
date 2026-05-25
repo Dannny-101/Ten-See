@@ -4017,10 +4017,10 @@ S.taskFilters = { assignee: '', priority: '', dueDateFrom: '', dueDateTo: '' };
 S.teamMembers = S.teamMembers || [];
 S.allTasks = S.allTasks || [];
 
-// Load team members for assignee dropdown
+// Load team members for assignee dropdown (available to all admins)
 async function loadTeamMembers() {
   try {
-    const data = await api('/api/admin');
+    const data = await api('/api/admin/list');
     S.teamMembers = data.data || [];
     return S.teamMembers;
   } catch { return []; }
