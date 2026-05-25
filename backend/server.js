@@ -252,6 +252,97 @@ io.on('connection', (socket) => {
         }
     });
     
+    // ── STAFF CHAT ──
+    // Join staff chat room
+    socket.on('join_staff_chat', (data) => {
+        const { adminId } = data;
+        if (adminId) {
+            socket.join(`admin_${adminId}`);
+            socket.staffAdminId = adminId;
+            console.log(`Admin ${adminId} joined staff chat room`);
+        }
+    });
+    
+    // Direct message between staff
+    socket.on('staff_message', (data) => {
+        const { toId, message, fromId, fromName, fromRole } = data;
+        if (!toId || !message || !fromId) return;
+        
+        const payload = {
+            toId,
+            fromId,
+            fromName: fromName || 'Admin',
+            fromRole: fromRole || 'Admin',
+            message,
+            timestamp: new Date().toISOString()
+        };
+        
+        // Send to recipient
+        io.to(`admin_${toId}`).emit('staff_message', payload);
+        // Send back to sender for confirmation
+        socket.emit('staff_message_sent', payload);
+        
+        console.log(`Staff message from ${fromName} to admin ${toId}`);
+    });
+    
+    // Join group chat
+    socket.on('join_group', (data) => {
+        const { groupId } = data;
+        if (groupId) {
+            socket.join(`group_${groupId}`);
+            socket.currentGroupId = groupId;
+            console.log(`Socket ${socket.id} joined group ${groupId}`);
+        }
+    });
+    
+    // Group message
+    socket.on('group_message', (data) => {
+        const { groupId, message, fromId, fromName, fromRole } = data;
+        if (!groupId || !message || !fromId) return;
+        
+        const payload = {
+            groupId,
+            fromId,
+            fromName: fromName || 'Admin',
+            fromRole: fromRole || 'Admin',
+            message,
+            timestamp: new Date().toISOString()
+        };
+        
+        // Broadcast to all group members except sender
+        socket.to(`group_${groupId}`).emit('group_message', payload);
+        // Send back to sender for confirmation
+        socket.emit('group_message_sent', payload);
+        
+        console.log(`Group message in ${groupId} from ${fromName}`);
+    });
+    
+    // Create new group
+    const staffGroups = new Map(); // In-memory storage for groups
+    socket.on('create_group', (data) => {
+        const { name, members, createdBy } = data;
+        if (!name || !createdBy) return;
+        
+        const groupId = `group_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const group = {
+            id: groupId,
+            name,
+            members: [...(members || []), createdBy],
+            createdBy,
+            createdAt: new Date().toISOString()
+        };
+        
+        staffGroups.set(groupId, group);
+        
+        // Notify all admins about new group
+        emitToAdmins('group_created', group);
+        
+        // Auto-join creator to group
+        socket.join(`group_${groupId}`);
+        
+        console.log(`Group created: ${name} (${groupId}) by ${createdBy}`);
+    });
+    
     socket.on('disconnect', () => {
         console.log('Client disconnected:', socket.id);
         

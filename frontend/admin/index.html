@@ -918,6 +918,42 @@
     @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: 1fr 1fr; } .three-col { grid-template-columns: 1fr; } }
   /* ── TASK BOARD ── */
 .task-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; overflow-x: auto; }
+
+/* ── TEAM CHAT ── */
+.teamchat-layout { display: grid; grid-template-columns: 260px 1fr; height: calc(100vh - 180px); min-height: 500px; }
+.teamchat-sidebar { border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+.teamchat-tabs { display: flex; border-bottom: 1px solid var(--border); }
+.teamchat-tab { flex: 1; padding: 0.75rem; text-align: center; cursor: pointer; font-size: 0.8rem; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; }
+.teamchat-tab:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+.teamchat-tab.active { color: var(--gold); border-bottom-color: var(--gold); background: var(--gold-dim); }
+.teamchat-list { flex: 1; overflow-y: auto; }
+.teamchat-item { padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.02); }
+.teamchat-item:hover { background: rgba(255,255,255,0.02); }
+.teamchat-item.active { background: var(--gold-dim); }
+.teamchat-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--gold-light)); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.85rem; color: var(--navy); }
+.teamchat-avatar.group { background: linear-gradient(135deg, #3b82f6, #60a5fa); color: white; }
+.teamchat-info { flex: 1; min-width: 0; }
+.teamchat-name { font-size: 0.85rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.teamchat-meta { font-size: 0.7rem; color: var(--text-muted); }
+.teamchat-status { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
+.teamchat-status.offline { background: var(--text-muted); }
+.teamchat-main { display: flex; flex-direction: column; }
+.teamchat-header { padding: 0.875rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.75rem; }
+.teamchat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.staff-msg { display: flex; gap: 0.75rem; max-width: 80%; }
+.staff-msg.own { align-self: flex-end; flex-direction: row-reverse; }
+.staff-msg-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--gold-light)); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.75rem; color: var(--navy); flex-shrink: 0; }
+.staff-msg-content { background: var(--surface2); padding: 0.625rem 0.875rem; border-radius: 12px; border-bottom-left-radius: 4px; }
+.staff-msg.own .staff-msg-content { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--navy); border-bottom-left-radius: 12px; border-bottom-right-radius: 4px; }
+.staff-msg-header { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.25rem; display: flex; gap: 0.5rem; }
+.staff-msg.own .staff-msg-header { color: rgba(0,0,0,0.6); }
+.staff-msg-role { background: rgba(255,255,255,0.2); padding: 0 6px; border-radius: 4px; font-size: 0.65rem; }
+.staff-msg-text { font-size: 0.85rem; line-height: 1.4; }
+.teamchat-input { padding: 0.875rem; border-top: 1px solid var(--border); display: flex; gap: 0.625rem; }
+.teamchat-input input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 0.625rem 0.875rem; color: var(--text); font-size: 0.85rem; }
+.teamchat-input button { padding: 0.625rem 1rem; background: var(--gold); color: var(--navy); border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.teamchat-create-btn { margin: 0.75rem; padding: 0.5rem; background: var(--surface2); border: 1px dashed var(--border); border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.8rem; color: var(--text-muted); }
+.teamchat-create-btn:hover { border-color: var(--gold); color: var(--gold); }
 @media (max-width: 1200px) {
   .task-board { grid-template-columns: repeat(2, 1fr); }
 }
@@ -1477,6 +1513,7 @@
 // ── STATE ──
 const S = {
   token: localStorage.getItem('adminToken'),
+  adminId: localStorage.getItem('adminId'),
   section: 'dashboard',
   listings: [], leads: [], bookings: [], notifications: [],
   chatSessions: [], currentSession: null,
@@ -1592,6 +1629,7 @@ function renderApp() {
           <div class="nav-item" id="nav-reports" onclick="showSection('reports')"><i class="fas fa-file-alt"></i> Reports</div>
           <div class="nav-item" id="nav-audit" onclick="showSection('audit')"><i class="fas fa-shield-alt"></i> Audit Log</div>
         <div class="nav-section-label">Team</div>
+<div class="nav-item" id="nav-teamchat" onclick="showSection('teamchat')"><i class="fas fa-user-friends"></i> Team Chat <span class="nav-badge" id="teamChatBadge" style="display:none">0</span></div>
 <div class="nav-item" id="nav-tasks" onclick="showSection('tasks')"><i class="fas fa-tasks"></i> Task Board</div>
 <div class="nav-item" id="nav-team" onclick="showSection('team')"><i class="fas fa-users-cog"></i> Team</div>
         </nav>
@@ -1630,6 +1668,7 @@ function renderApp() {
           <div class="section" id="sec-leads"></div>
           <div class="section" id="sec-bookings"></div>
           <div class="section" id="sec-chat"></div>
+          <div class="section" id="sec-teamchat"></div>
           <div class="section" id="sec-analytics"></div>
           <div class="section" id="sec-reports"></div>
           <div class="section" id="sec-audit"></div>
@@ -1659,6 +1698,7 @@ const TITLES = {
   leads: ['Leads', 'Track customer inquiries'],
   bookings: ['Bookings', 'Manage booking requests'],
   chat: ['Live Chat', 'Customer conversations'],
+  teamchat: ['Team Chat', 'Internal staff messaging'],
   analytics: ['Analytics', 'Performance insights'],
   reports: ['Reports', 'Detailed data reports'],
   audit: ['Audit Log', 'Admin activity history'],
@@ -1681,6 +1721,7 @@ function showSection(sec) {
   const loaders = {
     dashboard: loadDashboard, properties: loadProperties, listings: loadListings, leads: loadLeads,
     bookings: loadBookings, chat: () => { loadChat(); S.chatInterval = setInterval(() => { loadChatSessions(); if (S.currentSession) loadMessages(S.currentSession); }, 5000); },
+    teamchat: loadTeamChat,
     analytics: loadAnalytics, reports: loadReports, audit: loadAudit, tasks: loadTasks,
     team: loadTeam
   };
@@ -3452,6 +3493,21 @@ function initSocket() {
   // Track visitor name for current session
   let currentVisitorName = 'Visitor';
   
+  // Staff chat events
+  socket.on('staff_message', (data) => handleStaffMessage(data));
+  socket.on('group_message', (data) => handleStaffMessage(data));
+  socket.on('group_created', (group) => {
+    staffGroups.push(group);
+    if (S.section === 'teamchat') renderStaffChatList();
+    toast(`New group: ${group.name}`);
+  });
+  socket.on('staff_message_sent', (data) => {
+    console.log('Staff message sent:', data);
+  });
+  socket.on('group_message_sent', (data) => {
+    console.log('Group message sent:', data);
+  });
+
   // Chat events
   socket.on('new_chat_message', (data) => {
     console.log('new_chat_message received:', data);
@@ -4020,9 +4076,240 @@ async function deactivateAdmin(id) {
   else toast('Error', 'error');
 }
 
-// ── INIT ──
-S.adminId = localStorage.getItem('adminId');
+// ── TEAM CHAT ──
+let staffChatTab = 'direct'; // 'direct' or 'groups'
+let selectedStaffId = null;
+let selectedGroupId = null;
+let staffGroups = [];
+let onlineStaff = [];
+let staffChatMessages = [];
 
+async function loadTeamChat() {
+  const sec = document.getElementById('sec-teamchat');
+  sec.innerHTML = `
+    <div class="card" style="padding:0;">
+      <div class="teamchat-layout">
+        <div class="teamchat-sidebar">
+          <div class="teamchat-tabs">
+            <div class="teamchat-tab ${staffChatTab === 'direct' ? 'active' : ''}" onclick="switchStaffTab('direct')">Direct</div>
+            <div class="teamchat-tab ${staffChatTab === 'groups' ? 'active' : ''}" onclick="switchStaffTab('groups')">Groups</div>
+          </div>
+          <div class="teamchat-list" id="staffChatList">
+            <div class="loading" style="padding:2rem;"><div class="spinner"></div></div>
+          </div>
+          ${staffChatTab === 'groups' ? `<div class="teamchat-create-btn" onclick="createGroupModal()"><i class="fas fa-plus"></i> New Group</div>` : ''}
+        </div>
+        <div class="teamchat-main" id="staffChatMain">
+          <div class="chat-empty">
+            <i class="fas fa-user-friends"></i>
+            <p>Select a conversation to start messaging</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  await renderStaffChatList();
+}
+
+async function renderStaffChatList() {
+  const list = document.getElementById('staffChatList');
+  if (!list) return;
+  
+  if (staffChatTab === 'direct') {
+    // Fetch online staff
+    try {
+      const data = await api('/api/admin/');
+      onlineStaff = data.data || [];
+    } catch { onlineStaff = []; }
+    
+    list.innerHTML = onlineStaff.map(s => `
+      <div class="teamchat-item ${selectedStaffId === s._id ? 'active' : ''}" onclick="selectStaff('${s._id}', '${s.name || s.username}', '${s.role || 'admin'}')">
+        <div class="teamchat-avatar">${(s.name || s.username).charAt(0).toUpperCase()}</div>
+        <div class="teamchat-info">
+          <div class="teamchat-name">${s.name || s.username} ${s._id === S.adminId ? '(You)' : ''}</div>
+          <div class="teamchat-meta">${s.role || 'Admin'}</div>
+        </div>
+        <div class="teamchat-status ${s.isActive ? '' : 'offline'}"></div>
+      </div>
+    `).join('') || '<div style="padding:1rem;text-align:center;color:var(--text-muted);">No staff online</div>';
+  } else {
+    // Groups
+    list.innerHTML = staffGroups.map(g => `
+      <div class="teamchat-item ${selectedGroupId === g.id ? 'active' : ''}" onclick="selectGroup('${g.id}', '${g.name}')">
+        <div class="teamchat-avatar group">#</div>
+        <div class="teamchat-info">
+          <div class="teamchat-name">${g.name}</div>
+          <div class="teamchat-meta">${g.members?.length || 0} members</div>
+        </div>
+      </div>
+    `).join('') || '<div style="padding:1rem;text-align:center;color:var(--text-muted);">No groups yet</div>';
+  }
+}
+
+function switchStaffTab(tab) {
+  staffChatTab = tab;
+  selectedStaffId = null;
+  selectedGroupId = null;
+  loadTeamChat();
+  if (socket) {
+    socket.emit('join_staff_chat', { adminId: S.adminId });
+  }
+}
+
+function selectStaff(id, name, role) {
+  selectedStaffId = id;
+  selectedGroupId = null;
+  renderStaffChatList();
+  renderStaffChatWindow(name, role);
+  loadStaffMessages(id, 'direct');
+}
+
+function selectGroup(id, name) {
+  selectedGroupId = id;
+  selectedStaffId = null;
+  renderStaffChatList();
+  renderStaffChatWindow(name, 'Group');
+  loadStaffMessages(id, 'group');
+  if (socket) {
+    socket.emit('join_group', { groupId: id });
+  }
+}
+
+function renderStaffChatWindow(title, subtitle) {
+  const main = document.getElementById('staffChatMain');
+  if (!main) return;
+  main.innerHTML = `
+    <div class="teamchat-header">
+      <div class="teamchat-avatar ${selectedGroupId ? 'group' : ''}">${title.charAt(0).toUpperCase()}</div>
+      <div>
+        <div style="font-weight:600;font-size:0.95rem;">${title}</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);">${subtitle}</div>
+      </div>
+    </div>
+    <div class="teamchat-messages" id="staffChatMessages"></div>
+    <div class="teamchat-input">
+      <input type="text" id="staffChatInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendStaffMessage()">
+      <button onclick="sendStaffMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  `;
+  setTimeout(() => document.getElementById('staffChatInput')?.focus(), 50);
+}
+
+function loadStaffMessages(targetId, type) {
+  // Load from localStorage for now (can be enhanced with API)
+  const key = `staffchat_${type}_${targetId}`;
+  const stored = localStorage.getItem(key);
+  staffChatMessages = stored ? JSON.parse(stored) : [];
+  renderStaffMessages();
+}
+
+function renderStaffMessages() {
+  const container = document.getElementById('staffChatMessages');
+  if (!container) return;
+  
+  container.innerHTML = staffChatMessages.map(m => {
+    const isOwn = m.fromId === S.adminId;
+    return `
+      <div class="staff-msg ${isOwn ? 'own' : ''}">
+        <div class="staff-msg-avatar">${m.fromName?.charAt(0).toUpperCase() || '?'}</div>
+        <div class="staff-msg-content">
+          <div class="staff-msg-header">
+            <span>${m.fromName}</span>
+            ${m.fromRole ? `<span class="staff-msg-role">${m.fromRole}</span>` : ''}
+            <span>${new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+          </div>
+          <div class="staff-msg-text">${escapeHtml(m.text)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+function sendStaffMessage() {
+  const input = document.getElementById('staffChatInput');
+  const text = input?.value?.trim();
+  if (!text) return;
+  
+  const myName = S.adminName || 'Me';
+  const message = {
+    fromId: S.adminId,
+    fromName: myName,
+    fromRole: 'Admin',
+    text: text,
+    timestamp: new Date().toISOString()
+  };
+  
+  staffChatMessages.push(message);
+  
+  // Save to localStorage
+  const targetId = selectedStaffId || selectedGroupId;
+  const type = selectedStaffId ? 'direct' : 'group';
+  localStorage.setItem(`staffchat_${type}_${targetId}`, JSON.stringify(staffChatMessages));
+  
+  // Emit via socket
+  if (socket) {
+    if (selectedStaffId) {
+      socket.emit('staff_message', { toId: selectedStaffId, message: text, fromId: S.adminId, fromName: myName });
+    } else if (selectedGroupId) {
+      socket.emit('group_message', { groupId: selectedGroupId, message: text, fromId: S.adminId, fromName: myName });
+    }
+  }
+  
+  input.value = '';
+  renderStaffMessages();
+}
+
+function createGroupModal() {
+  const name = prompt('Group name:');
+  if (!name) return;
+  
+  const memberIds = onlineStaff.filter(s => s._id !== S.adminId).map(s => s._id);
+  if (socket) {
+    socket.emit('create_group', { name, members: memberIds, createdBy: S.adminId });
+  }
+  toast('Group created!');
+}
+
+// Handle incoming staff messages
+function handleStaffMessage(data) {
+  if (data.toId && data.toId !== S.adminId) return; // Not for me
+  
+  const key = data.groupId ? `staffchat_group_${data.groupId}` : `staffchat_direct_${data.fromId}`;
+  const stored = localStorage.getItem(key) || '[]';
+  const messages = JSON.parse(stored);
+  messages.push({
+    fromId: data.fromId,
+    fromName: data.fromName,
+    fromRole: data.fromRole || 'Admin',
+    text: data.message,
+    timestamp: new Date().toISOString()
+  });
+  localStorage.setItem(key, JSON.stringify(messages));
+  
+  // Update badge if not viewing
+  if ((selectedStaffId !== data.fromId && !data.groupId) || (data.groupId && selectedGroupId !== data.groupId)) {
+    const badge = document.getElementById('teamChatBadge');
+    if (badge) {
+      badge.textContent = (parseInt(badge.textContent) || 0) + 1;
+      badge.style.display = 'inline-block';
+    }
+  }
+  
+  // Refresh if currently viewing this chat
+  if ((data.fromId && selectedStaffId === data.fromId) || (data.groupId && selectedGroupId === data.groupId)) {
+    staffChatMessages = messages;
+    renderStaffMessages();
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ── INIT ──
 if (!S.token) {
   renderLogin();
 } else {
