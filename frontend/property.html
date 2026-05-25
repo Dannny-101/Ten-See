@@ -33,7 +33,7 @@
         .nav-back:hover { color: var(--color-accent); }
         .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.75rem; font-weight: 700; color: var(--color-accent); text-decoration: none; display: inline-flex; align-items: center; }
         .logo img { width: 72px; height: 72px; object-fit: contain; display: block; border-radius: 0; background: transparent; }
-        .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 600; color: var(--color-text-main); margin-left: 0.75rem; letter-spacing: -0.02em; display: flex; align-items: center; }
+        .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 600; color: var(--color-accent); margin-left: 0.75rem; letter-spacing: -0.02em; display: flex; align-items: center; }
         .logo-text span { color: var(--color-accent); font-weight: 700; }
         .theme-toggle { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .theme-toggle:hover { border-color: var(--color-accent); color: var(--color-accent); }
@@ -263,7 +263,7 @@
             if (!types.length) { el.style.display = 'none'; return; }
             el.innerHTML = `
                 <button class="room-type-filter-btn active" onclick="setRoomTypeFilter('all', this)">All Rooms</button>
-                ${types.map(t => `<button class="room-type-filter-btn" onclick="setRoomTypeFilter('${t}', this)">${t.replace('_',' ')}</button>`).join('')}
+                ${types.map(t => `<button class="room-type-filter-btn" onclick="setRoomTypeFilter('${t}', this)">${t.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</button>`).join('')}
             `;
         }
 
@@ -289,7 +289,7 @@
                 <a href="/listing.html?id=${l._id}" class="listing-card" data-aos="fade-up" data-aos-delay="${(i % 2) * 80}">
                     <div class="listing-image">
                         <img src="${l.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800'}" alt="${l.title}">
-                        <span class="listing-type-badge">${l.propertyType.replace('_',' ')}</span>
+                        <span class="listing-type-badge">${l.propertyType.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span>
                         <div class="listing-price-tag">RM ${l.price}<span style="font-size:0.75rem;font-weight:500;">/${l.pricePeriod}</span></div>
                     </div>
                     <div class="listing-content">
@@ -321,6 +321,17 @@
             document.getElementById('bookingForm').reset();
         }
         document.getElementById('bookingModal').addEventListener('click', e => { if (e.target === document.getElementById('bookingModal')) closeBooking(); });
+
+        // Theme toggle functionality
+        document.querySelectorAll('[data-theme-toggle]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                btn.setAttribute('aria-label', newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+            });
+        });
 
         async function submitBooking(e) {
             e.preventDefault();
