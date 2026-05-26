@@ -38,14 +38,19 @@ io.on('connection', (socket) => {
     console.log('Client connected:', socket.id);
     
     // Admin joins the all_admins room for notifications
-    socket.on('join_admin', (adminId) => {
+    socket.on('join_admin', async (adminId) => {
         socket.join('all_admins');
+        socket.join(`admin_${adminId}`);
         socket.adminId = adminId;
         console.log(`Admin ${adminId} joined all_admins room. Socket rooms:`, Array.from(socket.rooms));
         // Register agent socket for queue assignment
         chatQueue.registerAgentSocket(adminId, socket);
         // Send current metrics immediately on join
         chatQueue.broadcastQueueMetrics();
+        // Mark online + update lastSeen
+        const Admin = require('./models/Admin');
+        await Admin.updateOne({ _id: adminId }, { $set: { lastSeen: new Date(), isOnline: true } }).catch(() => {});
+        emitToAdmins('agent_status_changed', { adminId, status: 'online', timestamp: new Date().toISOString() });
     });
 
     // ── QUEUE: Agent sets their availability status ────────────────────────────
@@ -80,6 +85,17 @@ io.on('connection', (socket) => {
         if (session) await chatQueue.rotateChat(session);
     });
     
+    // Admin joins a specific chat session (for audit)
+    socket.on('admin_join_session', async (data) => {
+        const { sessionId, adminId, adminName } = data;
+        if (!sessionId || !adminId) return;
+        const { createAuditLog } = require('./routes/audit');
+        await createAuditLog('chat_joined',
+            { userId: adminId, username: adminName || 'Admin' },
+            { entityType: 'chat_session', entityId: sessionId, entityName: `Session ${sessionId.substring(0,8)}` }
+        ).catch(() => {});
+    });
+
     // Visitor joins their chat session room
     socket.on('join_chat', (sessionId) => {
         if (!sessionId) {
@@ -409,20 +425,25 @@ io.on('connection', (socket) => {
         // ── QUEUE: Unregister agent socket, set status away ────────────────
         if (socket.adminId) {
             chatQueue.unregisterAgentSocket(socket.adminId);
-            // Mark away only if no other socket is connected for same admin
-            // (they may have multiple tabs open)
             const Admin = require('./models/Admin');
-            await Admin.updateOne(
-                { _id: socket.adminId, chatStatus: 'online' },
-                { $set: { chatStatus: 'away' } }
-            ).catch(() => {});
-            emitToAdmins('agent_status_changed', {
-                adminId: socket.adminId,
-                status: 'away',
-                timestamp: new Date().toISOString()
-            });
+            // Check if admin has any other active sockets before marking offline
+            const otherSockets = [...io.sockets.sockets.values()].filter(
+                s => s !== socket && s.adminId === socket.adminId && s.connected
+            );
+            if (otherSockets.length === 0) {
+                await Admin.updateOne(
+                    { _id: socket.adminId },
+                    { $set: { lastSeen: new Date(), isOnline: false } }
+                ).catch(() => {});
+                emitToAdmins('agent_status_changed', {
+                    adminId: socket.adminId,
+                    status: 'offline',
+                    lastSeen: new Date().toISOString(),
+                    timestamp: new Date().toISOString()
+                });
+            }
             chatQueue.broadcastQueueMetrics();
-            console.log(`[Queue] Agent ${socket.adminId} went away on disconnect`);
+            console.log(`[Queue] Agent ${socket.adminId} disconnected`);
         }
     });
 });

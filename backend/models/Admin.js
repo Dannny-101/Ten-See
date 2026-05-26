@@ -19,6 +19,8 @@ const adminSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true },
   lastLogin: Date,
   createdAt: { type: Date, default: Date.now },
+  lastSeen: { type: Date, default: null },
+  isOnline: { type: Boolean, default: false },
   // Live chat queue fields
   chatStatus: { type: String, enum: ['online', 'away', 'invisible', 'offline'], default: 'offline' },
   maxChats: { type: Number, default: 3 },

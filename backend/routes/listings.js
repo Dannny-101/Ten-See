@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Listing = require('../models/Listing');
+const { createAuditLog } = require('./audit');
 
 // ── UNIVERSITY TO AREA MAPPING (Single Source of Truth) ──
 // Maps each supported university to its specific area(s) in KL/Selangor
@@ -209,6 +210,10 @@ router.post('/', async (req, res) => {
         }
         
         const listing = await Listing.create(req.body);
+        await createAuditLog('listing_created',
+            { userId: req.admin?.id, username: req.admin?.username || 'system' },
+            { entityType: 'listing', entityId: listing._id, entityName: listing.title }
+        ).catch(() => {});
         res.status(201).json({ success: true, data: listing });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
@@ -230,6 +235,10 @@ router.put('/:id', async (req, res) => {
         req.body.updatedAt = Date.now();
         const listing = await Listing.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!listing) return res.status(404).json({ success: false, error: 'Listing not found' });
+        await createAuditLog('listing_updated',
+            { userId: req.admin?.id, username: req.admin?.username || 'system' },
+            { entityType: 'listing', entityId: listing._id, entityName: listing.title }
+        ).catch(() => {});
         res.json({ success: true, data: listing });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
@@ -241,6 +250,10 @@ router.delete('/:id', async (req, res) => {
     try {
         const listing = await Listing.findByIdAndDelete(req.params.id);
         if (!listing) return res.status(404).json({ success: false, error: 'Listing not found' });
+        await createAuditLog('listing_deleted',
+            { userId: req.admin?.id, username: req.admin?.username || 'system' },
+            { entityType: 'listing', entityId: req.params.id, entityName: listing.title }
+        ).catch(() => {});
         res.json({ success: true, message: 'Listing deleted' });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });

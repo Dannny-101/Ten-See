@@ -2011,7 +2011,6 @@ function renderApp() {
         <div class="nav-section-label">Team</div>
 <div class="nav-item" id="nav-teamchat" onclick="showSection('teamchat')"><i class="fas fa-user-friends"></i> Team Chat <span class="nav-badge" id="teamChatBadge" style="display:none">0</span></div>
 <div class="nav-item" id="nav-tasks" onclick="showSection('tasks')"><i class="fas fa-tasks"></i> Task Board</div>
-<div class="nav-item" id="nav-team" onclick="showSection('team')"><i class="fas fa-users-cog"></i> Team</div>
 ${S.adminRole === 'superadmin' ? `<div class="nav-section-label">System</div>
 <div class="nav-item" id="nav-adminmgmt" onclick="showSection('adminmgmt')"><i class="fas fa-user-shield"></i> Admin Management</div>` : ''}
         </nav>
@@ -2672,7 +2671,7 @@ function renderLeadsBody() {
       <td><select class="inline-status-select" onchange="inlineUpdateStatus('${l._id}', this.value)" title="Click to change status">
         ${['new','contacted','viewing_scheduled','converted','closed'].map(s=>`<option value="${s}"${l.status===s?' selected':''}>${cap(s)}</option>`).join('')}
       </select></td>
-      <td style="font-size:0.78rem;color:var(--text-muted);">${fmtDate(l.createdAt)}</td>
+      <td style="font-size:0.78rem;color:var(--text-muted);">${fmtDate(l.createdAt)}<br><span style="font-size:0.72rem;opacity:0.7;">${fmtTime(l.createdAt)}</span></td>
       <td><button class="btn btn-ghost btn-sm btn-icon" onclick="viewLead('${l._id}')" title="View"><i class="fas fa-eye"></i></button></td>
       <div class="lead-swipe-actions">
         <button class="lead-swipe-btn-call" onclick="window.location='tel:${l.phone||''}'"><i class="fas fa-phone"></i><br>Call</button>
@@ -3462,7 +3461,12 @@ async function openSession(id, name, isClosed = false) {
   S.currentSession = id;
   currentAdminSession = id;
   currentSessionIsClosed = isClosed;
-  
+
+  // Audit: log that this admin joined the session
+  if (socket && socket.connected && !isClosed) {
+    socket.emit('admin_join_session', { sessionId: id, adminId: S.adminId, adminName: S.adminName || 'Admin' });
+  }
+
   // Fetch session details to get contact info
   const sessionData = await api(`/api/chat/${id}`);
   const msgs = sessionData.data || [];
@@ -4001,16 +4005,21 @@ async function loadAudit() {
         <span style="font-size:0.8rem;color:var(--text-muted);">${data.total||0} total entries</span>
       </div>
       <div class="card-body no-pad">
-        ${logs.length ? logs.map(l => `
+        ${logs.length ? logs.map(l => {
+          const actionLabel = l.action.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+          const entityLabel = l.target?.entityName ? `<strong>${l.target.entityName}</strong>` : (l.target?.entityType||'');
+          const byLabel = `<span style="color:var(--gold);">${l.performedBy?.username||'system'}</span>`;
+          const icon = auditIcon(l.action);
+          return `
           <div class="audit-item">
-            <div class="audit-dot" style="background:${auditColor(l.action)}"></div>
+            <div class="audit-dot" style="background:${auditColor(l.action)}"><i class="fas fa-${icon}" style="font-size:8px;color:#fff;"></i></div>
             <div class="audit-content">
-              <div class="audit-action">${l.action} — ${l.target?.entityType||'system'}</div>
-              <div class="audit-detail">by ${l.performedBy?.username||'system'}${l.target?.entityName?' on '+l.target.entityName:''}</div>
+              <div class="audit-action">${actionLabel}${entityLabel?' — ':''} ${entityLabel}</div>
+              <div class="audit-detail">by ${byLabel} · ${fmtDateTime(l.createdAt)}</div>
             </div>
             <div class="audit-time">${timeAgo(l.createdAt)}</div>
-          </div>
-        `).join('') : `<div class="empty-state"><i class="fas fa-shield-alt"></i><p>No audit logs yet</p></div>`}
+          </div>`;
+        }).join('') : `<div class="empty-state"><i class="fas fa-shield-alt"></i><p>No audit logs yet</p></div>`}
       </div>
     </div>
   `;
@@ -4110,6 +4119,7 @@ document.addEventListener('click', e => {
 function cap(s) { return s ? s.replace(/_/g,' ').replace(/\b\w/g, c=>c.toUpperCase()) : ''; }
 function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-MY', { day:'2-digit', month:'short', year:'numeric' }) : '-'; }
 function fmtTime(d) { return d ? new Date(d).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }) : '-'; }
+function fmtDateTime(d) { return d ? `${fmtDate(d)} ${fmtTime(d)}` : '-'; }
 function timeAgo(d) {
   const diff = Date.now() - new Date(d).getTime();
   const m = Math.floor(diff / 60000);
@@ -4149,6 +4159,15 @@ function renderTrendBars(trends) {
   `).join('');
 }
 
+function auditIcon(action) {
+  if (action.includes('login')) return 'sign-in-alt';
+  if (action.includes('listing')) return 'building';
+  if (action.includes('task')) return 'tasks';
+  if (action.includes('chat')) return 'comments';
+  if (action.includes('admin')) return 'user-shield';
+  if (action.includes('delete')) return 'trash';
+  return 'circle';
+}
 function auditColor(action) {
   if (!action) return 'var(--text-muted)';
   if (action.includes('DELETE') || action.includes('delete')) return 'var(--danger)';
@@ -4185,6 +4204,11 @@ function initSocket() {
   socket.on('connect', () => {
     console.log('Socket connected:', socket.id);
     socket.emit('join_admin', adminId);
+    // Re-join staff chat room so direct messages always route correctly
+    socket.emit('join_staff_chat', { adminId });
+    // Re-join any active group
+    if (selectedGroupId) socket.emit('join_group', { groupId: selectedGroupId });
+    console.log('Socket rooms rejoined for adminId:', adminId);
   });
   
   socket.on('connect_error', (err) => {
@@ -4437,10 +4461,23 @@ function initSocket() {
     if (S.section === 'chat') renderQueueMetricsBar(data);
   });
 
-  // Another agent's status changed
+  // Another agent's status changed — update all live indicators
   socket.on('agent_status_changed', (data) => {
     updateAgentStatusDot(data.adminId, data.status);
     if (S.section === 'chat') renderQueueMetricsBar(S.queueMetrics);
+    // Update teamchat sidebar dot
+    const dot = document.querySelector(`#staffDot-${data.adminId}`);
+    if (dot) {
+      const colorMap = { online: '#22c55e', away: '#f59e0b', offline: '#6b7280' };
+      dot.style.background = colorMap[data.status] || '#6b7280';
+      dot.title = data.status;
+    }
+    // Update admin mgmt online indicator if on that page
+    const adminDot = document.querySelector(`#adminOnlineDot-${data.adminId}`);
+    if (adminDot) {
+      adminDot.style.background = data.status === 'online' ? '#22c55e' : '#6b7280';
+      adminDot.title = data.status === 'online' ? 'Online' : (data.lastSeen ? `Last seen ${timeAgo(data.lastSeen)}` : 'Offline');
+    }
   });
 
   // Register service worker + push once socket is up
@@ -4846,6 +4883,10 @@ async function loadTeam() {
         <td>${statusBadge(a.role)}</td>
         <td style="font-size:0.78rem;color:var(--text-muted);">${a.lastLogin ? timeAgo(a.lastLogin) : 'Never'}</td>
         <td>${a.isActive ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-inactive">Inactive</span>'}</td>
+        <td style="text-align:center;">
+          <span id="adminOnlineDot-${a._id}" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${a.isOnline?'#22c55e':'#6b7280'};" title="${a.isOnline?'Online':(a.lastSeen?'Last seen '+timeAgo(a.lastSeen):'Offline')}"></span>
+          <span style="font-size:0.7rem;color:var(--text-muted);margin-left:4px;">${a.isOnline?'Online':(a.lastSeen?timeAgo(a.lastSeen):'Never')}</span>
+        </td>
         <td>
           ${a._id !== S.adminId ? `<button class="btn btn-danger-ghost btn-sm btn-icon" onclick="deactivateAdmin('${a._id}')" title="Deactivate"><i class="fas fa-user-slash"></i></button>` : '<em style="font-size:0.75rem;color:var(--text-muted);">You</em>'}
         </td>
@@ -4913,6 +4954,10 @@ async function loadAdminManagement() {
         <td style="font-size:0.78rem;color:var(--text-muted);">${a.createdBy?.name || a.createdBy?.username || 'System'}</td>
         <td style="font-size:0.78rem;color:var(--text-muted);">${a.createdAt ? new Date(a.createdAt).toLocaleDateString() : '-'}</td>
         <td>${a.isActive ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-inactive">Inactive</span>'}</td>
+        <td style="text-align:center;">
+          <span id="adminOnlineDot-${a._id}" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${a.isOnline?'#22c55e':'#6b7280'};" title="${a.isOnline?'Online':(a.lastSeen?'Last seen '+timeAgo(a.lastSeen):'Offline')}"></span>
+          <span style="font-size:0.7rem;color:var(--text-muted);margin-left:4px;">${a.isOnline?'<span style=color:#22c55e>Online</span>':(a.lastSeen?timeAgo(a.lastSeen):'Never')}</span>
+        </td>
         <td>
           <div style="display:flex;gap:0.5rem;">
             ${a._id !== S.adminId ? `
@@ -5096,7 +5141,7 @@ async function renderStaffChatList() {
             ${lastText}
           </div>
           <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;">
-            ${unread > 0 ? `<span style="background:var(--gold);color:#000;border-radius:50%;width:18px;height:18px;font-size:0.68rem;font-weight:700;display:flex;align-items:center;justify-content:center;">${unread}</span>` : `<div class="teamchat-status ${s.isActive ? '' : 'offline'}"></div>`}
+            ${unread > 0 ? `<span style="background:var(--gold);color:#000;border-radius:50%;width:18px;height:18px;font-size:0.68rem;font-weight:700;display:flex;align-items:center;justify-content:center;">${unread}</span>` : `<span id="staffDot-${s._id}" style="width:8px;height:8px;border-radius:50%;background:${s.isOnline?'#22c55e':'#6b7280'};display:inline-block;" title="${s.isOnline?'Online':'Offline'}"></span>`}
           </div>
         </div>
       `;
@@ -5263,13 +5308,42 @@ function sendStaffMessage() {
 }
 
 function createGroupModal() {
-  const name = prompt('Group name:');
-  if (!name) return;
-  
-  const memberIds = onlineStaff.filter(s => s._id !== S.adminId).map(s => s._id);
-  if (socket) {
-    socket.emit('create_group', { name, members: memberIds, createdBy: S.adminId });
-  }
+  const others = onlineStaff.filter(s => s._id !== S.adminId);
+  const memberOptions = others.map(s => `
+    <label style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid var(--border);cursor:pointer;">
+      <input type="checkbox" class="grp-member-cb" value="${s._id}" style="width:16px;height:16px;accent-color:var(--gold);">
+      <div style="width:28px;height:28px;border-radius:50%;background:${s.avatar?.bg||'var(--gold)'};display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">${s.avatar?.emoji||(s.name||s.username).charAt(0).toUpperCase()}</div>
+      <div>
+        <div style="font-size:0.85rem;font-weight:600;">${s.name||s.username}</div>
+        <div style="font-size:0.72rem;color:var(--text-muted);">${s.role||'Admin'}</div>
+      </div>
+    </label>`).join('');
+
+  const overlay = document.createElement('div');
+  overlay.id = 'createGroupOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:99999;display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = `
+    <div style="background:var(--surface);border-radius:16px;padding:1.5rem;width:340px;max-width:95vw;box-shadow:0 16px 48px rgba(0,0,0,0.3);">
+      <div style="font-weight:700;font-size:1rem;margin-bottom:1rem;">Create Group Chat</div>
+      <input id="newGroupName" placeholder="Group name..." style="width:100%;padding:0.6rem 0.8rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);margin-bottom:1rem;box-sizing:border-box;">
+      <div style="font-size:0.8rem;font-weight:600;color:var(--text-muted);margin-bottom:0.5rem;">Add Members</div>
+      <div style="max-height:200px;overflow-y:auto;">${memberOptions||'<div style="color:var(--text-muted);font-size:0.83rem;padding:0.5rem 0;">No other admins available</div>'}</div>
+      <div style="display:flex;gap:0.5rem;margin-top:1rem;">
+        <button onclick="submitCreateGroup()" style="flex:1;background:var(--gold);color:#1C2420;border:none;padding:0.6rem;border-radius:8px;font-weight:700;cursor:pointer;">Create</button>
+        <button onclick="document.getElementById('createGroupOverlay').remove()" style="flex:1;background:var(--surface2);color:var(--text);border:1px solid var(--border);padding:0.6rem;border-radius:8px;cursor:pointer;">Cancel</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => document.getElementById('newGroupName')?.focus(), 50);
+}
+
+function submitCreateGroup() {
+  const name = document.getElementById('newGroupName')?.value?.trim();
+  if (!name) { toast('Enter a group name', 'warn'); return; }
+  const checked = [...document.querySelectorAll('.grp-member-cb:checked')].map(cb => cb.value);
+  if (!socket) { toast('Not connected', 'error'); return; }
+  socket.emit('create_group', { name, members: checked, createdBy: S.adminId });
+  document.getElementById('createGroupOverlay')?.remove();
   toast('Group created!');
 }
 
