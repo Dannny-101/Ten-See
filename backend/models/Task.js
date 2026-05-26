@@ -30,11 +30,11 @@ const taskSchema = new mongoose.Schema({
     enum: ['lead', 'listing', 'booking', 'chat', 'general', 'maintenance'],
     default: 'general'
   },
-  assignedTo: {
+  assignedTo: [{
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
     username: String,
     name: String
-  },
+  }],
   createdBy: {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true },
     username: { type: String, required: true },

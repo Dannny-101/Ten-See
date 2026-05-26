@@ -106,7 +106,8 @@ router.post('/session', async (req, res) => {
       name: name || 'Visitor',
       email,
       phone,
-      status: 'active'
+      status: 'queued',
+      queueEnteredAt: new Date()
     });
     
     // Store initial user info in first message (system message)
@@ -177,7 +178,7 @@ router.get('/admin/sessions', async (req, res) => {
     // Merge status into sessions
     const sessionsWithStatus = processedSessions.map(s => ({
       ...s,
-      status: statusMap.get(s._id)?.status || 'active',
+      status: statusMap.get(s._id)?.status || 'queued',
       closedAt: statusMap.get(s._id)?.closedAt,
       closedBy: statusMap.get(s._id)?.closedBy
     }));
@@ -231,7 +232,7 @@ router.put('/reopen/:sessionId', async (req, res) => {
     // Update session status
     await ChatSession.findOneAndUpdate(
       { sessionId },
-      { status: 'active', closedAt: null, closedBy: null },
+      { status: 'queued', closedAt: null, closedBy: null },
       { upsert: true }
     );
     

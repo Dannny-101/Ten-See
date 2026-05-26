@@ -54,7 +54,7 @@ router.get('/:id', async (req, res) => {
 // POST create task
 router.post('/', async (req, res) => {
   try {
-    const { title, description, priority, category, dueDate, relatedEntity, tags } = req.body;
+    const { title, description, priority, category, dueDate, relatedEntity, tags, assignedTo } = req.body;
     
     const task = await Task.create({
       title,
@@ -64,6 +64,7 @@ router.post('/', async (req, res) => {
       dueDate,
       relatedEntity,
       tags: tags || [],
+      assignedTo: assignedTo || [],
       createdBy: {
         userId: req.admin.id,
         username: req.admin.username,

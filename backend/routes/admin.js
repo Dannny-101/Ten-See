@@ -5,30 +5,6 @@ const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 const { createAuditLog } = require('./audit');
 
-// ── TEMPORARY EMERGENCY PASSWORD RESET ──
-// REMOVE THIS AFTER YOU LOG IN SUCCESSFULLY
-router.post('/reset-password', async (req, res) => {
-  try {
-    const { username, newPassword } = req.body;
-    const admin = await Admin.findOne({ username });
-    
-    if (!admin) {
-      return res.status(404).json({ success: false, error: 'Admin not found' });
-    }
-    
-    // Force set new password (will be hashed by pre-save hook)
-    admin.password = newPassword;
-    await admin.save();
-    
-    res.json({ 
-      success: true, 
-      message: 'Password reset successfully',
-      admin: { username: admin.username, role: admin.role }
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
 // POST login
 router.post('/login', async (req, res) => {
   try {
@@ -93,6 +69,14 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
+// Middleware to require superadmin
+const requireSuperAdmin = (req, res, next) => {
+  if (req.admin.role !== 'superadmin') {
+    return res.status(403).json({ success: false, error: 'Superadmin access required' });
+  }
+  next();
+};
+
 // GET admin profile
 router.get('/profile', authMiddleware, async (req, res) => {
   try {
@@ -103,13 +87,25 @@ router.get('/profile', authMiddleware, async (req, res) => {
   }
 });
 
-// GET all admins (superadmin only)
-router.get('/', authMiddleware, async (req, res) => {
+// GET all admins (superadmin only - for admin management)
+router.get('/', authMiddleware, requireSuperAdmin, async (req, res) => {
   try {
-    if (req.admin.role !== 'superadmin') {
-      return res.status(403).json({ success: false, error: 'Superadmin access required' });
-    }
-    const admins = await Admin.find({ isActive: true }).select('-password').sort({ createdAt: -1 });
+    const admins = await Admin.find({ isActive: true })
+      .select('-password')
+      .populate('createdBy', 'name username')
+      .sort({ createdAt: -1 });
+    res.json({ success: true, count: admins.length, data: admins });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// GET all admins for chat (all authenticated admins)
+router.get('/list', authMiddleware, async (req, res) => {
+  try {
+    const admins = await Admin.find({ isActive: true })
+      .select('-password')
+      .sort({ createdAt: -1 });
     res.json({ success: true, count: admins.length, data: admins });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -137,7 +133,14 @@ router.post('/create', authMiddleware, async (req, res) => {
       return res.status(403).json({ success: false, error: 'Superadmin access required' });
     }
     const { username, password, name, email, role } = req.body;
-    const admin = await Admin.create({ username, password, name, email, role: role || 'admin' });
+    const admin = await Admin.create({ 
+      username, 
+      password, 
+      name, 
+      email, 
+      role: role || 'admin',
+      createdBy: req.admin.id
+    });
     
     await createAuditLog('admin_created', {
       userId: req.admin.id,
@@ -154,6 +157,28 @@ router.post('/create', authMiddleware, async (req, res) => {
       success: true, 
       data: { id: admin._id, username: admin.username, name: admin.name, role: admin.role } 
     });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// PUT update admin avatar (self only) - MUST be before /:id to avoid route collision
+router.put('/avatar', authMiddleware, async (req, res) => {
+  try {
+    const { emoji, bg } = req.body;
+    if (!emoji || !bg) {
+      return res.status(400).json({ success: false, error: 'Emoji and background color required' });
+    }
+    
+    const admin = await Admin.findByIdAndUpdate(
+      req.admin.id,
+      { $set: { avatar: { emoji, bg }, updatedAt: Date.now() } },
+      { new: true, overwrite: false }
+    ).select('-password');
+    
+    if (!admin) return res.status(404).json({ success: false, error: 'Admin not found' });
+    
+    res.json({ success: true, data: admin });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
   }
@@ -231,5 +256,44 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   }
 });
 
+// PATCH update admin role (superadmin only)
+router.patch('/:id/role', authMiddleware, requireSuperAdmin, async (req, res) => {
+  try {
+    const { role } = req.body;
+    if (!role || !['superadmin', 'admin'].includes(role)) {
+      return res.status(400).json({ success: false, error: 'Valid role required (superadmin or admin)' });
+    }
+    
+    if (req.params.id === req.admin.id) {
+      return res.status(400).json({ success: false, error: 'Cannot change your own role' });
+    }
+
+    const admin = await Admin.findByIdAndUpdate(
+      req.params.id,
+      { role, updatedAt: Date.now() },
+      { new: true }
+    ).select('-password');
+    
+    if (!admin) return res.status(404).json({ success: false, error: 'Admin not found' });
+
+    await createAuditLog('admin_role_changed', {
+      userId: req.admin.id,
+      username: req.admin.username,
+      role: req.admin.role,
+      ipAddress: req.ip
+    }, {
+      entityType: 'Admin',
+      entityId: admin._id,
+      entityName: admin.username
+    }, [{ field: 'role', oldValue: 'previous', newValue: role }]);
+
+    res.json({ success: true, data: admin });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+
 module.exports = router;
 module.exports.authMiddleware = authMiddleware;
+module.exports.requireSuperAdmin = requireSuperAdmin;

@@ -2131,6 +2131,70 @@
                     if (indicator) indicator.remove();
                 }
             });
+
+            // Queue position update
+            chatSocket.on('queue_position', (data) => {
+                if (data.sessionId !== chatSessionId) return;
+                const area = document.getElementById('chatMessagesArea');
+                if (!area) return;
+                let qEl = document.getElementById('chatQueueBanner');
+                if (!qEl) {
+                    qEl = document.createElement('div');
+                    qEl.id = 'chatQueueBanner';
+                    qEl.style.cssText = 'background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #f59e0b;border-radius:8px;padding:0.6rem 0.9rem;margin:0.5rem;font-size:0.82rem;color:#92400e;text-align:center;';
+                    area.insertBefore(qEl, area.firstChild);
+                }
+                qEl.innerHTML = `<i class="fas fa-clock"></i> ${data.message || `Position ${data.position} in queue`} — ${data.estimatedWait || 'connecting shortly'}`;
+            });
+
+            // Agent has been assigned
+            chatSocket.on('agent_assigned', (data) => {
+                if (data.sessionId && data.sessionId !== chatSessionId) return;
+                adminConnected = true;
+                const area = document.getElementById('chatMessagesArea');
+                if (!area) return;
+                // Remove queue banner
+                const qEl = document.getElementById('chatQueueBanner');
+                if (qEl) qEl.remove();
+                // Don't duplicate
+                if (area.querySelector('.chat-agent-banner-connected')) return;
+                const banner = document.createElement('div');
+                banner.className = 'chat-agent-banner chat-agent-banner-connected';
+                const agentName = data.agentName || 'Agent';
+                banner.innerHTML = `<i class="fas fa-user-headset"></i> <strong>${escapeHtml(agentName)}</strong> has joined and will assist you.`;
+                area.appendChild(banner);
+                area.scrollTop = area.scrollHeight;
+                const statusEl = document.getElementById('chatHeaderStatus');
+                if (statusEl) statusEl.textContent = `${agentName} online`;
+            });
+
+            // Agent transferred (rotation)
+            chatSocket.on('agent_transferred', (data) => {
+                if (data.sessionId && data.sessionId !== chatSessionId) return;
+                const area = document.getElementById('chatMessagesArea');
+                if (!area) return;
+                const banner = document.createElement('div');
+                banner.className = 'chat-agent-banner';
+                banner.style.cssText = 'background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #93c5fd;color:#1e40af;';
+                banner.innerHTML = `<i class="fas fa-exchange-alt"></i> You've been connected to <strong>${escapeHtml(data.agentName || 'a new agent')}</strong>.`;
+                area.appendChild(banner);
+                area.scrollTop = area.scrollHeight;
+            });
+
+            // No agents available after max rotations
+            chatSocket.on('chat_unavailable', (data) => {
+                if (data.sessionId && data.sessionId !== chatSessionId) return;
+                const area = document.getElementById('chatMessagesArea');
+                if (!area) return;
+                const qEl = document.getElementById('chatQueueBanner');
+                if (qEl) qEl.remove();
+                const banner = document.createElement('div');
+                banner.className = 'chat-agent-banner';
+                banner.style.cssText = 'background:linear-gradient(135deg,#f9fafb,#f3f4f6);border:1px solid #d1d5db;color:#374151;';
+                banner.innerHTML = `<i class="fas fa-moon"></i> ${escapeHtml(data.message || "All agents are busy. Please leave a message and we'll get back to you.")}`;
+                area.appendChild(banner);
+                area.scrollTop = area.scrollHeight;
+            });
             
             chatSocket.on('connect_error', (err) => {
                 console.error('Chat socket error:', err.message);
