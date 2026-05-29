@@ -2363,7 +2363,7 @@
                     : 'Room';
                 const imgSrc = listing.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800';
                 return `
-                <a href="/listing.html?id=${listing._id}" class="listing-card" data-aos="fade-up" data-aos-delay="${(i % 3) * 60}" style="text-decoration:none;display:block;cursor:pointer;">
+                <a href="/listing.html?id=${listing._id}" class="listing-card" data-aos="fade-up" data-aos-delay="${(i % 3) * 60}" style="text-decoration:none;display:block;cursor:pointer;" onclick="trackListingView('${listing._id}')">
                     <div class="listing-image">
                         <img src="${imgSrc}" alt="${listing.title}">
                         <div class="listing-price">RM ${listing.price}<span>/${listing.pricePeriod || 'month'}</span></div>
@@ -2389,7 +2389,7 @@
                             <span class="btn btn-outline-dark btn-sm" style="flex:1;justify-content:center;pointer-events:none;">
                                 <i class="fas fa-eye"></i> View Details
                             </span>
-                            <button class="btn btn-primary btn-sm" onclick="event.preventDefault();event.stopPropagation();openBooking('${listing._id}', '${listing.title.replace(/'/g, "\\'")}')"> 
+                            <button class="btn btn-primary btn-sm" onclick="event.preventDefault();event.stopPropagation();trackListingView('${listing._id}');openBooking('${listing._id}', '${listing.title.replace(/'/g, "\\'")}')">
                                 <i class="fas fa-calendar"></i> Enquire
                             </button>
                         </div>
@@ -2435,6 +2435,12 @@
             const d = new Date(date);
             const now = new Date();
             return (now - d) / (1000 * 60 * 60 * 24) <= 7;
+        }
+
+        // Track listing view - fire and forget
+        function trackListingView(listingId) {
+            fetch(`/api/listings/${listingId}/view`, { method: 'POST' })
+                .catch(err => console.log('View tracking error:', err));
         }
 
         function debouncedSearch() {

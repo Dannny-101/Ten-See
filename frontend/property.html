@@ -179,6 +179,12 @@
     <script>
         AOS.init({ duration: 600, once: true, offset: 60 });
 
+        // Track listing view - fire and forget
+        function trackListingView(listingId) {
+            fetch(`/api/listings/${listingId}/view`, { method: 'POST' })
+                .catch(err => console.log('View tracking error:', err));
+        }
+
         const params = new URLSearchParams(window.location.search);
         const propertyId = params.get('id');
         let allRoomListings = [];
@@ -295,7 +301,7 @@
             const sorted = [...listings].sort((a, b) => (TYPE_ORDER[a.propertyType] ?? 9) - (TYPE_ORDER[b.propertyType] ?? 9));
 
             grid.innerHTML = sorted.map((l, i) => `
-                <a href="/listing.html?id=${l._id}" class="listing-card" data-aos="fade-up" data-aos-delay="${(i % 2) * 80}">
+                <a href="/listing.html?id=${l._id}" class="listing-card" data-aos="fade-up" data-aos-delay="${(i % 2) * 80}" onclick="trackListingView('${l._id}')">
                     <div class="listing-image">
                         <img src="${l.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800'}" alt="${l.title}">
                         <span class="listing-type-badge">${l.propertyType.replace('_',' ')}</span>
@@ -312,7 +318,7 @@
                             ${(l.amenities || []).slice(0, 4).map(a => `<span class="amenity-tag">${a}</span>`).join('')}
                             ${l.amenities?.length > 4 ? `<span class="amenity-tag">+${l.amenities.length - 4}</span>` : ''}
                         </div>
-                        <div class="btn-enquire" onclick="event.preventDefault(); openBooking('${l._id}')">
+                        <div class="btn-enquire" onclick="event.preventDefault(); trackListingView('${l._id}'); openBooking('${l._id}')">
                             <i class="fas fa-calendar"></i> Enquire
                         </div>
                     </div>
