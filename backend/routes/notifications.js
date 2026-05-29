@@ -130,4 +130,24 @@ router.delete('/cleanup', async (req, res) => {
   }
 });
 
+// Helper: create notification (used by other routes)
+const createNotification = async (type, title, message, data = null, recipient = { type: 'all' }) => {
+  try {
+    const notification = await Notification.create({
+      type,
+      title,
+      message,
+      recipient,
+      data,
+      isRead: false,
+      soundPlayed: false
+    });
+    return notification;
+  } catch (error) {
+    console.error('Error creating notification:', error);
+    return null;
+  }
+};
+
 module.exports = router;
+module.exports.createNotification = createNotification;

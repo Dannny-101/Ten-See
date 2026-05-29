@@ -49,6 +49,7 @@ router.post('/webhook', async (req, res) => {
           type: 'new_lead',
           title: 'New WhatsApp Lead',
           message: `${senderName || 'WhatsApp User'} messaged via WhatsApp: "${message?.substring(0, 50)}${message?.length > 50 ? '...' : ''}"`,
+          recipient: { type: 'all' },
           data: { leadId: lead._id, source: 'whatsapp' },
           isRead: false
         });

@@ -23,6 +23,7 @@ router.post('/', async (req, res) => {
       type: 'new_lead',
       title: 'New Lead Received',
       message: `${lead.name} submitted an inquiry via ${lead.source}`,
+      recipient: { type: 'all' },
       data: { 
         leadId: lead._id, 
         listingId: lead.listingId 
@@ -106,6 +107,7 @@ router.put('/:id', async (req, res) => {
         type: 'lead_status_change',
         title: 'Lead Status Updated',
         message: `${lead.name}'s status changed from ${oldLead.status} to ${lead.status}`,
+        recipient: { type: 'all' },
         data: { 
           leadId: lead._id, 
           listingId: lead.listingId 

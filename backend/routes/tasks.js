@@ -90,7 +90,7 @@ router.post('/', async (req, res) => {
       type: 'new_task',
       title: 'New Task Created',
       message: `${task.createdBy.name || task.createdBy.username} created task: ${task.title}`,
-      recipient: { type: 'superadmin' },
+      recipient: { type: 'all' },
       data: { taskId: task._id }
     });
 
@@ -148,7 +148,7 @@ router.put('/:id', async (req, res) => {
         type: 'task_completed',
         title: 'Task Completed',
         message: `${task.completedBy.name || task.completedBy.username} completed: ${task.title}`,
-        recipient: { type: 'superadmin' },
+        recipient: { type: 'all' },
         data: { taskId: task._id }
       });
     } else {

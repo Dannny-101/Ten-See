@@ -541,6 +541,7 @@ async function checkUnattendedLeads() {
         type: 'unattended_lead',
         title: 'Unattended Lead Alert',
         message: `Lead from ${lead.name} unattended for 16+ hours`,
+        recipient: { type: 'all' },
         data: { 
           leadId: lead._id, 
           source: lead.source,
