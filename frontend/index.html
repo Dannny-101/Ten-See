@@ -673,14 +673,14 @@
         }
         .footer-col h4 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.5rem; color: var(--color-accent); margin-bottom: 0.75rem;
+            font-size: 1.5rem; color: var(--color-text-main); margin-bottom: 0.75rem;
         }
-        .footer-col h4 span { font-weight: 300; color: rgba(255,255,255,0.55); }
+        .footer-col h4 span { font-weight: 300; color: var(--color-text-main); }
         .footer-logo img { width: 64px; height: 64px; object-fit: contain; display: block; border-radius: 12px; }
-        .footer-col p { color: rgba(255,255,255,0.55); font-size: 0.875rem; line-height: 1.7; margin-bottom: 0.5rem; }
-        .footer-col h5 { color: rgba(255,255,255,0.55); font-size: 0.875rem; margin-bottom: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .footer-col p { color: var(--color-text-main); font-size: 0.875rem; line-height: 1.7; margin-bottom: 0.5rem; }
+        .footer-col h5 { color: var(--color-text-main); font-size: 0.875rem; margin-bottom: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
         .footer-col a {
-            display: block; color: rgba(255,255,255,0.55);
+            display: block; color: var(--color-text-main);
             text-decoration: none; font-size: 0.875rem;
             margin-bottom: 0.5rem; transition: color 0.2s;
         }
@@ -689,16 +689,16 @@
         .footer .contact-item,
         .footer .contact-item a {
             display: flex; align-items: center; gap: 0.6rem;
-            color: rgba(255,255,255,0.55) !important; font-size: 0.875rem; margin-bottom: 0.625rem;
+            color: var(--color-text-main) !important; font-size: 0.875rem; margin-bottom: 0.625rem;
         }
-        .contact-item i { color: var(--color-accent); width: 16px; }
+        .contact-item i { color: var(--color-text-main); width: 16px; }
         .footer-bottom {
             max-width: 1200px; margin: 0 auto;
             padding-top: 2rem;
             display: flex; justify-content: space-between; align-items: center;
             flex-wrap: wrap; gap: 1rem;
         }
-        .footer-bottom p { color: rgba(255,255,255,0.55); font-size: 0.825rem; }
+        .footer-bottom p { color: var(--color-text-main); font-size: 0.825rem; }
 
         /* ── CHAT WIDGET ── */
         .chat-widget {
@@ -1004,13 +1004,13 @@
             box-shadow: 0 4px 16px rgba(44, 56, 48, 0.2), inset 0 1px 0 rgba(255,255,255,0.15);
             transform: translateY(-1px) scale(1.05);
         }
-        /* Logo hover - no glow to avoid rectangle visibility */
+        /* Logo hover - blend with navbar background to hide rectangle */
         a.logo[aria-label]:hover {
-            background: transparent;
+            background: var(--color-primary);
             backdrop-filter: none;
             border: none;
-            box-shadow: none;
-            transform: translateY(-1px) scale(1.02);
+            box-shadow: 0 0 0 4px var(--color-primary), 0 4px 16px rgba(44, 56, 48, 0.2);
+            transform: translateY(-1px) scale(1.05);
         }
         [data-theme="dark"] .theme-toggle:hover,
         [data-theme="dark"] .nav-actions button:hover,
