@@ -663,9 +663,9 @@
 
         /* ── FOOTER ── */
         .footer {
-            background: #141a17;
+            background: var(--color-primary);
             padding: 4rem 2rem 2rem;
-            border-top: 1px solid rgba(255,255,255,0.06);
+            border-top: 1px solid var(--color-border);
         }
         .footer-grid {
             max-width: 1200px; margin: 0 auto;
@@ -676,12 +676,12 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.5rem; color: var(--color-accent); margin-bottom: 0.75rem;
         }
-        .footer-col h4 span { font-weight: 300; color: white; }
+        .footer-col h4 span { font-weight: 300; color: var(--color-text-main); }
         .footer-logo img { width: 64px; height: 64px; object-fit: contain; display: block; border-radius: 12px; }
-        .footer-col p { color: rgba(255,255,255,0.55); font-size: 0.875rem; line-height: 1.7; margin-bottom: 0.5rem; }
+        .footer-col p { color: var(--color-text-muted); font-size: 0.875rem; line-height: 1.7; margin-bottom: 0.5rem; }
         .footer-col h5 { color: var(--color-accent-light); font-size: 0.875rem; margin-bottom: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
         .footer-col a {
-            display: block; color: rgba(255,255,255,0.55);
+            display: block; color: var(--color-text-muted);
             text-decoration: none; font-size: 0.875rem;
             margin-bottom: 0.5rem; transition: color 0.2s;
         }
@@ -690,17 +690,17 @@
         .footer .contact-item,
         .footer .contact-item a {
             display: flex; align-items: center; gap: 0.6rem;
-            color: rgba(255,255,255,0.55) !important; font-size: 0.875rem; margin-bottom: 0.625rem;
+            color: var(--color-text-muted) !important; font-size: 0.875rem; margin-bottom: 0.625rem;
         }
         .contact-item i { color: var(--color-accent); width: 16px; }
         .footer-bottom {
             max-width: 1200px; margin: 0 auto;
             padding-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.06);
+            border-top: 1px solid var(--color-border);
             display: flex; justify-content: space-between; align-items: center;
             flex-wrap: wrap; gap: 1rem;
         }
-        .footer-bottom p { color: rgba(255,255,255,0.35); font-size: 0.825rem; }
+        .footer-bottom p { color: var(--color-text-muted); font-size: 0.825rem; }
 
         /* ── CHAT WIDGET ── */
         .chat-widget {
