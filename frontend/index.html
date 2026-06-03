@@ -675,10 +675,10 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.5rem; color: var(--color-accent); margin-bottom: 0.75rem;
         }
-        .footer-col h4 span { font-weight: 300; color: white; }
+        .footer-col h4 span { font-weight: 300; color: rgba(255,255,255,0.55); }
         .footer-logo img { width: 64px; height: 64px; object-fit: contain; display: block; border-radius: 12px; }
         .footer-col p { color: rgba(255,255,255,0.55); font-size: 0.875rem; line-height: 1.7; margin-bottom: 0.5rem; }
-        .footer-col h5 { color: var(--color-accent-light); font-size: 0.875rem; margin-bottom: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .footer-col h5 { color: rgba(255,255,255,0.55); font-size: 0.875rem; margin-bottom: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
         .footer-col a {
             display: block; color: rgba(255,255,255,0.55);
             text-decoration: none; font-size: 0.875rem;
@@ -698,7 +698,7 @@
             display: flex; justify-content: space-between; align-items: center;
             flex-wrap: wrap; gap: 1rem;
         }
-        .footer-bottom p { color: rgba(255,255,255,0.35); font-size: 0.825rem; }
+        .footer-bottom p { color: rgba(255,255,255,0.55); font-size: 0.825rem; }
 
         /* ── CHAT WIDGET ── */
         .chat-widget {
@@ -1003,6 +1003,14 @@
             border: 1px solid rgba(184, 149, 74, 0.3);
             box-shadow: 0 4px 16px rgba(44, 56, 48, 0.2), inset 0 1px 0 rgba(255,255,255,0.15);
             transform: translateY(-1px) scale(1.05);
+        }
+        /* Logo hover - no glow to avoid rectangle visibility */
+        a.logo[aria-label]:hover {
+            background: transparent;
+            backdrop-filter: none;
+            border: none;
+            box-shadow: none;
+            transform: translateY(-1px) scale(1.02);
         }
         [data-theme="dark"] .theme-toggle:hover,
         [data-theme="dark"] .nav-actions button:hover,
