@@ -1134,6 +1134,25 @@
   .sidebar { display: none !important; }
   .main { margin-left: 0 !important; padding-bottom: 70px; }
   .content { padding: 1rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .two-col, .three-col { grid-template-columns: 1fr; }
+  .card { padding: 1rem; margin-bottom: 1rem; }
+  .topbar { padding: 0.75rem 1rem; }
+  .topbar-title { font-size: 1rem; }
+  /* Team Chat Mobile */
+  .teamchat-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: calc(100vh - 140px); min-height: auto; }
+  .teamchat-sidebar { border-right: none; border-bottom: 1px solid var(--border); max-height: 200px; }
+  .teamchat-main { min-height: 300px; }
+  .chat-layout { grid-template-columns: 1fr; height: calc(100vh - 140px); }
+  .chat-sessions { max-height: 200px; border-right: none; border-bottom: 1px solid var(--border); }
+  /* Table overflow on mobile */
+  .table-wrap { overflow-x: auto; }
+  th, td { white-space: nowrap; }
+  /* Modals on mobile */
+  .modal { max-width: 95vw; margin: 1rem; }
+  /* Task board mobile */
+  .task-board { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+  .task-column { min-width: 140px; }
 }
 
 /* ── POLISHED UI: GLASSMORPHISM & ANIMATIONS ── */
@@ -1466,7 +1485,7 @@ table tr:hover td:first-child {
     <button class="mob-nav-item" id="mobnav-leads" onclick="showSection('leads');updateMobNav('leads')"><i class="fas fa-users"></i>Leads</button>
     <button class="mob-nav-item" id="mobnav-chat" onclick="showSection('chat');updateMobNav('chat')"><i class="fas fa-comments"></i>Chat<span class="mob-nav-badge" id="mobChatBadge" style="display:none">0</span></button>
     <button class="mob-nav-item" id="mobnav-bookings" onclick="showSection('bookings');updateMobNav('bookings')"><i class="fas fa-calendar-check"></i>Bookings</button>
-    <button class="mob-nav-item" id="mobnav-more" onclick="showSection('analytics');updateMobNav('analytics')"><i class="fas fa-ellipsis-h"></i>More</button>
+    <button class="mob-nav-item" id="mobnav-teamchat" onclick="showSection('teamchat');updateMobNav('teamchat')"><i class="fas fa-user-friends"></i>Team<span class="mob-nav-badge" id="mobTeamChatBadge" style="display:none">0</span></button>
   </div>
 </div>
 
@@ -5449,13 +5468,12 @@ function handleStaffMessage(data) {
     // Increment unread
     chatUnreadCounts[senderId] = (chatUnreadCounts[senderId] || 0) + 1;
 
-    // Update nav badge
+    // Update nav badge (desktop + mobile)
+    const total = Object.values(chatUnreadCounts).reduce((a, b) => a + b, 0);
     const badge = document.getElementById('teamChatBadge');
-    if (badge) {
-      const total = Object.values(chatUnreadCounts).reduce((a, b) => a + b, 0);
-      badge.textContent = total;
-      badge.style.display = 'inline-block';
-    }
+    if (badge) { badge.textContent = total; badge.style.display = 'inline-block'; }
+    const mobBadge = document.getElementById('mobTeamChatBadge');
+    if (mobBadge) { mobBadge.textContent = total; mobBadge.style.display = total > 0 ? '' : 'none'; }
 
     // Play chime
     playChime();
@@ -5852,9 +5870,9 @@ async function runSmartNotifCheck() {
 // ── 5. MOBILE FEATURES ─────────────────────
 
 function updateMobNav(sec) {
-  const keys = ['dashboard', 'leads', 'chat', 'bookings', 'analytics'];
+  const keys = ['dashboard', 'leads', 'chat', 'bookings', 'teamchat'];
   keys.forEach(k => {
-    const btn = document.getElementById(`mobnav-${k === 'analytics' ? 'more' : k}`);
+    const btn = document.getElementById(`mobnav-${k}`);
     if (btn) btn.classList.toggle('active', k === sec);
   });
   // Sync chat badge
@@ -5906,6 +5924,13 @@ function initPullToRefresh() {
   }, { passive: true });
 }
 
+// ── INIT ──
+// Auto-render app or login on page load
+if (S.token) {
+  renderApp();
+} else {
+  renderLogin();
+}
 </script>
 </body>
 </html>
