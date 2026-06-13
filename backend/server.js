@@ -475,7 +475,7 @@ app.set('emitToAdmins', emitToAdmins);
 // Middleware
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: ALLOWED_ORIGINS }));
-app.use(express.json());
+app.use(express.json({ verify: (req, res, buf) => { req.rawBody = buf; } }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../frontend')));
 
@@ -515,6 +515,13 @@ const apiLimiter = rateLimit({
 });
 app.use('/api/admin/login', loginLimiter);
 app.use('/api', apiLimiter);
+
+// Public runtime config (single source for the frontend Mapbox token).
+// Served as a blocking classic script so window.MAPBOX_TOKEN is set before page scripts run.
+app.get('/api/config.js', (req, res) => {
+    res.type('application/javascript');
+    res.send('window.MAPBOX_TOKEN=' + JSON.stringify(process.env.MAPBOX_TOKEN || '') + ';');
+});
 
 // Routes
 app.use('/api/listings', require('./routes/listings'));

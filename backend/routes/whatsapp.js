@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 const router = express.Router();
 const whatsappService = require('../services/whatsapp');
 const Lead = require('../models/Lead');
@@ -7,10 +8,37 @@ const emailService = require('../services/email');
 const { authMiddleware } = require('./admin');
 
 /**
+ * Verify the X-Hub-Signature-256 header sent by Meta.
+ * HMAC-SHA256 of the raw request body keyed with the Meta App Secret.
+ * Fails closed (403) when the secret is unset or the signature is missing/invalid.
+ */
+function verifyWhatsAppSignature(req, res, next) {
+  const appSecret = process.env.WHATSAPP_APP_SECRET;
+  if (!appSecret) {
+    console.error('[WhatsApp] WHATSAPP_APP_SECRET is not set — rejecting webhook');
+    return res.status(403).json({ success: false, error: 'Webhook signature verification not configured' });
+  }
+
+  const signature = req.get('X-Hub-Signature-256');
+  if (!signature || !req.rawBody) {
+    return res.status(403).json({ success: false, error: 'Missing webhook signature' });
+  }
+
+  const expected = 'sha256=' + crypto.createHmac('sha256', appSecret).update(req.rawBody).digest('hex');
+  const signatureBuf = Buffer.from(signature);
+  const expectedBuf = Buffer.from(expected);
+  if (signatureBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(signatureBuf, expectedBuf)) {
+    return res.status(403).json({ success: false, error: 'Invalid webhook signature' });
+  }
+
+  next();
+}
+
+/**
  * POST /api/whatsapp/webhook
  * Handle incoming WhatsApp messages from webhook
  */
-router.post('/webhook', async (req, res) => {
+router.post('/webhook', verifyWhatsAppSignature, async (req, res) => {
   try {
     // Verify webhook token
     const challenge = whatsappService.verifyWebhookToken(req);

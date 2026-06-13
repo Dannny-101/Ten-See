@@ -29,10 +29,10 @@ Deps: a day lists "needs day N" when it cannot start before N is done.
 - [x] Day 7 — CORS + helmet + rate limits: npm i helmet express-rate-limit. cors origin
   allowlist ['https://tensee.my','http://localhost:5000'] on Express AND Socket.io.
   Limit /api/admin/login 10/15min, /api 300/15min. Verify: 11th login attempt → 429.
-- [ ] Day 8 — WhatsApp webhook signature: capture raw body via express.json({verify});
+- [x] Day 8 — WhatsApp webhook signature: capture raw body via express.json({verify});
   HMAC-SHA256 with Meta App Secret; compare X-Hub-Signature-256; 403 on mismatch.
   Verify: unsigned POST → 403; Meta test event → 200.
-- [ ] Day 9 — Mapbox token: in Mapbox dashboard add URL restriction (tensee.my) or rotate +
+- [x] Day 9 — Mapbox token: in Mapbox dashboard add URL restriction (tensee.my) or rotate +
   restrict. Serve from one place (e.g. /api/config), remove the split-string copies in
   property.html + listing.html. Verify: maps still load.
 - [ ] Day 10 — Purge node_modules from git: git rm -r --cached backend/node_modules; commit.
