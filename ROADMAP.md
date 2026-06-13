@@ -16,7 +16,7 @@ Deps: a day lists "needs day N" when it cannot start before N is done.
 
 ## Phase 1 — Security lockdown (site is NOT launchable until Day 10)
 
-- [ ] Day 4 — Protect leads + bookings: in routes/leads.js and routes/bookings.js import
+- [x] Day 4 — Protect leads + bookings: in routes/leads.js and routes/bookings.js import
   { authMiddleware } from './admin'; apply to every GET/PUT/DELETE. Keep POST / public.
   Verify: curl /api/leads → 401; login token → 200.
 - [ ] Day 5 — Protect listings/properties/audit/whatsapp-send: authMiddleware on

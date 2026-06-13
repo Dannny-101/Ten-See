@@ -3,6 +3,7 @@ const router = express.Router();
 const Lead = require('../models/Lead');
 const Notification = require('../models/Notification');
 const emailService = require('../utils/email');
+const { authMiddleware } = require('./admin');
 
 // POST /api/leads — Create new lead
 router.post('/', async (req, res) => {
@@ -56,7 +57,7 @@ router.post('/', async (req, res) => {
 });
 
 // GET /api/leads — Get all leads
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const { status, source, search, limit } = req.query;
     let query = {};
@@ -82,7 +83,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/leads/:id — Get single lead
-router.get('/:id', async (req, res) => {
+router.get('/:id', authMiddleware, async (req, res) => {
   try {
     const lead = await Lead.findById(req.params.id);
     if (!lead) return res.status(404).json({ success: false, error: 'Lead not found' });
@@ -93,7 +94,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // PUT /api/leads/:id — Update lead
-router.put('/:id', async (req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => {
   try {
     const oldLead = await Lead.findById(req.params.id);
     if (!oldLead) return res.status(404).json({ success: false, error: 'Lead not found' });
@@ -134,7 +135,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE /api/leads/:id — Delete lead
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const lead = await Lead.findByIdAndDelete(req.params.id);
     if (!lead) return res.status(404).json({ success: false, error: 'Lead not found' });

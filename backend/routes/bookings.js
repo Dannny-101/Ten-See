@@ -5,8 +5,9 @@ const Listing = require('../models/Listing');
 const Lead = require('../models/Lead');
 const { createNotification } = require('./notifications');
 const emailService = require('../utils/email');
+const { authMiddleware } = require('./admin');
 
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const { status, listingId, source, page = 1, limit = 20 } = req.query;
     let query = {};
@@ -28,7 +29,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', authMiddleware, async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id).populate('listingId').populate('leadId');
     if (!booking) return res.status(404).json({ success: false, error: 'Booking not found' });
@@ -118,7 +119,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id/status', async (req, res) => {
+router.put('/:id/status', authMiddleware, async (req, res) => {
   try {
     const { status, adminNotes } = req.body;
     const booking = await Booking.findByIdAndUpdate(
@@ -137,7 +138,7 @@ router.put('/:id/status', async (req, res) => {
   }
 });
 
-router.get('/availability/:listingId', async (req, res) => {
+router.get('/availability/:listingId', authMiddleware, async (req, res) => {
   try {
     const { month, year } = req.query;
     const listingId = req.params.listingId;
@@ -162,7 +163,7 @@ router.get('/availability/:listingId', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const booking = await Booking.findByIdAndDelete(req.params.id);
     if (!booking) return res.status(404).json({ success: false, error: 'Booking not found' });
