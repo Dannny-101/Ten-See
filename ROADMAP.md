@@ -57,10 +57,10 @@ Deps: a day lists "needs day N" when it cannot start before N is done.
 
 ## Phase 3 — Real AI agent
 
-- [ ] Day 16 — LLM key + prompt: Groq (free) or Google AI Studio key → .env. Write
+- [x] Day 16 — LLM key + prompt: Groq (free) or Google AI Studio key → .env. Write
   backend/prompts/leasing.txt: qualify budget/university/move-in; hand viewings to humans.
   Verify: curl the LLM API directly once.
-- [ ] Day 17 — Swap regex for LLM: new services/ai.js; in server.js send_message replace the
+- [x] Day 17 — Swap regex for LLM: new services/ai.js; in server.js send_message replace the
   if/else block with ai.reply(sessionId, message); keep regex as catch-fallback.
   Verify: chat widget answers an unscripted question sensibly. (needs day 16)
 - [ ] Day 18 — Conversation memory: ai.js loads last 20 ChatMessages for the session before

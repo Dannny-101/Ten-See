@@ -20,6 +20,8 @@ const Lead = require('./models/Lead');
 const Notification = require('./models/Notification');
 const chatQueue = require('./services/chatQueue');
 const chatPager = require('./services/chatPager');
+const ai = require('./services/ai');
+const cron = require('node-cron');
 
 const app = express();
 const server = http.createServer(app);
@@ -40,6 +42,9 @@ chatQueue.init(io, chatPager);
 
 // Track active admin sessions (sessionId -> adminSocketId)
 const activeAdminSessions = new Map();
+
+// In-memory storage for staff groups (shared across all sockets)
+const staffGroups = new Map();
 
 // Socket.io connection handling
 io.on('connection', (socket) => {
@@ -208,23 +213,27 @@ io.on('connection', (socket) => {
                 }
                 
                 try {
-                    const lowerMsg = message.toLowerCase();
                     let aiResponse = '';
-                    
-                    if (/budget|cheap|price|cost|rm/.test(lowerMsg)) {
-                        aiResponse = "What's your monthly budget? We have rooms from RM400–RM1,500.";
-                    } else if (/location|where|area|near|close/.test(lowerMsg)) {
-                        aiResponse = "Which university? I can recommend the best areas.";
-                    } else if (/wifi|internet|fiber|connection/.test(lowerMsg)) {
-                        aiResponse = "All listings include WiFi. Some have fiber.";
-                    } else if (/deposit|payment|advance|pay/.test(lowerMsg)) {
-                        aiResponse = "Most need 1 month deposit + 1 month advance.";
-                    } else if (/viewing|tour|visit|see/.test(lowerMsg)) {
-                        aiResponse = "We can arrange virtual or in-person. When works?";
-                    } else if (/contact|whatsapp|phone|call/.test(lowerMsg)) {
-                        aiResponse = "Reach us on WhatsApp at +60 XX-XXXX XXXX.";
-                    } else {
-                        aiResponse = "Thanks! A human agent will join shortly. Tell me your university and budget.";
+                    try {
+                        aiResponse = await ai.reply(sessionId, message);
+                    } catch (llmErr) {
+                        console.error('LLM failed, using regex fallback:', llmErr.message);
+                        const lowerMsg = message.toLowerCase();
+                        if (/budget|cheap|price|cost|rm/.test(lowerMsg)) {
+                            aiResponse = "What's your monthly budget? We have rooms from RM400–RM1,500.";
+                        } else if (/location|where|area|near|close/.test(lowerMsg)) {
+                            aiResponse = "Which university? I can recommend the best areas.";
+                        } else if (/wifi|internet|fiber|connection/.test(lowerMsg)) {
+                            aiResponse = "All listings include WiFi. Some have fiber.";
+                        } else if (/deposit|payment|advance|pay/.test(lowerMsg)) {
+                            aiResponse = "Most need 1 month deposit + 1 month advance.";
+                        } else if (/viewing|tour|visit|see/.test(lowerMsg)) {
+                            aiResponse = "We can arrange virtual or in-person. When works?";
+                        } else if (/contact|whatsapp|phone|call/.test(lowerMsg)) {
+                            aiResponse = "Reach us on WhatsApp at +60 XX-XXXX XXXX.";
+                        } else {
+                            aiResponse = "Thanks! A human agent will join shortly. Tell me your university and budget.";
+                        }
                     }
                     
                     // Double-check admin still not connected before saving
@@ -394,7 +403,6 @@ io.on('connection', (socket) => {
     });
     
     // Create new group
-    const staffGroups = new Map(); // In-memory storage for groups
     socket.on('create_group', (data) => {
         const { name, members, createdBy } = data;
         if (!name || !createdBy) return;
@@ -619,7 +627,7 @@ async function checkUnattendedLeads() {
 }
 
 // Start the cron job
-setInterval(checkUnattendedLeads, CHECK_INTERVAL);
+cron.schedule('*/15 * * * *', checkUnattendedLeads);
 console.log('[Smart Notify] Unattended lead checker started (every 15 min)');
 
 const PORT = process.env.PORT || 5000;
