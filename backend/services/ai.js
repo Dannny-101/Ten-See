@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+const ChatMessage = require('../models/ChatMessage');
 
 const SYSTEM_PROMPT = fs.readFileSync(
     path.join(__dirname, '../prompts/leasing.txt'),
@@ -52,8 +53,20 @@ async function reply(sessionId, message) {
         throw new Error('GROQ_API_KEY not set');
     }
 
+    const history = await ChatMessage.find({ sessionId })
+        .sort({ createdAt: -1 })
+        .limit(20)
+        .select('message senderType')
+        .lean();
+
+    const historyMessages = history.reverse().map(msg => ({
+        role: msg.senderType === 'ai' || msg.senderType === 'human' ? 'assistant' : 'user',
+        content: msg.message
+    }));
+
     const messages = [
         { role: 'system', content: SYSTEM_PROMPT },
+        ...historyMessages,
         { role: 'user', content: message }
     ];
 

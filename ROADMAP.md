@@ -63,7 +63,7 @@ Deps: a day lists "needs day N" when it cannot start before N is done.
 - [x] Day 17 — Swap regex for LLM: new services/ai.js; in server.js send_message replace the
   if/else block with ai.reply(sessionId, message); keep regex as catch-fallback.
   Verify: chat widget answers an unscripted question sensibly. (needs day 16)
-- [ ] Day 18 — Conversation memory: ai.js loads last 20 ChatMessages for the session before
+- [x] Day 18 — Conversation memory: ai.js loads last 20 ChatMessages for the session before
   each call. Verify: tell it your budget, ask "what was my budget?" — it answers.
 - [ ] Day 19 — Lead extraction: after each AI reply, second LLM call extracts
   {name,budget,university,moveIn} JSON → upsert onto the Lead. Verify: dashboard lead
