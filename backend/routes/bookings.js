@@ -67,13 +67,14 @@ router.post('/', async (req, res) => {
       }
     }
 
-    const overlapping = await Booking.findOne({
+    const overlapCount = await Booking.countDocuments({
       listingId, status: { $nin: ['cancelled'] },
       $or: [{ checkInDate: { $lte: new Date(checkOutDate) }, checkOutDate: { $gte: new Date(checkInDate) } }]
     });
 
-    if (overlapping) {
-      return res.status(400).json({ success: false, error: 'These dates are already booked. Please select different dates.' });
+    const units = listing.units || 1;
+    if (overlapCount >= units) {
+      return res.status(400).json({ success: false, error: 'These dates are fully booked. Please select different dates.' });
     }
 
     let nights = 0;
