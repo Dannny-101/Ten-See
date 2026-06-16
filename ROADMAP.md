@@ -35,7 +35,7 @@ Deps: a day lists "needs day N" when it cannot start before N is done.
 - [x] Day 9 — Mapbox token: in Mapbox dashboard add URL restriction (tensee.my) or rotate +
   restrict. Serve from one place (e.g. /api/config), remove the split-string copies in
   property.html + listing.html. Verify: maps still load.
-- [ ] Day 10 — Purge node_modules from git: git rm -r --cached backend/node_modules; commit.
+- [x] Day 10 — Purge node_modules from git: git rm -r --cached backend/node_modules; commit.
   Verify: git ls-files | grep node_modules → empty.
 
 ## Phase 2 — Bug fixes
