@@ -112,7 +112,7 @@ router.post('/', async (req, res) => {
     };
 
     await emailService.sendBookingConfirmation(lead.email, bookingData);
-    await emailService.sendBookingAdminNotification(process.env.ADMIN_EMAIL || 'admin@tensee.my', bookingData);
+    await emailService.sendBookingAdminNotification(process.env.ADMIN_EMAIL || 'admin@tenandsee.homes', bookingData);
 
     res.status(201).json({ success: true, data: booking });
   } catch (error) {

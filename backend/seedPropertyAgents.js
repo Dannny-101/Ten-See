@@ -14,7 +14,7 @@ const agents = [
     //   propertyId: '64abc123...', // ObjectId from your Property collection
     //   agentName: 'Danny',
     //   agentPhone: '601XXXXXXXX', // E.164 format, no + prefix
-    //   agentEmail: 'danny@tensee.my',
+    //   agentEmail: 'danny@tenandsee.homes',
     //   priority: 1
     // },
 ];

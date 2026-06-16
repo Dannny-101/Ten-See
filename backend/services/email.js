@@ -41,7 +41,7 @@ async function sendEnquiryConfirmation(emailAddress, enquiryData) {
               <li>Schedule a viewing or get more information</li>
             </ol>
             
-            <p>In the meantime, feel free to browse more listings at <a href="https://tensee.my/listings" style="color: #B8954A; text-decoration: none;">tensee.my/listings</a></p>
+            <p>In the meantime, feel free to browse more listings at <a href="https://tenandsee.homes/listings" style="color: #B8954A; text-decoration: none;">tenandsee.homes/listings</a></p>
             
             <hr style="border: none; border-top: 1px solid #E5E7EB; margin: 30px 0;">
             
@@ -55,7 +55,7 @@ async function sendEnquiryConfirmation(emailAddress, enquiryData) {
     `;
 
     const mailOptions = {
-      from: process.env.SMTP_FROM || 'hello@tensee.my',
+      from: process.env.SMTP_FROM || 'hello@tenandsee.homes',
       to: emailAddress,
       subject: `We've received your enquiry — Ten&See (Ref: ${referenceNumber})`,
       html: htmlContent
@@ -89,14 +89,14 @@ async function sendAdminNotification(adminEmail, enquiryData) {
           <p><strong>Budget:</strong> ${enquiryData.budget || 'Not specified'}</p>
           
           <p style="margin-top: 20px; color: #6B7280;">
-            <a href="https://tensee.my/admin" style="color: #B8954A; text-decoration: none;">View in Dashboard →</a>
+            <a href="https://tenandsee.homes/admin" style="color: #B8954A; text-decoration: none;">View in Dashboard →</a>
           </p>
         </body>
       </html>
     `;
 
     const mailOptions = {
-      from: process.env.SMTP_FROM || 'hello@tensee.my',
+      from: process.env.SMTP_FROM || 'hello@tenandsee.homes',
       to: adminEmail,
       subject: `[New Enquiry] ${enquiryData.name} - ${enquiryData.propertyName}`,
       html: htmlContent
@@ -156,7 +156,7 @@ async function sendBookingConfirmation(customerEmail, bookingData) {
     `;
 
     const mailOptions = {
-      from: process.env.SMTP_FROM || 'hello@tensee.my',
+      from: process.env.SMTP_FROM || 'hello@tenandsee.homes',
       to: customerEmail,
       subject: `Booking Received — Ten&See (${bookingData.listingTitle || 'Property Booking'})`,
       html: htmlContent
@@ -193,7 +193,7 @@ async function sendBookingAdminNotification(adminEmail, bookingData) {
           </div>
           
           <p style="margin-top: 20px;">
-            <a href="https://tensee.my/admin" style="background: #B8954A; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">View in Dashboard →</a>
+            <a href="https://tenandsee.homes/admin" style="background: #B8954A; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">View in Dashboard →</a>
           </p>
           
           <p style="color: #6B7280; margin-top: 30px;">
@@ -204,7 +204,7 @@ async function sendBookingAdminNotification(adminEmail, bookingData) {
     `;
 
     const mailOptions = {
-      from: process.env.SMTP_FROM || 'hello@tensee.my',
+      from: process.env.SMTP_FROM || 'hello@tenandsee.homes',
       to: adminEmail,
       subject: `[New ${bookingData.source === 'whatsapp' ? 'WhatsApp' : 'Website'} Booking] ${bookingData.studentName || bookingData.name} - ${bookingData.listingTitle || 'Property'}`,
       html: htmlContent
@@ -235,7 +235,7 @@ const templates = {
           <p><strong>Property:</strong> ${data.listingTitle || 'General inquiry'}</p>
           <p><strong>Message:</strong> ${data.message || 'No message'}</p>
         </div>
-        <a href="${data.dashboardUrl || 'https://tensee.my/admin'}"
+        <a href="${data.dashboardUrl || 'https://tenandsee.homes/admin'}"
            style="display: inline-block; background: #C9A84C; color: #1B2E4B; padding: 12px 24px;
                   text-decoration: none; border-radius: 6px; font-weight: bold;">
           View in Dashboard
@@ -260,7 +260,7 @@ const templates = {
           <p><strong>New Status:</strong> <span style="color: #C9A84C; font-weight: bold;">${data.status}</span></p>
           <p><strong>Notes:</strong> ${data.notes || 'No notes added'}</p>
         </div>
-        <a href="${data.dashboardUrl || 'https://tensee.my/admin'}"
+        <a href="${data.dashboardUrl || 'https://tenandsee.homes/admin'}"
            style="display: inline-block; background: #C9A84C; color: #1B2E4B; padding: 12px 24px;
                   text-decoration: none; border-radius: 6px; font-weight: bold;">
           View Lead Details
@@ -283,7 +283,7 @@ const templates = {
             ${data.message}
           </blockquote>
         </div>
-        <a href="${data.chatUrl || 'https://tensee.my/admin'}"
+        <a href="${data.chatUrl || 'https://tenandsee.homes/admin'}"
            style="display: inline-block; background: #C9A84C; color: #1B2E4B; padding: 12px 24px;
                   text-decoration: none; border-radius: 6px; font-weight: bold;">
           Reply in Chat
@@ -312,7 +312,7 @@ const templates = {
             <span>Chat Sessions:</span><strong>${data.chatSessions}</strong>
           </div>
         </div>
-        <a href="${data.dashboardUrl || 'https://tensee.my/admin'}"
+        <a href="${data.dashboardUrl || 'https://tenandsee.homes/admin'}"
            style="display: inline-block; background: #C9A84C; color: #1B2E4B; padding: 12px 24px;
                   text-decoration: none; border-radius: 6px; font-weight: bold;">
           View Full Dashboard
@@ -349,7 +349,7 @@ const templates = {
 const sendEmail = async (to, templateName, data) => {
   const template = templates[templateName](data);
   const info = await transporter.sendMail({
-    from: process.env.SMTP_FROM || 'hello@tensee.my',
+    from: process.env.SMTP_FROM || 'hello@tenandsee.homes',
     to,
     subject: template.subject,
     html: template.html
@@ -360,7 +360,7 @@ const sendEmail = async (to, templateName, data) => {
 
 const sendRaw = async (to, subject, html) => {
   const info = await transporter.sendMail({
-    from: process.env.SMTP_FROM || 'hello@tensee.my',
+    from: process.env.SMTP_FROM || 'hello@tenandsee.homes',
     to,
     subject,
     html

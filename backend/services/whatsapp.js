@@ -8,8 +8,8 @@ const AUTO_REPLY_MESSAGE = `Hi! Thanks for reaching out to Ten&See 👋
 
 We've received your message and will reply within 24 hours.
 
-In the meantime, check out our listings: https://tensee.my/listings
-Or fill out our quick form: https://tensee.my
+In the meantime, check out our listings: https://tenandsee.homes/listings
+Or fill out our quick form: https://tenandsee.homes
 
 — Ten&See Team`;
 

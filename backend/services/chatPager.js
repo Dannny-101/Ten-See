@@ -7,7 +7,7 @@ try {
     webpush = require('web-push');
     if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
         webpush.setVapidDetails(
-            `mailto:${process.env.SMTP_FROM || 'hello@tensee.my'}`,
+            `mailto:${process.env.SMTP_FROM || 'hello@tenandsee.homes'}`,
             process.env.VAPID_PUBLIC_KEY,
             process.env.VAPID_PRIVATE_KEY
         );
@@ -51,7 +51,7 @@ async function sendWhatsAppAlert(agent, session) {
             : 0;
         const waitStr = waitSecs > 60 ? `${Math.round(waitSecs / 60)}m` : `${waitSecs}s`;
 
-        const msg = `🔔 *Ten&See Live Chat*\n\nVisitor: *${session.name || 'Anonymous'}*\nTopic: ${session.topic || 'General'}\nWaited: ${waitStr}\n\nOpen your dashboard to respond:\nhttps://tensee.my/admin\n\n_You have 90 seconds before the chat rotates._`;
+        const msg = `🔔 *Ten&See Live Chat*\n\nVisitor: *${session.name || 'Anonymous'}*\nTopic: ${session.topic || 'General'}\nWaited: ${waitStr}\n\nOpen your dashboard to respond:\nhttps://tenandsee.homes/admin\n\n_You have 90 seconds before the chat rotates._`;
 
         await sendWhatsAppMessage(phone, msg);
         console.log(`[Pager] WhatsApp sent to ${agent.name || agent.username} (${phone})`);
@@ -80,7 +80,7 @@ async function sendEmailAlert(agent, session) {
                     <tr><td style="padding:6px 0;color:#6b7280;font-size:0.85rem;">Topic</td><td style="padding:6px 0;">${session.topic || 'General'}</td></tr>
                 </table>
                 <div style="margin-top:20px;">
-                    <a href="https://tensee.my/admin" style="background:#c9a84c;color:#1C2420;padding:12px 24px;text-decoration:none;border-radius:8px;font-weight:600;display:inline-block;">Open Chat Dashboard →</a>
+                    <a href="https://tenandsee.homes/admin" style="background:#c9a84c;color:#1C2420;padding:12px 24px;text-decoration:none;border-radius:8px;font-weight:600;display:inline-block;">Open Chat Dashboard →</a>
                 </div>
                 <p style="margin-top:16px;font-size:0.8rem;color:#9ca3af;">You have 90 seconds to respond before the chat is reassigned.</p>
             </div>
@@ -101,7 +101,7 @@ async function notifySLABreach(agent, session) {
             body: `${session.name || 'Visitor'} is still waiting. Chat will rotate soon.`,
             tag: `sla_${session.sessionId}`,
             requireInteraction: true,
-            url: 'https://tensee.my/admin',
+            url: 'https://tenandsee.homes/admin',
             sessionId: session.sessionId
         };
         await sendPush(agent, pushPayload);
@@ -109,7 +109,7 @@ async function notifySLABreach(agent, session) {
         // Re-send WhatsApp for SLA breach
         const phone = agent.notificationSettings?.phoneNumber;
         if (phone && agent.notificationSettings?.whatsappAlerts) {
-            const msg = `⚠️ *SLA BREACH — Ten&See*\n\n${session.name || 'Visitor'} has been waiting too long. Chat will rotate to another agent.\n\nOpen now: https://tensee.my/admin`;
+            const msg = `⚠️ *SLA BREACH — Ten&See*\n\n${session.name || 'Visitor'} has been waiting too long. Chat will rotate to another agent.\n\nOpen now: https://tenandsee.homes/admin`;
             await sendWhatsAppMessage(phone, msg).catch(() => {});
         }
     } catch (err) {
@@ -129,7 +129,7 @@ async function notifyAssignment(agent, session) {
             body: `${session.name || 'Visitor'}: ${session.topic || 'General query'}`,
             tag: `assign_${session.sessionId}`,
             requireInteraction: true,
-            url: 'https://tensee.my/admin',
+            url: 'https://tenandsee.homes/admin',
             sessionId: session.sessionId,
             actions: [
                 { action: 'accept', title: 'Open Chat' }

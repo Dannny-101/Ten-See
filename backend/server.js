@@ -13,7 +13,7 @@ if (!process.env.JWT_SECRET) {
     throw new Error('FATAL: JWT_SECRET is not set. Refusing to start. Set JWT_SECRET in backend/.env.');
 }
 
-const ALLOWED_ORIGINS = ['https://tensee.my', 'http://localhost:5000'];
+const ALLOWED_ORIGINS = ['https://tenandsee.homes', 'http://localhost:5000'];
 
 const ChatMessage = require('./models/ChatMessage');
 const Lead = require('./models/Lead');
