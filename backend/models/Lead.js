@@ -5,6 +5,9 @@ const leadSchema = new mongoose.Schema({
     email: { type: String, required: true },
     phone: String,
     university: String,
+    budget: String,
+    moveIn: String,
+    sessionId: String,
     message: String,
     source: { 
         type: String, 

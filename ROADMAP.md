@@ -65,7 +65,7 @@ Deps: a day lists "needs day N" when it cannot start before N is done.
   Verify: chat widget answers an unscripted question sensibly. (needs day 16)
 - [x] Day 18 — Conversation memory: ai.js loads last 20 ChatMessages for the session before
   each call. Verify: tell it your budget, ask "what was my budget?" — it answers.
-- [ ] Day 19 — Lead extraction: after each AI reply, second LLM call extracts
+- [x] Day 19 — Lead extraction: after each AI reply, second LLM call extracts
   {name,budget,university,moveIn} JSON → upsert onto the Lead. Verify: dashboard lead
   fills in after a chat.
 - [ ] Day 20 — Property→agent matrix: new model PropertyAgent {propertyId, agentName,

@@ -73,4 +73,45 @@ async function reply(sessionId, message) {
     return groqRequest(messages);
 }
 
-module.exports = { reply };
+async function extractLeadData(sessionId) {
+    if (!process.env.GROQ_API_KEY) return null;
+
+    const history = await ChatMessage.find({ sessionId })
+        .sort({ createdAt: -1 })
+        .limit(20)
+        .select('message senderType')
+        .lean();
+
+    if (!history.length) return null;
+
+    const transcript = history.reverse()
+        .map(m => `${m.senderType === 'visitor' ? 'Student' : 'Agent'}: ${m.message}`)
+        .join('\n');
+
+    const extractionPrompt = `Extract student lead information from this chat transcript. 
+Return ONLY a valid JSON object with these fields (use null for unknown):
+{"name": string|null, "budget": string|null, "university": string|null, "moveIn": string|null}
+
+Rules:
+- budget: include the RM amount if mentioned (e.g. "RM800/month")
+- moveIn: any date or timeframe mentioned (e.g. "July 2025", "next semester")
+- university: full name if mentioned
+- name: student's name if they introduced themselves
+- Return ONLY the JSON, no explanation
+
+Transcript:
+${transcript}`;
+
+    try {
+        const raw = await groqRequest([
+            { role: 'user', content: extractionPrompt }
+        ]);
+        const match = raw.match(/\{[\s\S]*\}/);
+        if (!match) return null;
+        return JSON.parse(match[0]);
+    } catch {
+        return null;
+    }
+}
+
+module.exports = { reply, extractLeadData };

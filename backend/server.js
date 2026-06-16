@@ -272,6 +272,30 @@ io.on('connection', (socket) => {
                     });
                     
                     console.log(`AI auto-reply sent for session ${sessionId}`);
+
+                    // ── LEAD EXTRACTION ──────────────────────────────────────
+                    ai.extractLeadData(sessionId).then(async (extracted) => {
+                        if (!extracted) return;
+                        const update = {};
+                        if (extracted.name) update.name = extracted.name;
+                        if (extracted.budget) update.budget = extracted.budget;
+                        if (extracted.university) update.university = extracted.university;
+                        if (extracted.moveIn) update.moveIn = extracted.moveIn;
+                        if (!Object.keys(update).length) return;
+
+                        const ChatSession = require('./models/ChatSession');
+                        const session = await ChatSession.findOne({ sessionId }).lean().catch(() => null);
+                        if (!session) return;
+
+                        const Lead = require('./models/Lead');
+                        await Lead.findOneAndUpdate(
+                            { $or: [{ sessionId }, { email: session.email }] },
+                            { $set: { ...update, sessionId } },
+                            { new: true }
+                        ).catch(() => {});
+                        console.log(`[AI Extract] Lead updated for session ${sessionId}:`, update);
+                    }).catch(() => {});
+
                 } catch (err) {
                     console.error('AI auto-reply failed:', err.message);
                 }
