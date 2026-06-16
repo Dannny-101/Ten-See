@@ -285,7 +285,7 @@
 
         const schema = {
             '@context': 'https://schema.org',
-            '@type': schemaType,
+            '@type': ['Product', schemaType],
             name: l.title,
             url: window.location.href,
             numberOfBedrooms: l.bedrooms || undefined,
