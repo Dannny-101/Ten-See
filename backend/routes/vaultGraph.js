@@ -67,6 +67,10 @@ function buildGraph() {
     return cachedGraph;
   }
 
+  if (!fs.existsSync(VAULT_DIR)) {
+    throw new Error(`Vault directory not found at ${VAULT_DIR}. Ensure orchestrator/ is copied in Dockerfile.`);
+  }
+
   const nodes = [];
   const edges = [];
   const nodeMap = new Map();

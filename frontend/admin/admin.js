@@ -4028,6 +4028,10 @@ let vaultGraphSim = null;
 
 async function loadVaultGraph() {
   const sec = document.getElementById('sec-vaultgraph');
+  if (typeof d3 === 'undefined') {
+    sec.innerHTML = '<div class="empty-state">D3.js failed to load. Check your network connection.</div>';
+    return;
+  }
   sec.innerHTML = `
     <div class="vault-graph-wrap" id="vaultGraphWrap">
       <div class="vault-graph-controls">
@@ -4060,11 +4064,13 @@ async function loadVaultGraph() {
 
   try {
     const res = await api('/api/vault-graph');
-    if (!res.success) { sec.innerHTML = '<div class="empty-state">Failed to load graph</div>'; return; }
+    if (!res.success) { sec.innerHTML = '<div class="empty-state">Failed to load graph: ' + (res.error || 'Unknown error') + '</div>'; return; }
     const data = res.data;
+    if (!data.nodes || !data.nodes.length) { sec.innerHTML = '<div class="empty-state">No vault nodes found</div>'; return; }
     vgRender(data.nodes, data.edges);
   } catch (e) {
-    sec.innerHTML = '<div class="empty-state">Error loading vault graph</div>';
+    sec.innerHTML = '<div class="empty-state">Error loading vault graph: ' + e.message + '</div>';
+    console.error('Vault graph error:', e);
   }
 }
 
@@ -4087,7 +4093,14 @@ let vgNodes = [], vgEdges = [], vgActiveSections = new Set(), vgActiveRadii = ne
 
 function vgRender(nodes, edges) {
   vgNodes = nodes.map(n => ({...n}));
-  vgEdges = edges.map(e => ({...e}));
+  // Build immutable edge index with string IDs only
+  vgEdgeIndex = new Map();
+  edges.forEach(e => {
+    const src = e.source;
+    const tgt = e.target;
+    if (!vgEdgeIndex.has(src)) vgEdgeIndex.set(src, new Set());
+    vgEdgeIndex.get(src).add(tgt);
+  });
   vgNodes.forEach(n => vgActiveSections.add(n.section));
   vgBuildFilters();
   vgDraw();
@@ -4131,21 +4144,33 @@ function vgFmtSec(s) {
 }
 
 let vgSvg, vgSim, vgG, vgZoom;
+let vgEdgeIndex = new Map(); // sourceId -> Set(targetIds)
 
 function vgDraw() {
   const container = document.getElementById('vgCanvas');
-  const w = container.clientWidth;
-  const h = container.clientHeight;
+  const w = container.clientWidth || 800;
+  const h = container.clientHeight || 600;
   container.innerHTML = '';
 
   const fNodes = vgNodes.filter(n => vgActiveSections.has(n.section) && vgActiveRadii.has(n.radius));
   const fIds = new Set(fNodes.map(n => n.id));
-  const fEdges = vgEdges.filter(e => fIds.has(e.source) && fIds.has(e.target));
+
+  // Build fresh edge array with string IDs (D3 will resolve to objects internally)
+  const rawEdges = [];
+  vgEdgeIndex.forEach((targets, src) => {
+    if (!fIds.has(src)) return;
+    targets.forEach(tgt => {
+      if (fIds.has(tgt)) rawEdges.push({ source: src, target: tgt });
+    });
+  });
 
   vgSvg = d3.select('#vgCanvas').append('svg').attr('width', w).attr('height', h).attr('viewBox', [0,0,w,h]);
   vgG = vgSvg.append('g');
   vgZoom = d3.zoom().scaleExtent([0.1,4]).on('zoom', e => vgG.attr('transform', e.transform));
   vgSvg.call(vgZoom);
+
+  // Stop any previous simulation
+  if (vgSim) vgSim.stop();
 
   vgSim = d3.forceSimulation()
     .force('link', d3.forceLink().id(d => d.id).distance(d =>
@@ -4158,7 +4183,7 @@ function vgDraw() {
     .force('center', d3.forceCenter(w/2, h/2))
     .force('collide', d3.forceCollide().radius(d => VG_R_SIZES[d.radius] + 8));
 
-  let link = vgG.selectAll('.vgl').data(fEdges, d => d.source.id + '-' + d.target.id);
+  let link = vgG.selectAll('.vgl').data(rawEdges, d => d.source + '-' + d.target);
   link.exit().remove();
   const linkEnter = link.enter().append('line').attr('class','vgl')
     .attr('stroke', 'var(--border)').attr('stroke-width', 1).attr('stroke-opacity', 0.5);
@@ -4197,7 +4222,7 @@ function vgDraw() {
   vgSvg.on('click', () => vgCloseSidebar());
 
   vgSim.nodes(fNodes);
-  vgSim.force('link').links(fEdges);
+  vgSim.force('link').links(rawEdges);
   vgSim.alpha(1).restart();
 
   vgSim.on('tick', () => {
@@ -4228,11 +4253,20 @@ function vgSidebar(d) {
   const tags = document.getElementById('vgSbTags');
   tags.innerHTML = (d.tags || []).map(t => `<span class="vg-tag">${t}</span>`).join('');
   const links = document.getElementById('vgSbLinks');
-  const connected = vgEdges.filter(e => e.source.id === d.id || e.target.id === d.id);
-  links.innerHTML = connected.length ? connected.map(e => {
-    const o = e.source.id === d.id ? e.target : e.source;
-    return `<li onclick="vgShowNode('${o.id}')">${o.title}</li>`;
-  }).join('') : '<li style="color:var(--text-muted)">No connections</li>';
+  // Use immutable edge index (string IDs)
+  const connected = [];
+  vgEdgeIndex.forEach((targets, src) => {
+    targets.forEach(tgt => {
+      if (src === d.id || tgt === d.id) {
+        const otherId = src === d.id ? tgt : src;
+        const other = vgNodes.find(n => n.id === otherId);
+        if (other) connected.push(other);
+      }
+    });
+  });
+  links.innerHTML = connected.length ? connected.map(o =>
+    `<li onclick="vgShowNode('${o.id}')">${o.title}</li>`
+  ).join('') : '<li style="color:var(--text-muted)">No connections</li>';
   sb.classList.add('open');
 }
 function vgCloseSidebar() { document.getElementById('vgSidebar').classList.remove('open'); }

@@ -13,6 +13,7 @@ WORKDIR /app
 # Copy application files
 COPY backend/ ./backend/
 COPY frontend/ ./frontend/
+COPY orchestrator/ ./orchestrator/
 
 # Set working directory to backend
 WORKDIR /app/backend
