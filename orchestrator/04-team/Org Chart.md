@@ -45,4 +45,4 @@ AI is the fourth team member alongside you and two humans. Its responsibilities 
 
 ## Parent
 
-[[04-team/_hub|← Back to hub]]
+[[04-team/Team Hub|← Back to hub]]

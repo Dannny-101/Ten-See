@@ -30,7 +30,6 @@
             "state": {
               "type": "localgraph",
               "state": {
-                "file": "path/to/note.md",
                 "options": {
                   "collapse-filter": true,
                   "search": "",
@@ -58,7 +57,7 @@
                 }
               },
               "icon": "lucide-git-fork",
-              "title": "Graph of note"
+              "title": "Graph view"
             },
             "group": "13c6357f1232f24d"
           }
@@ -224,33 +223,34 @@
   },
   "active": "8f646473581c7648",
   "lastOpenFiles": [
-    "path/to/note.md",
+    "daily/Daily Hub.md",
+    "08-sops/Playbooks.md",
+    "08-sops/Runbooks.md",
+    "08-sops/SOPs Hub.md",
+    "07-competitive/Landscape.md",
+    "07-competitive/Competitive Hub.md",
+    "06-brand/Voice.md",
+    "06-brand/Brand Hub.md",
+    "05-roadmap/Backlog.md",
+    "05-roadmap/Milestones.md",
+    "05-roadmap/Roadmap Hub.md",
+    "04-team/Onboarding.md",
+    "04-team/Meetings.md",
+    "04-team/Org Chart.md",
+    "04-team/Team Hub.md",
+    "03-operations/Vendors.md",
+    "03-operations/Processes.md",
+    "03-operations/Service Model.md",
+    "03-operations/Operations Hub.md",
+    "02-product/API Reference.md",
+    "02-product/Codebase Map.md",
+    "02-product/Architecture.md",
+    "02-product/Product Hub.md",
+    "01-company/Metrics.md",
+    "01-company/Strategy.md",
+    "01-company/Overview.md",
     "path/to",
     "path",
-    "daily/_hub.md",
-    "99-templates/detail.md",
-    "99-templates/hub.md",
-    "99-templates/topic.md",
-    "99-templates",
-    "08-sops/_hub.md",
-    "07-competitive/_hub.md",
-    "06-brand/_hub.md",
-    "05-roadmap/_hub.md",
-    "04-team/_hub.md",
-    "03-operations/_hub.md",
-    "02-product/_hub.md",
-    "01-company/_hub.md",
-    "01-company/01-01-overview.md",
-    "99-index.md",
-    "01-company/01-03-metrics.md",
-    "05-roadmap/05-01-milestones.md",
-    "05-roadmap/05-02-backlog.md",
-    "08-sops/08-02-playbooks.md",
-    "daily/2026-06-20.md",
-    "03-operations/03-02-processes.md",
-    "07-competitive/07-01-landscape.md",
-    "00-meta/MOC - Operations.md",
-    "01-company/01-02-strategy.md",
-    "02-product/02-03-api-reference.md"
+    "99-templates"
   ]
 }

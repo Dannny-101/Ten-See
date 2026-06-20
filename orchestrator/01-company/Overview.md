@@ -42,4 +42,4 @@ Ten&See is the brand name. Legal structure is TBD — either sole proprietorship
 
 ## Parent
 
-[[01-company/_hub|← Back to hub]]
+[[01-company/Company Hub|← Back to hub]]

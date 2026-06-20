@@ -17,5 +17,5 @@ A running log of founder and team activity. Each note is a snapshot of a single 
 
 ## Related Hubs
 
-- [[../01-company/_hub|Company]] — Strategy decisions logged here
-- [[../04-team/_hub|Team]] — Meeting notes logged here
+- [[../01-company/Company Hub|Company]] — Strategy decisions logged here
+- [[../04-team/Team Hub|Team]] — Meeting notes logged here

@@ -13,7 +13,7 @@ Write flowing prose here. One to three paragraphs per section. Avoid fragmented 
 
 ## Section One
 
-Content that links to [[../../01-company/_hub|Company hub]] or related topics.
+Content that links to [[../../01-company/Company Hub|Company hub]] or related topics.
 
 ## Section Two
 

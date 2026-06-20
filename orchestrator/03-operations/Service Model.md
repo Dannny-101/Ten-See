@@ -56,4 +56,4 @@ Pricing is unvalidated. Test with landlords before locking in.
 
 ## Parent
 
-[[03-operations/_hub|← Back to hub]]
+[[03-operations/Operations Hub|← Back to hub]]

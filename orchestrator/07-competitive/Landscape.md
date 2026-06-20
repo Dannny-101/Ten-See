@@ -63,4 +63,4 @@ Track competitors monthly:
 
 ## Parent
 
-[[07-competitive/_hub|← Back to hub]]
+[[07-competitive/Competitive Hub|← Back to hub]]

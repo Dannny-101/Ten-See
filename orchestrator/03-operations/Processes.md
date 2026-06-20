@@ -39,4 +39,4 @@ Outreach can be automated (triggered by a new listing match) or manual (a follow
 
 ## Parent
 
-[[03-operations/_hub|← Back to hub]]
+[[03-operations/Operations Hub|← Back to hub]]

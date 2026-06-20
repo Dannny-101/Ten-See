@@ -44,7 +44,7 @@ Status from `ROADMAP.md` (as of 2026-06-20):
 - Stabilize core flows (enquiry → booking)
 
 ### Milestone 2: Differentiation Experiment (TBD)
-- Pick ONE pivot direction from [[01-company/01-02-strategy]]
+- Pick ONE pivot direction from [[01-company/Strategy]]
 - Build a 90-day MVP of the chosen differentiator
 - Measure: retention, NPS, booking conversion
 
@@ -76,4 +76,4 @@ When updating this file after completing a ROADMAP day, cross-reference `ROADMAP
 
 ## Parent
 
-[[05-roadmap/_hub|← Back to hub]]
+[[05-roadmap/Roadmap Hub|← Back to hub]]

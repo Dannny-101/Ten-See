@@ -21,7 +21,7 @@ This vault uses a **hub-and-spoke** architecture with concentric importance.
 | Radius | Node Type | Importance | Examples |
 |--------|-----------|------------|----------|
 | 0 | Center | Highest | This note |
-| 1 | Section Hub | High | `_hub.md` in each folder |
+| 1 | Section Hub | High | e.g., Company Hub, Product Hub |
 | 2 | Topic | Medium | Individual notes |
 | 3 | Detail | Lower | Daily notes, sub-topics |
 
@@ -31,14 +31,14 @@ This vault uses a **hub-and-spoke** architecture with concentric importance.
 
 | Hub | Purpose |
 |-----|---------|
-| [[01-company/_hub\|Company]] | Mission, model, strategy, metrics |
-| [[02-product/_hub\|Product]] | Architecture, codebase, API |
-| [[03-operations/_hub\|Operations]] | Service model, processes, vendors |
-| [[04-team/_hub\|Team]] | Org chart, meetings, onboarding |
-| [[05-roadmap/_hub\|Roadmap]] | Milestones, backlog |
-| [[06-brand/_hub\|Brand]] | Voice, identity, messaging |
-| [[07-competitive/_hub\|Competitive]] | Landscape, positioning |
-| [[08-sops/_hub\|SOPs]] | Runbooks, playbooks |
+| [[01-company/Company Hub\|Company]] | Mission, model, strategy, metrics |
+| [[02-product/Product Hub\|Product]] | Architecture, codebase, API |
+| [[03-operations/Operations Hub\|Operations]] | Service model, processes, vendors |
+| [[04-team/Team Hub\|Team]] | Org chart, meetings, onboarding |
+| [[05-roadmap/Roadmap Hub\|Roadmap]] | Milestones, backlog |
+| [[06-brand/Brand Hub\|Brand]] | Voice, identity, messaging |
+| [[07-competitive/Competitive Hub\|Competitive]] | Landscape, positioning |
+| [[08-sops/SOPs Hub\|SOPs]] | Runbooks, playbooks |
 
 ## Current Status
 

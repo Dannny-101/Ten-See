@@ -47,4 +47,4 @@ Mid-year intake is January through March for secondary program intakes. The focu
 
 ## Parent
 
-[[08-sops/_hub|← Back to hub]]
+[[08-sops/SOPs Hub|← Back to hub]]

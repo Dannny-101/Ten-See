@@ -61,4 +61,4 @@ Right now (solo founder): informal daily/weekly reviews with yourself. No formal
 
 ## Parent
 
-[[04-team/_hub|← Back to hub]]
+[[04-team/Team Hub|← Back to hub]]

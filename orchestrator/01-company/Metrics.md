@@ -45,4 +45,4 @@ Weekly reports cover enquiries, bookings, active chats, and admin activity. Mont
 
 ## Parent
 
-[[01-company/_hub|← Back to hub]]
+[[01-company/Company Hub|← Back to hub]]

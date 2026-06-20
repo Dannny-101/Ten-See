@@ -40,4 +40,4 @@ When a feature is ready or a bug fix is complete, ensure all changes are committ
 
 ## Parent
 
-[[08-sops/_hub|← Back to hub]]
+[[08-sops/SOPs Hub|← Back to hub]]

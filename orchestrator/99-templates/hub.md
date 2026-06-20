@@ -17,5 +17,5 @@ One-sentence description of what this section covers.
 
 ## Related Hubs
 
-- [[../../01-company/_hub|Company]] — Why this section exists
-- [[../../04-team/_hub|Team]] — Who owns this
+- [[../../01-company/Company Hub|Company]] — Why this section exists
+- [[../../04-team/Team Hub|Team]] — Who owns this

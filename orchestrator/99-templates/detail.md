@@ -9,4 +9,4 @@ tags:
 
 # Title
 
-Content that links to a relevant [[../../01-company/_hub|hub]] or topic note.
+Content that links to a relevant [[../../01-company/Company Hub|hub]] or topic note.

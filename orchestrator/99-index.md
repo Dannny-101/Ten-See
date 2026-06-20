@@ -13,14 +13,14 @@ tags:
 
 ## By Section
 
-- **Company:** [[01-company/01-01-overview|Overview]] | [[01-company/01-02-strategy|Strategy]] | [[01-company/01-03-metrics|Metrics]]
-- **Product:** [[02-product/02-01-architecture|Architecture]] | [[02-product/02-02-codebase-map|Codebase Map]] | [[02-product/02-03-api-reference|API Reference]]
-- **Operations:** [[03-operations/03-01-service-model|Service Model]] | [[03-operations/03-02-processes|Processes]] | [[03-operations/03-03-vendors|Vendors]]
-- **Team:** [[04-team/04-01-org-chart|Org Chart]] | [[04-team/04-02-meetings|Meetings]] | [[04-team/04-03-onboarding|Onboarding]]
-- **Roadmap:** [[05-roadmap/05-01-milestones|Milestones]] | [[05-roadmap/05-02-backlog|Backlog]]
-- **Brand:** [[06-brand/06-01-voice|Voice & Identity]]
-- **Competitive:** [[07-competitive/07-01-landscape|Landscape]]
-- **SOPs:** [[08-sops/08-01-runbooks|Runbooks]] | [[08-sops/08-02-playbooks|Playbooks]]
+- **Company:** [[01-company/Overview|Overview]] | [[01-company/Strategy|Strategy]] | [[01-company/Metrics|Metrics]]
+- **Product:** [[02-product/Architecture|Architecture]] | [[02-product/Codebase Map|Codebase Map]] | [[02-product/API Reference|API Reference]]
+- **Operations:** [[03-operations/Service Model|Service Model]] | [[03-operations/Processes|Processes]] | [[03-operations/Vendors|Vendors]]
+- **Team:** [[04-team/Org Chart|Org Chart]] | [[04-team/Meetings|Meetings]] | [[04-team/Onboarding|Onboarding]]
+- **Roadmap:** [[05-roadmap/Milestones|Milestones]] | [[05-roadmap/Backlog|Backlog]]
+- **Brand:** [[06-brand/Voice|Voice & Identity]]
+- **Competitive:** [[07-competitive/Landscape|Landscape]]
+- **SOPs:** [[08-sops/Runbooks|Runbooks]] | [[08-sops/Playbooks|Playbooks]]
 
 ## Key Topics
 
@@ -42,16 +42,16 @@ tags:
 
 ## Active Decisions (Unresolved)
 
-1. **Differentiation strategy** — See [[01-company/01-02-strategy]]
-2. **First hire** — Ops or Dev? See [[04-team/04-01-org-chart]]
-3. **Pricing model** — Validate with landlords. See [[03-operations/03-01-service-model]]
+1. **Differentiation strategy** — See [[01-company/Strategy]]
+2. **First hire** — Ops or Dev? See [[04-team/Org Chart]]
+3. **Pricing model** — Validate with landlords. See [[03-operations/Service Model]]
 
 ## Quick Links for AI
 
 If you are an AI assistant, start here:
 1. Read [[00-start-here]]
 2. Read the section relevant to your current task
-3. Check [[05-roadmap/05-01-milestones]] to avoid conflicting work
+3. Check [[05-roadmap/Milestones]] to avoid conflicting work
 4. Write a summary to `daily/` when done
 
 ---

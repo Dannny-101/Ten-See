@@ -34,11 +34,11 @@ Pick one pivot direction. Build a ninety-day MVP. Measure retention and NPS.
 
 ## Related
 
-- [[01-company/01-01-overview]] — Business model this strategy serves
-- [[01-company/01-03-metrics]] — How we measure success
-- [[04-team/04-01-org-chart]] — Team implications of each option
-- [[05-roadmap/05-02-backlog]] — Backlog items organized by strategy
+- [[01-company/Overview]] — Business model this strategy serves
+- [[01-company/Metrics]] — How we measure success
+- [[04-team/Org Chart]] — Team implications of each option
+- [[05-roadmap/Backlog]] — Backlog items organized by strategy
 
 ## Parent
 
-[[01-company/_hub|← Back to hub]]
+[[01-company/Company Hub|← Back to hub]]

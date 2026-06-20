@@ -15,7 +15,7 @@ tags:
 ## Pre-Day-1 Checklist
 
 - [ ] Send welcome email with:
-  - Company overview (link to [[01-company/01-01-overview]])
+  - Company overview (link to [[01-company/Overview]])
   - Access to this vault
   - Slack/Discord invite (or WhatsApp group)
   - Calendar invites for recurring meetings
@@ -36,7 +36,7 @@ tags:
 
 ## Week 1
 
-- [ ] Complete role-specific SOPs in [[08-sops/08-01-runbooks]]
+- [ ] Complete role-specific SOPs in [[08-sops/Runbooks]]
 - [ ] Shadow each core process once
 - [ ] Write a "first impressions" note in `daily/`
 - [ ] Weekly 1:1 with founder
@@ -63,7 +63,7 @@ tags:
 
 ### Developer
 - [ ] Set up local dev environment
-- [ ] Read [[02-product/02-02-codebase-map]]
+- [ ] Read [[02-product/Codebase Map]]
 - [ ] Fix one labeled `good-first-issue` bug
 - [ ] Deploy first feature to staging
 
@@ -77,4 +77,4 @@ tags:
 
 ## Parent
 
-[[04-team/_hub|← Back to hub]]
+[[04-team/Team Hub|← Back to hub]]

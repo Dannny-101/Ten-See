@@ -82,4 +82,4 @@ The `authMiddleware` in `routes/admin.js` protects all non-public endpoints. Pub
 
 ## Parent
 
-[[02-product/_hub|← Back to hub]]
+[[02-product/Product Hub|← Back to hub]]

@@ -48,4 +48,4 @@ Housing guides cover how to find, inspect, and rent student housing in Malaysia.
 
 ## Parent
 
-[[06-brand/_hub|← Back to hub]]
+[[06-brand/Brand Hub|← Back to hub]]
