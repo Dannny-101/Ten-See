@@ -1,4 +1,15 @@
+---
+type: topic
+status: active
+section: competitive
+created: 2026-06-20
+updated: 2026-06-20
+tags: [competitive, landscape, competitors, positioning, moat]
+---
+
 # Competitive Landscape
+
+> MOC: [[00-meta/MOC - Company]]
 
 ## Direct Competitors
 
@@ -45,5 +56,11 @@ Track competitors monthly:
 - Customer complaints (social media, reviews)
 
 ---
+
+## Context Links
+
+- [[01-company/01-02-strategy]] — Strategy is the response to this landscape
+- [[01-company/01-01-overview]] — Business model within this landscape
+- [[DEC - Differentiation Strategy]] — The open decision this landscape informs
 
 #tags #competitive #landscape #competitors #positioning #moat

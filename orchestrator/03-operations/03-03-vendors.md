@@ -1,4 +1,15 @@
+---
+type: topic
+status: active
+section: operations
+created: 2026-06-20
+updated: 2026-06-20
+tags: [vendors, partners, technology, compliance]
+---
+
 # Vendors & Partners
+
+> MOC: [[00-meta/MOC - Operations]]
 
 ## Technology Vendors
 
@@ -39,5 +50,10 @@
 | Business registration (SSM) | TBD | — |
 
 ---
+
+## Context Links
+
+- [[02-product/02-01-architecture]] — How these vendors integrate technically
+- [[03-operations/03-01-service-model]] — Service partners for student/landlord services
 
 #tags #vendors #partners #technology #compliance #suppliers

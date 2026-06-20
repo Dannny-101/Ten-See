@@ -1,4 +1,15 @@
+---
+type: topic
+status: active
+section: product
+created: 2026-06-20
+updated: 2026-06-20
+tags: [api, reference, endpoints, rest, socketio]
+---
+
 # API Reference
+
+> MOC: [[00-meta/MOC - Product]]
 
 ## Response Format
 
@@ -98,5 +109,10 @@ Or on error:
 - `createdAt` / `updatedAt`
 
 ---
+
+## Context Links
+
+- [[02-product/02-02-codebase-map]] — Where these endpoints are implemented
+- [[08-sops/08-01-runbooks]] — Operational procedures for API changes
 
 #tags #api #reference #endpoints #rest #socketio #models

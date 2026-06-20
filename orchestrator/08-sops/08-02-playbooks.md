@@ -1,4 +1,15 @@
+---
+type: topic
+status: active
+section: sops
+created: 2026-06-20
+updated: 2026-06-20
+tags: [playbook, marketing, sales, acquisition, crisis]
+---
+
 # Playbooks
+
+> MOC: [[00-meta/MOC - Operations]]
 
 ## Playbook vs Runbook
 
@@ -99,5 +110,11 @@ Agent → Team Lead (if exists) → Founder → Legal/External
 - Focus: targeted ads for mid-year starters
 
 ---
+
+## Context Links
+
+- [[06-brand/06-01-voice]] — Brand voice these playbooks express
+- [[01-company/01-03-metrics]] — Metrics these playbooks should move
+- [[03-operations/03-01-service-model]] — Services these playbooks sell
 
 #tags #playbook #marketing #sales #acquisition #landlord #crisis #seasonal

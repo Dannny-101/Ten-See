@@ -1,4 +1,15 @@
+---
+type: topic
+status: active
+section: team
+created: 2026-06-20
+updated: 2026-06-20
+tags: [onboarding, new-hire, checklist, training]
+---
+
 # New Hire Onboarding
+
+> MOC: [[00-meta/MOC - Team]]
 
 ## Pre-Day-1 Checklist
 
@@ -62,5 +73,11 @@
 - [ ] Present competitive analysis
 
 ---
+
+## Context Links
+
+- [[04-team/04-01-org-chart]] — Where this hire fits
+- [[08-sops/08-01-runbooks]] — Procedures they'll learn
+- [[03-operations/03-02-processes]] — Processes they'll execute
 
 #tags #onboarding #new-hire #checklist #training #ramp-up

@@ -1,4 +1,15 @@
+---
+type: topic
+status: active
+section: team
+created: 2026-06-20
+updated: 2026-06-20
+tags: [meetings, decisions, standup, reviews]
+---
+
 # Meetings & Decisions
+
+> MOC: [[00-meta/MOC - Team]]
 
 ## Meeting Rhythms (Target)
 
@@ -46,5 +57,11 @@
 Right now (solo founder): informal daily/weekly reviews with yourself. No formal meeting structure needed until team size > 2.
 
 ---
+
+## Context Links
+
+- [[04-team/04-01-org-chart]] — Who attends these meetings
+- [[DEC - Differentiation Strategy]] — Example of tracked decision
+- [[DEC - First Hire]] — Example of tracked decision
 
 #tags #meetings #decisions #standup #reviews #decision-log

@@ -1,4 +1,15 @@
+---
+type: topic
+status: active
+section: operations
+created: 2026-06-20
+updated: 2026-06-20
+tags: [process, workflow, enquiry, booking, chat]
+---
+
 # Core Processes
+
+> MOC: [[00-meta/MOC - Operations]]
 
 ## 1. Enquiry → Lead
 
@@ -83,5 +94,11 @@
 **Owner:** Platform (automated) or Admin (manual)
 
 ---
+
+## Context Links
+
+- [[03-operations/03-01-service-model]] — The service these processes deliver
+- [[04-team/04-01-org-chart]] — Who executes these processes
+- [[08-sops/08-01-runbooks]] — Step-by-step procedures for these processes
 
 #tags #process #workflow #enquiry #booking #chat #whatsapp

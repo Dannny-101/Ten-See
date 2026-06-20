@@ -1,4 +1,15 @@
+---
+type: topic
+status: active
+section: brand
+created: 2026-06-20
+updated: 2026-06-20
+tags: [brand, voice, tone, messaging, identity]
+---
+
 # Brand Voice & Identity
+
+> MOC: [[00-meta/MOC - Company]] (brand is part of company identity)
 
 ## Brand Personality
 
@@ -56,5 +67,11 @@
 4. **Trust & Safety** — How we verify properties, scam warnings
 
 ---
+
+## Context Links
+
+- [[01-company/01-01-overview]] — Mission this brand expresses
+- [[07-competitive/07-01-landscape]] — Market context brand must differentiate in
+- [[08-sops/08-02-playbooks]] — Marketing playbooks that use this voice
 
 #tags #brand #voice #tone #messaging #visual-identity #content
