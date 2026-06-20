@@ -167,8 +167,8 @@ html { scroll-behavior: smooth; }
             letter-spacing: 0.03em;
         }
         .hero-title {
-            font-size: clamp(2.4rem, 4vw, 3.5rem);
-            font-weight: 700; line-height: 1.15;
+            font-size: clamp(2.8rem, 5vw, 4.2rem);
+            font-weight: 800; line-height: 1.1;
             color: white; margin-bottom: 1.25rem;
         }
         .hero-title .accent { color: var(--color-accent); }
