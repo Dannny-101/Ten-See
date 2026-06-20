@@ -45,6 +45,17 @@ If you are an AI assistant, start here:
 3. Check [[05-roadmap/05-01-milestones]] to avoid conflicting work
 4. Write a summary to `daily/` when done
 
+## Graph Database
+
+- [[00-meta/graph-database]] — How this vault works as a knowledge graph
+- [[00-meta/relationship-map]] — Entity relationships
+- [[00-meta/dashboard]] — Live Dataview queries
+
+## Open Decisions
+
+- [[DEC - Differentiation Strategy]] — High impact, due 2026-07-15
+- [[DEC - First Hire]] — High impact, due 2026-07-01
+
 ---
 
 *Last updated: 2026-06-20*

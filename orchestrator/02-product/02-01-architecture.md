@@ -1,4 +1,15 @@
+---
+type: topic
+status: active
+section: product
+created: 2026-06-20
+updated: 2026-06-20
+tags: [architecture, system-design, tech-stack]
+---
+
 # System Architecture
+
+> MOC: [[00-meta/MOC - Product]]
 
 ## High-Level Design
 
@@ -75,5 +86,12 @@
 | `MAPBOX_TOKEN` | Maps (should be served via API, not hardcoded) |
 
 ---
+
+## Context Links
+
+- [[02-product/02-02-codebase-map]] — File-level map of this architecture
+- [[02-product/02-03-api-reference]] — API surface of this system
+- [[03-operations/03-03-vendors]] — External services integrated here
+- [[08-sops/08-01-runbooks]] — Operational procedures for this system
 
 #tags #architecture #system-design #tech-stack #express #mongodb #socketio

@@ -1,4 +1,15 @@
+---
+type: topic
+status: active
+section: company
+created: 2026-06-20
+updated: 2026-06-20
+tags: [strategy, decision-needed]
+---
+
 # Strategy
+
+> Related: [[DEC - Differentiation Strategy]] — open decision tracking this exact question.
 
 ## Current Position
 
@@ -54,6 +65,15 @@ Before choosing, answer:
 
 Pick ONE pivot direction, build a 90-day MVP, measure retention and NPS.
 
+> This is tracked as [[DEC - Differentiation Strategy]]. Fill the scoring matrix there.
+
+## Context Links
+
+- [[01-company/01-01-overview]] — Business model this strategy serves
+- [[01-company/01-03-metrics]] — How we'll measure success
+- [[04-team/04-01-org-chart]] — Team implications of each option
+- [[05-roadmap/05-02-backlog]] — Backlog items organized by strategy
+
 ---
 
-#tags #strategy #pivot #differentiation #decision-needed
+#tags #strategy #pivot #differentiation #decision-needed #company

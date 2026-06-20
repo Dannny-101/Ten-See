@@ -1,4 +1,15 @@
+---
+type: topic
+status: active
+section: roadmap
+created: 2026-06-20
+updated: 2026-06-20
+tags: [roadmap, milestones, phases, goals]
+---
+
 # Milestones & Roadmap
+
+> MOC: [[00-meta/MOC - Roadmap]]
 
 ## Source of Truth
 
@@ -61,5 +72,12 @@ Before moving to the next milestone, confirm:
 When updating this file after completing a ROADMAP day, cross-reference `ROADMAP.md` and update both files. AI should propose updates to milestones after each monthly review.
 
 ---
+
+## Context Links
+
+- [[01-company/01-02-strategy]] — Strategy determines roadmap
+- [[04-team/04-01-org-chart]] — Team capacity affects timeline
+- [[01-company/01-03-metrics]] — Milestones measured by metrics
+- [[05-roadmap/05-02-backlog]] — Ideas that may become milestones
 
 #tags #roadmap #milestones #phases #goals #tracking
