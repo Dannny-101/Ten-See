@@ -1,16 +1,14 @@
 ---
 type: topic
 status: active
-section: operations
 created: 2026-06-20
-updated: 2026-06-20
-tags: [operations, service-model, pricing]
+tags:
+  - operations
+  - service-model
+  - pricing
 ---
 
 # Service Model
-
-> MOC: [[00-meta/MOC - Operations]]
-> Tracked in [[DEC - Differentiation Strategy]] — service-first is the current lean.
 
 ## What We Sell
 
@@ -75,11 +73,3 @@ Onboarding → Listing → Enquiries → Viewings → Booking → Tenant handove
 
 ---
 
-## Context Links
-
-- [[01-company/01-01-overview]] — Business model this service delivers
-- [[03-operations/03-02-processes]] — How this service is delivered
-- [[04-team/04-01-org-chart]] — Who delivers this service
-- [[07-competitive/07-01-landscape]] — Why this service differentiates us
-
-#tags #operations #service-model #pricing #student-journey #landlord-journey

@@ -1,15 +1,15 @@
 ---
 type: topic
 status: active
-section: roadmap
 created: 2026-06-20
-updated: 2026-06-20
-tags: [backlog, ideas, experiments, tech-debt]
+tags:
+  - backlog
+  - ideas
+  - experiments
+  - tech-debt
 ---
 
 # Backlog & Ideas
-
-> MOC: [[00-meta/MOC - Roadmap]]
 
 ## Active Experiments
 
@@ -52,10 +52,3 @@ tags: [backlog, ideas, experiments, tech-debt]
 
 ---
 
-## Context Links
-
-- [[05-roadmap/05-01-milestones]] — Backlog items become milestones
-- [[01-company/01-02-strategy]] — Strategy filters which backlog items matter
-- [[DEC - Differentiation Strategy]] — Pivot direction affects which experiments to run
-
-#tags #backlog #ideas #experiments #tech-debt #features

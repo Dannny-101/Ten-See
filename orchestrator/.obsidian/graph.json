@@ -5,7 +5,7 @@
   "showAttachments": false,
   "hideUnresolved": true,
   "showOrphans": true,
-  "collapseColorGroups": false,
+  "collapse-color-groups": true,
   "colorGroups": [
     {
       "query": "path:01-company",
@@ -78,15 +78,16 @@
       }
     }
   ],
-  "collapseDisplay": false,
+  "collapse-display": true,
   "showArrow": false,
   "textFadeMultiplier": -1.5,
   "nodeSizeMultiplier": 1.2,
   "lineSizeMultiplier": 1,
-  "collapseForces": false,
+  "collapse-forces": true,
   "centerStrength": 0.5,
   "repelStrength": 10,
   "linkStrength": 1,
   "linkDistance": 250,
-  "scale": 0.8
+  "scale": 0.5516687124570527,
+  "close": false
 }

@@ -1,9 +1,11 @@
 ---
-type: moc
+type: hub
 status: active
 created: 2026-06-20
-updated: 2026-06-20
-tags: [overview, tenandsee, ai-orchestrator]
+tags:
+  - overview
+  - tenandsee
+  - ai-orchestrator
 ---
 
 # Ten&See — AI Context Orchestrator
@@ -22,19 +24,18 @@ Ten&See is a **student housing platform** (Malaysia-focused) where students disc
 
 ## Quick Navigation
 
-| Section | Purpose | MOC |
-|---------|---------|-----|
-| [[01-company/01-01-overview\|Company Overview]] | Mission, vision, business model | [[00-meta/MOC - Company\|→]] |
-| [[02-product/02-01-architecture\|Architecture]] | Tech stack, system design | [[00-meta/MOC - Product\|→]] |
-| [[02-product/02-02-codebase-map\|Codebase Map]] | File-by-file code map | [[00-meta/MOC - Product\|→]] |
-| [[03-operations/03-01-service-model\|Service Model]] | What we sell, how we deliver | [[00-meta/MOC - Operations\|→]] |
-| [[04-team/04-01-org-chart\|Team / Org Chart]] | Roles, responsibilities, gaps | [[00-meta/MOC - Team\|→]] |
-| [[05-roadmap/05-01-milestones\|Milestones]] | Current phase, upcoming milestones | [[00-meta/MOC - Roadmap\|→]] |
-| [[06-brand/06-01-voice\|Brand Voice]] | Tone, messaging, visual identity | — |
-| [[07-competitive/07-01-landscape\|Competitive Landscape]] | Competitors, positioning | — |
-| [[08-sops/08-01-runbooks\|Runbooks]] | Standard operating procedures | [[00-meta/MOC - Operations\|→]] |
-| [[99-index\|Index]] | Full keyword index | — |
-| [[00-meta/dashboard\|Dashboard]] | Live Dataview overview | [[00-meta/graph-database\|Graph DB]] |
+| Section | Purpose |
+|---------|---------|
+| [[01-company/01-01-overview\|Company Overview]] | Mission, vision, business model |
+| [[02-product/02-01-architecture\|Architecture]] | Tech stack, system design |
+| [[02-product/02-02-codebase-map\|Codebase Map]] | File-by-file code map |
+| [[03-operations/03-01-service-model\|Service Model]] | What we sell, how we deliver |
+| [[04-team/04-01-org-chart\|Team / Org Chart]] | Roles, responsibilities, gaps |
+| [[05-roadmap/05-01-milestones\|Milestones]] | Current phase, upcoming milestones |
+| [[06-brand/06-01-voice\|Brand Voice]] | Tone, messaging, visual identity |
+| [[07-competitive/07-01-landscape\|Competitive Landscape]] | Competitors, positioning |
+| [[08-sops/08-01-runbooks\|Runbooks]] | Standard operating procedures |
+| [[99-index\|Index]] | Full keyword index |
 
 ---
 
@@ -58,14 +59,6 @@ Ten&See is a **student housing platform** (Malaysia-focused) where students disc
 
 ---
 
-## Graph Features
-
-- **Dashboard:** [[00-meta/dashboard]] — live Dataview queries
-- **Graph View:** Press `Ctrl/Cmd+G` — colored by section, decisions in red
-- **MOCs:** Hub notes for each section ([[00-meta/MOC - Company]], [[00-meta/MOC - Product]], etc.)
-- **Decisions:** Open decisions tracked as first-class nodes ([[DEC - Differentiation Strategy]], [[DEC - First Hire]])
-- **Relationship Map:** [[00-meta/relationship-map]] — entity relationship diagram
-
 ## AI Integration Rules
 
 - AI reads the full vault before any task to build context.
@@ -76,6 +69,3 @@ Ten&See is a **student housing platform** (Malaysia-focused) where students disc
 
 ---
 
-> For the graph database architecture, see [[00-meta/graph-database]].
-
-#tags #overview #tenandsee #student-housing #malaysia #platform #context #ai-orchestrator

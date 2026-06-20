@@ -1,15 +1,14 @@
 ---
 type: topic
 status: active
-section: team
 created: 2026-06-20
-updated: 2026-06-20
-tags: [team, org-chart, hiring]
+tags:
+  - team
+  - org-chart
+  - hiring
 ---
 
 # Team / Org Chart
-
-> Related: [[DEC - First Hire]] — open decision on who to hire first.
 
 ## Current State
 
@@ -79,10 +78,6 @@ Founder / CEO
 - Contractors first, convert to FTE after 3mo if fit is strong
 - Performance bonuses tied to booking conversions
 
-## Hiring Decision
-
-Who to hire first is an open strategic question. See [[DEC - First Hire]] for the decision framework and options.
-
 ## AI as Team Member
 
 - **Role:** 4th team member (alongside you + 2 humans)
@@ -96,10 +91,3 @@ Who to hire first is an open strategic question. See [[DEC - First Hire]] for th
 
 ---
 
-## Context Links
-
-- [[03-operations/03-02-processes]] — Processes the team will execute
-- [[01-company/01-02-strategy]] — Strategy determines team needs
-- [[05-roadmap/05-01-milestones]] — Hiring tied to milestones
-
-#tags #team #org-chart #hiring #roles #structure #ai-team-member

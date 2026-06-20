@@ -1,16 +1,17 @@
 ---
 type: topic
 status: active
-section: product
 created: 2026-06-20
-updated: 2026-06-20
-tags: [codebase, map, backend, frontend]
+tags:
+  - codebase
+  - map
+  - backend
+  - frontend
 ---
 
 # Codebase Map
 
 > Auto-generated snapshot. Last updated: 2026-06-20.
-> MOC: [[00-meta/MOC - Product]]
 
 ## Entry Point
 
@@ -81,10 +82,3 @@ All live in `backend/models/`.
 
 ---
 
-## Context Links
-
-- [[02-product/02-01-architecture]] — System architecture this code implements
-- [[02-product/02-03-api-reference]] — API surface of this codebase
-- [[08-sops/08-01-runbooks]] — Runbook 6: deploying code
-
-#tags #codebase #map #backend #frontend #routes #models #services

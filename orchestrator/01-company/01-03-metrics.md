@@ -1,15 +1,14 @@
 ---
 type: topic
 status: active
-section: company
 created: 2026-06-20
-updated: 2026-06-20
-tags: [metrics, kpi, dashboard]
+tags:
+  - metrics
+  - kpi
+  - dashboard
 ---
 
 # Metrics & KPIs
-
-> MOC: [[00-meta/MOC - Company]]
 
 ## North Star Metric
 
@@ -56,10 +55,3 @@ tags: [metrics, kpi, dashboard]
 
 ---
 
-## Context Links
-
-- [[01-company/01-01-overview]] — Business model these metrics serve
-- [[03-operations/03-02-processes]] — Processes that generate these metrics
-- [[05-roadmap/05-01-milestones]] — Milestones these metrics track
-
-#tags #metrics #kpi #dashboard #tracking #analytics

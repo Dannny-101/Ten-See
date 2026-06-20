@@ -1,15 +1,15 @@
 ---
 type: topic
 status: active
-section: sops
 created: 2026-06-20
-updated: 2026-06-20
-tags: [sop, runbook, procedures, operations]
+tags:
+  - sop
+  - runbook
+  - procedures
+  - operations
 ---
 
 # Runbooks
-
-> MOC: [[00-meta/MOC - Operations]]
 
 ## What is a Runbook?
 
@@ -116,10 +116,3 @@ A step-by-step procedure for a specific operational task. Anyone on the team sho
 
 ---
 
-## Context Links
-
-- [[03-operations/03-02-processes]] — Processes these runbooks execute
-- [[04-team/04-01-org-chart]] — Roles that follow these runbooks
-- [[04-team/04-03-onboarding]] — New hires learn these runbooks
-
-#tags #sop #runbook #procedures #operations #manual

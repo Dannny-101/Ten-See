@@ -1,15 +1,14 @@
 ---
 type: topic
 status: active
-section: company
 created: 2026-06-20
-updated: 2026-06-20
-tags: [company, mission, business-model]
+tags:
+  - company
+  - mission
+  - business-model
 ---
 
 # Company Overview
-
-> MOC: [[00-meta/MOC - Company]]
 
 ## Mission
 
@@ -44,8 +43,6 @@ Landlords face:
 
 ## Strategic Tension (Active Decision Needed)
 
-> Tracked in [[DEC - Differentiation Strategy]].
-
 The current platform model is **functional but commoditized**. Competitors (iProperty, Mudah, Carousell, uni-official portals) offer similar listings. To win, we need a real differentiator.
 
 **Options on the table:**
@@ -73,11 +70,3 @@ The current platform model is **functional but commoditized**. Competitors (iPro
 
 ---
 
-## Context Links
-
-- [[01-company/01-02-strategy]] — How we plan to differentiate
-- [[01-company/01-03-metrics]] — How we measure success
-- [[07-competitive/07-01-landscape]] — Market context
-- [[04-team/04-01-org-chart]] — Who executes this
-
-#tags #company #mission #strategy #business-model
