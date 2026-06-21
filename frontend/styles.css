@@ -4,8 +4,6 @@ html { scroll-behavior: smooth; }
         body {
             font-family: 'Inter', sans-serif;
             background: var(--color-bg);
-            background-image: radial-gradient(rgba(44, 56, 48, 0.06) 1px, transparent 1px);
-            background-size: 28px 28px;
             color: var(--color-text-main);
             line-height: 1.6;
         }
