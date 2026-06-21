@@ -41,14 +41,7 @@ html { scroll-behavior: smooth; }
             text-decoration: none;
             display: inline-flex; align-items: center;
         }
-        .logo img {
-            width: 64px; height: 64px; object-fit: contain; display: block; border-radius: 0; background: transparent;
-            animation: logoGlow 3s ease-in-out infinite;
-        }
-        @keyframes logoGlow {
-            0%, 100% { filter: drop-shadow(0 0 4px rgba(201,168,76,0.3)); }
-            50% { filter: drop-shadow(0 0 14px rgba(201,168,76,0.65)); }
-        }
+        .logo img { width: 64px; height: 64px; object-fit: contain; display: block; border-radius: 0; background: transparent; }
         .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 1.75rem; font-weight: 700; color: white; margin-left: 0.75rem; letter-spacing: -0.02em; display: flex; align-items: center; }
         .logo-text span { color: var(--color-accent); font-weight: 700; }
         .nav-links { display: flex; gap: 2.5rem; align-items: center; list-style: none; position: absolute; left: 50%; transform: translateX(-50%); }
