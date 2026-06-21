@@ -492,10 +492,14 @@ html { scroll-behavior: smooth; }
 
         /* ── HOW IT WORKS ── */
         .how-timeline {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
             position: relative;
         }
-        .how-timeline::before { display: none; }
+        .how-timeline::before {
+            content: ''; position: absolute; top: 28px; left: 12.5%; right: 12.5%;
+            height: 2px; background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent) 100%);
+            opacity: 0.3;
+        }
         .how-step {
             text-align: center; position: relative; z-index: 1;
         }
@@ -510,7 +514,11 @@ html { scroll-behavior: smooth; }
             box-shadow: 0 4px 20px rgba(201,168,76,0.15);
         }
         .how-step h3 { font-size: 1.1rem; color: var(--color-text-main); margin-bottom: 0.75rem; font-weight: 600; }
-        .how-step p { font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; max-width: 280px; margin: 0 auto; }
+        .how-step p { font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; max-width: 220px; margin: 0 auto; }
+        @media (max-width: 900px) {
+            .how-timeline { grid-template-columns: 1fr 1fr; }
+            .how-timeline::before { display: none; }
+        }
         @media (max-width: 600px) {
             .how-timeline { grid-template-columns: 1fr; gap: 2rem; }
         }
