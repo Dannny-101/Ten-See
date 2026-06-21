@@ -144,55 +144,6 @@ html { scroll-behavior: smooth; }
         }
         .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
 
-        .hero-search-glass {
-            display: flex; align-items: flex-end; gap: 0.75rem;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            border-radius: 18px;
-            padding: 1rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        }
-        .hero-search-field {
-            flex: 1 1 0;
-            min-width: 140px;
-        }
-        .hero-search-field label {
-            display: flex; align-items: center; gap: 0.35rem;
-            font-size: 0.7rem; font-weight: 600;
-            color: rgba(255,255,255,0.7);
-            text-transform: uppercase; letter-spacing: 0.05em;
-            margin-bottom: 0.4rem;
-        }
-        .hero-search-field select,
-        .hero-search-field input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            border-radius: 10px;
-            padding: 0.65rem 0.75rem;
-            color: white;
-            font-size: 0.9rem;
-            outline: none;
-        }
-        .hero-search-field select option,
-        .hero-search-field input::placeholder { color: rgba(255,255,255,0.5); }
-        .hero-search-field select:focus,
-        .hero-search-field input:focus { border-color: var(--color-accent); }
-        .hero-search-btn {
-            flex-shrink: 0;
-            padding: 0.85rem 1.25rem;
-            border-radius: 12px;
-        }
-        @media (max-width: 768px) {
-            .hero-search-glass {
-                flex-wrap: wrap;
-            }
-            .hero-search-field { flex: 1 1 45%; }
-            .hero-search-btn { width: 100%; justify-content: center; }
-        }
-
         .hero-stats {
             display: flex; gap: 2rem; flex-wrap: wrap;
             padding-top: 2rem;

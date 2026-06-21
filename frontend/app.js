@@ -954,50 +954,17 @@ AOS.init({ duration: 600, once: true, offset: 60 });
                 const data = await res.json();
                 const options = data.data;
 
-                // Populate university dropdowns
+                // Populate university dropdown
                 const uniSelect = document.getElementById('qUni');
-                const heroUniSelect = document.getElementById('heroUni');
                 let uniOptions = '<option value="">Select University</option>';
                 (options.universities || []).forEach(uni => {
                     if (uni) uniOptions += `<option value="${uni}">${uni}</option>`;
                 });
-                if (uniSelect) uniSelect.innerHTML = uniOptions;
-                if (heroUniSelect) heroUniSelect.innerHTML = uniOptions;
+                uniSelect.innerHTML = uniOptions;
 
                 // Store available areas for later use
                 window.availableAreas = options.areas || [];
             } catch (e) { console.error(e); }
-        }
-
-        // Hero search dropdown sync
-        function updateHeroAreaOptions() {
-            const uni = document.getElementById('heroUni').value;
-            const areaSelect = document.getElementById('heroArea');
-            const currentArea = areaSelect.value;
-            let mappedAreas = [];
-            if (uni && UNIVERSITY_AREA_MAP[uni]) mappedAreas = UNIVERSITY_AREA_MAP[uni];
-            const availableAreas = window.availableAreas || ALL_AREAS;
-            let areas = mappedAreas.length > 0 ? mappedAreas.filter(area => availableAreas.includes(area)) : availableAreas;
-            let options = uni ? '' : '<option value="">Select Area</option>';
-            areas.forEach(area => { options += `<option value="${area}">${area}</option>`; });
-            areaSelect.innerHTML = options;
-            if (uni && areas.length > 0) {
-                if (!currentArea || !areas.includes(currentArea)) areaSelect.value = areas[0];
-                else areaSelect.value = currentArea;
-            }
-        }
-
-        function heroSearch() {
-            const uni = document.getElementById('heroUni').value;
-            const area = document.getElementById('heroArea').value;
-            const type = document.getElementById('heroType').value;
-            const maxPrice = document.getElementById('heroMaxPrice').value;
-            let params = new URLSearchParams();
-            if (uni) params.set('university', uni);
-            if (area) params.set('area', area);
-            if (type) params.set('propertyType', type);
-            if (maxPrice) params.set('maxPrice', maxPrice);
-            window.location.href = `/listings.html${params.toString() ? '?' + params : ''}`;
         }
 
         // Triangle mesh canvas animation
