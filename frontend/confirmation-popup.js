@@ -55,7 +55,7 @@ const ConfirmationPopup = {
     const titleEl = document.createElement('h2');
     titleEl.textContent = title;
     titleEl.style.cssText = `
-      color: #2C3830;
+      color: #386641;
       font-size: 1.5rem;
       margin-bottom: 10px;
       font-family: 'Space Grotesk', sans-serif;
@@ -85,7 +85,7 @@ const ConfirmationPopup = {
       `;
       refEl.innerHTML = `
         <p style="color: #6B7280; font-size: 0.85rem; margin: 0 0 5px 0;">Reference Number</p>
-        <p style="color: #2C3830; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.1rem; margin: 0;">${referenceNumber}</p>
+        <p style="color: #386641; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.1rem; margin: 0;">${referenceNumber}</p>
       `;
     }
 

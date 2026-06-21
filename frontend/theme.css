@@ -4,7 +4,7 @@ html {
 }
 
 [data-theme="light"] {
-  --color-primary: #2C3830;
+  --color-primary: #386641;
   --color-accent: #B8954A;
   --color-accent-light: #F0D9A0;
   --color-bg: #F7F8FA;
@@ -48,7 +48,7 @@ html {
 }
 
 [data-theme="dark"] {
-  --color-primary: #2C3830;
+  --color-primary: #386641;
   --color-accent: #B8954A;
   --color-accent-light: #D4B87A;
   --color-bg: #0F1210;

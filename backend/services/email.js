@@ -21,7 +21,7 @@ async function sendEnquiryConfirmation(emailAddress, enquiryData) {
       <html>
         <body style="font-family: 'Inter', Arial, sans-serif; color: #1C2420; line-height: 1.6;">
           <div style="max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #2C3830; border-bottom: 3px solid #B8954A; padding-bottom: 10px;">
+            <h2 style="color: #386641; border-bottom: 3px solid #B8954A; padding-bottom: 10px;">
               We've Received Your Enquiry ✓
             </h2>
             
@@ -34,7 +34,7 @@ async function sendEnquiryConfirmation(emailAddress, enquiryData) {
               <p><strong>Submitted:</strong> ${new Date().toLocaleString()}</p>
             </div>
             
-            <h3 style="color: #2C3830;">What's Next?</h3>
+            <h3 style="color: #386641;">What's Next?</h3>
             <ol>
               <li>Our team will review your enquiry within 24 hours</li>
               <li>We'll reach out via WhatsApp or email to confirm availability</li>
@@ -119,7 +119,7 @@ async function sendBookingConfirmation(customerEmail, bookingData) {
       <html>
         <body style="font-family: 'Inter', Arial, sans-serif; color: #1C2420; line-height: 1.6;">
           <div style="max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #2C3830; border-bottom: 3px solid #B8954A; padding-bottom: 10px;">
+            <h2 style="color: #386641; border-bottom: 3px solid #B8954A; padding-bottom: 10px;">
               Booking Received ✓
             </h2>
             
@@ -135,7 +135,7 @@ async function sendBookingConfirmation(customerEmail, bookingData) {
               <p><strong>Total Amount:</strong> RM ${bookingData.totalAmount || '0'}</p>
             </div>
             
-            <h3 style="color: #2C3830;">What's Next?</h3>
+            <h3 style="color: #386641;">What's Next?</h3>
             <ol>
               <li>We'll review your booking within 24 hours</li>
               <li>You'll receive a confirmation email with payment instructions</li>

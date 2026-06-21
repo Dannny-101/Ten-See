@@ -68,7 +68,7 @@ async function sendEmailAlert(agent, session) {
 
         const html = `
         <div style="font-family:Inter,Arial,sans-serif;max-width:480px;margin:0 auto;padding:20px;">
-            <div style="background:#2C3830;padding:16px 20px;border-radius:8px 8px 0 0;">
+            <div style="background:#386641;padding:16px 20px;border-radius:8px 8px 0 0;">
                 <h2 style="color:#c9a84c;margin:0;font-size:1rem;">🔔 Live Chat Assigned — Ten&amp;See</h2>
             </div>
             <div style="background:#fff;border:1px solid #e5e7eb;border-top:none;padding:20px;border-radius:0 0 8px 8px;">
