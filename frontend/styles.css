@@ -143,27 +143,6 @@ html { scroll-behavior: smooth; }
             margin-bottom: 2.5rem; max-width: 500px; line-height: 1.7;
         }
         .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
-        .btn-pill {
-            display: inline-flex; align-items: center; gap: 0.6rem;
-            padding: 1rem 2.25rem;
-            border-radius: 100px;
-            font-weight: 700; font-size: 1rem;
-            background: var(--color-accent);
-            color: var(--color-primary);
-            border: none;
-            text-decoration: none;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .btn-pill:hover { transform: translateY(-2px); }
-        .btn-pill-glow {
-            box-shadow: 0 4px 20px rgba(201, 168, 76, 0.35);
-            animation: pillGlow 2.5s ease-in-out infinite;
-        }
-        @keyframes pillGlow {
-            0%, 100% { box-shadow: 0 4px 20px rgba(201, 168, 76, 0.35); }
-            50% { box-shadow: 0 6px 30px rgba(201, 168, 76, 0.55); }
-        }
 
         .hero-search-glass {
             display: flex; align-items: flex-end; gap: 0.75rem;
