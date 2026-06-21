@@ -55,8 +55,24 @@
 
     <!-- ── HERO ── -->
     <section class="hero" id="home">
-        <canvas class="hero-mesh-canvas" id="heroMeshCanvas" aria-hidden="true"></canvas>
-        <div class="hero-mesh-overlay"></div>
+        <!-- Dynamic Hero Background System - CONFIGURABLE -->
+        <!-- Options: 1) Single Image, 2) Video, 3) Slideshow -->
+        <div class="hero-bg-container" id="heroBgContainer">
+            <!-- SLIDESHOW MODE: Add slides below (will auto-rotate) -->
+            <div class="hero-bg-slideshow" id="heroSlideshow">
+                <div class="hero-bg-slide active" style="background-image: url('https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1920&q=80');"></div>
+                <div class="hero-bg-slide" style="background-image: url('https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1920&q=80');"></div>
+                <div class="hero-bg-slide" style="background-image: url('https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1920&q=80');"></div>
+            </div>
+
+            <!-- VIDEO MODE: Uncomment below and comment out slideshow above -->
+            <!-- <video class="hero-bg-video" autoplay muted loop playsinline>
+                <source src="/assets/hero-video.mp4" type="video/mp4">
+            </video> -->
+
+            <!-- SINGLE IMAGE MODE: Uncomment below and comment out slideshow -->
+            <!-- <img class="hero-bg-image" src="/assets/hero-bg.jpg" alt="Background"> -->
+        </div>
 
         <div class="hero-grid">
             <div data-aos="fade-right">

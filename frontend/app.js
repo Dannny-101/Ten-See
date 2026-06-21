@@ -852,7 +852,6 @@ AOS.init({ duration: 600, once: true, offset: 60 });
             loadFeatured();
             initWhatsAppQR();
             initChatScrollTransition();
-            initMeshCanvas('heroMeshCanvas', { cols: 20, rows: 14, speed: 0.0004, opacity: 0.08 });
         });
 
         // ── INLINE CHAT (contact section) — reuses same socket + session ──
@@ -965,103 +964,6 @@ AOS.init({ duration: 600, once: true, offset: 60 });
                 // Store available areas for later use
                 window.availableAreas = options.areas || [];
             } catch (e) { console.error(e); }
-        }
-
-        // Triangle mesh canvas animation
-        function initMeshCanvas(canvasId, options = {}) {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const dpr = Math.min(window.devicePixelRatio || 1, 2);
-            let width, height;
-            const cols = options.cols || 18;
-            const rows = options.rows || 12;
-            const speed = options.speed || 0.0003;
-            const points = [];
-
-            function resize() {
-                const rect = canvas.getBoundingClientRect();
-                width = rect.width; height = rect.height;
-                canvas.width = width * dpr; canvas.height = height * dpr;
-                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-                points.length = 0;
-                const xStep = width / (cols - 1);
-                const yStep = height / (rows - 1);
-                for (let y = 0; y < rows; y++) {
-                    for (let x = 0; x < cols; x++) {
-                        points.push({
-                            baseX: x * xStep,
-                            baseY: y * yStep,
-                            phase: Math.random() * Math.PI * 2,
-                            speed: 0.5 + Math.random() * 0.5
-                        });
-                    }
-                }
-            }
-            resize();
-            window.addEventListener('resize', resize);
-
-            let time = 0;
-            function drawTriangle(p1, p2, p3, color, opacity) {
-                const cx = (p1.x + p2.x + p3.x) / 3;
-                const cy = (p1.y + p2.y + p3.y) / 3;
-                const distFromCenter = Math.sqrt(Math.pow(cx - width / 2, 2) + Math.pow(cy - height / 2, 2));
-                const maxDist = Math.max(width, height) / 2;
-                const fade = 1 - Math.min(distFromCenter / maxDist, 1) * 0.5;
-                ctx.fillStyle = `rgba(${color}, ${opacity * fade})`;
-                ctx.beginPath();
-                ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
-                ctx.closePath();
-                ctx.fill();
-            }
-
-            function draw() {
-                time += 1;
-                ctx.clearRect(0, 0, width, height);
-                const activePoints = points.map(p => {
-                    const dx = Math.sin(time * speed * p.speed + p.phase) * (width * 0.015);
-                    const dy = Math.cos(time * speed * p.speed * 0.7 + p.phase) * (height * 0.015);
-                    return { x: p.baseX + dx, y: p.baseY + dy };
-                });
-
-                const color = options.color || '201, 168, 76';
-                const opacity = options.opacity || 0.08;
-                for (let y = 0; y < rows - 1; y++) {
-                    for (let x = 0; x < cols - 1; x++) {
-                        const i = y * cols + x;
-                        const p1 = activePoints[i];
-                        const p2 = activePoints[i + 1];
-                        const p3 = activePoints[i + cols];
-                        const p4 = activePoints[i + cols + 1];
-                        drawTriangle(p1, p2, p3, color, opacity);
-                        drawTriangle(p2, p3, p4, color, opacity * 0.8);
-                    }
-                }
-
-                ctx.strokeStyle = `rgba(${color}, ${opacity * 0.6})`;
-                ctx.lineWidth = 0.6;
-                ctx.beginPath();
-                for (let y = 0; y < rows; y++) {
-                    for (let x = 0; x < cols - 1; x++) {
-                        const i = y * cols + x;
-                        const p = activePoints[i];
-                        const p2 = activePoints[i + 1];
-                        ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
-                    }
-                }
-                for (let y = 0; y < rows - 1; y++) {
-                    for (let x = 0; x < cols; x++) {
-                        const i = y * cols + x;
-                        const p = activePoints[i];
-                        const p2 = activePoints[i + cols];
-                        ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
-                    }
-                }
-                ctx.stroke();
-
-                requestAnimationFrame(draw);
-            }
-            draw();
         }
 
 /* ===== block ===== */
