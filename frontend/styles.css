@@ -416,13 +416,19 @@ html { scroll-behavior: smooth; }
             width: 100%; max-width: 420px;
         }
         .hero-card-main {
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: transform 0.22s ease-out, opacity 0.18s ease-out;
         }
-        .hero-card-main.hc-fade-out {
-            opacity: 0; transform: translateY(8px) scale(0.98);
+        .hero-card-main.hc-slide-out-left {
+            transform: translateX(-80px);
+            opacity: 0;
         }
-        .hero-card-main.hc-fade-in {
-            opacity: 1; transform: translateY(0) scale(1);
+        .hero-card-main.hc-slide-out-right {
+            transform: translateX(80px);
+            opacity: 0;
+        }
+        .hero-card-main.hc-enter {
+            transform: translateX(0);
+            opacity: 1;
         }
         .hc-nav {
             position: absolute;

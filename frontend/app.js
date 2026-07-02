@@ -995,11 +995,14 @@ AOS.init({ duration: 600, once: true, offset: 60 });
 (function () {
     const amenityIconMap = { wifi: 'fa-wifi', ac: 'fa-snowflake', 'air cond': 'fa-snowflake', parking: 'fa-car', gym: 'fa-dumbbell', pool: 'fa-swimming-pool', laundry: 'fa-tshirt', security: 'fa-shield-alt', kitchen: 'fa-utensils', tv: 'fa-tv' };
     let listings = [], idx = 0, timer = null;
+    let lastDir = 1;
 
     function renderCard(l) {
-        const card = document.getElementById('heroCard');
+        var card = document.getElementById('heroCard');
         if (!card || !l) return;
-        card.classList.add('hc-fade-out');
+        var outClass = lastDir > 0 ? 'hc-slide-out-left' : 'hc-slide-out-right';
+        card.classList.remove('hc-enter');
+        card.classList.add(outClass);
         setTimeout(function() {
             document.getElementById('hcImg').src = (l.images && l.images[0]) ? l.images[0] : 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80';
             document.getElementById('hcImg').alt = l.title || '';
@@ -1020,9 +1023,10 @@ AOS.init({ duration: 600, once: true, offset: 60 });
                 var icon = Object.entries(amenityIconMap).find(function(e) { return key.includes(e[0]); });
                 return '<div class="hc-amenity" title="' + a + '"><i class="fas ' + (icon ? icon[1] : 'fa-check') + '"></i></div>';
             }).join('');
-            card.classList.remove('hc-fade-out');
+            card.classList.remove('hc-slide-out-left', 'hc-slide-out-right');
+            card.classList.add('hc-enter');
             updateDots();
-        }, 280);
+        }, 160);
     }
 
     function updateDots() {
@@ -1040,11 +1044,13 @@ AOS.init({ duration: 600, once: true, offset: 60 });
 
     window.hcNav = function(dir) {
         if (!listings.length) return;
+        lastDir = dir;
         idx = (idx + dir + listings.length) % listings.length;
         renderCard(listings[idx]);
         resetTimer();
     };
     window.hcGoTo = function(i) {
+        lastDir = i > idx ? 1 : -1;
         idx = i; renderCard(listings[idx]); resetTimer();
     };
 
