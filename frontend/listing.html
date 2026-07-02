@@ -22,35 +22,22 @@
     <meta name="twitter:description" content="Photos, price, amenities and location for verified student rooms.">
     <meta name="twitter:image" content="https://tenandsee.homes/assets/logo.png">
     <link rel="icon" type="image/png" href="/assets/logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="/theme.js"></script>
     <link rel="stylesheet" href="/theme.css">
+    <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="/cookie-consent.css">
     <link rel="stylesheet" href="/map-feature.css">
     <script src="/api/config.js"></script>
     <script src="/map-feature.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text-main); line-height: 1.6; }
-        h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; }
+        body { font-family: 'League Spartan', sans-serif; background: var(--color-bg); color: var(--color-text-main); line-height: 1.6; }
+        h1,h2,h3,h4 { font-family: 'League Spartan', sans-serif; }
 
-        /* Navbar */
-        .navbar {
-            position: fixed; top: 0; left: 0; right: 0;
-            z-index: 1000; padding: 1rem 2rem;
-            background: var(--color-primary);
-        }
-        .nav-container {
-            max-width: 1400px; margin: 0 auto;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .logo { text-decoration: none; display: inline-flex; align-items: center; }
-        .logo img { width: 64px; height: 64px; object-fit: contain; display: block; border-radius: 0; background: transparent; }
-        .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 1.75rem; font-weight: 700; color: white; margin-left: 0.75rem; letter-spacing: -0.02em; display: flex; align-items: center; }
-        .logo-text span { color: var(--color-accent); font-weight: 700; }
-        .nav-back { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s; }
-        .nav-back:hover { color: var(--color-accent); }
+        .nav-back { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s; }
+        .nav-back:hover { color: var(--gold); }
 
         /* Layout */
         .page-wrap { max-width: 1100px; margin: 0 auto; padding: 7rem 2rem 4rem; }
@@ -79,7 +66,7 @@
         .listing-location i { color: var(--color-accent); }
 
         .price-block { display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--color-border); }
-        .price-main { font-family: 'Space Grotesk', sans-serif; font-size: 2.25rem; font-weight: 700; color: var(--color-text-main); }
+        .price-main { font-family: 'League Spartan', sans-serif; font-size: 2.25rem; font-weight: 700; color: var(--color-text-main); }
         .price-period { font-size: 1rem; color: var(--color-text-muted); }
 
         .stats-row { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
@@ -103,7 +90,7 @@
 
         /* Sidebar */
         .sidebar-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 20px; padding: 1.75rem; margin-bottom: 1.5rem; position: sticky; top: 6rem; }
-        .sidebar-price { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 0.25rem; }
+        .sidebar-price { font-family: 'League Spartan', sans-serif; font-size: 2rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 0.25rem; }
         .sidebar-period { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1.5rem; }
 
         .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.875rem 1.5rem; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease; border: none; text-decoration: none; width: 100%; justify-content: center; margin-bottom: 0.75rem; font-family: inherit; }
@@ -200,14 +187,20 @@
 </head>
 <body>
 
-<nav class="navbar">
+<nav class="navbar" id="navbar">
     <div class="nav-container">
-        <a href="/" class="logo" aria-label="Ten&See home"><img src="/assets/logo.png" alt="Ten&See logo"><span class="logo-text">Ten<span>&</span>See</span></a>
+        <a href="/" class="logo" aria-label="Ten&See home"><img id="navLogo" src="/assets/logo-dm.png" alt="Ten&See logo"><span class="logo-text">Ten<span>&</span>See</span></a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="/" target="_self">Homepage</a></li>
+            <li><a href="/listings.html" target="_self">Rent a Room</a></li>
+            <li><a href="/index.html#contact" target="_self">Contact</a></li>
+            <li><a href="/index.html#about" target="_self">About Us</a></li>
+        </ul>
         <div class="nav-actions">
-            <a href="/listings.html" class="nav-back"><i class="fas fa-arrow-left"></i> Back to Listings</a>
             <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to dark mode">
                 <i class="fas fa-moon" aria-hidden="true"></i>
             </button>
+            <button class="hamburger" onclick="toggleMobileNav()" aria-label="Open menu">☰</button>
         </div>
     </div>
 </nav>

@@ -24,6 +24,8 @@
     document.documentElement.setAttribute('data-theme', t);
     document.documentElement.style.colorScheme = t;
     document.querySelectorAll('[data-theme-toggle]').forEach(updateToggleA11y);
+    const logo = document.getElementById('navLogo');
+    if (logo) logo.src = t === 'dark' ? '/assets/logo-dm.png' : '/assets/logo-lm.png';
     return t;
   }
 

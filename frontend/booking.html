@@ -9,45 +9,25 @@
     <meta name="description" content="Submit a booking request for your selected student room. Ten&See will confirm availability within 24 hours.">
     <link rel="canonical" href="https://tenandsee.homes/booking.html">
     <link rel="icon" type="image/png" href="/assets/logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="/theme.js"></script>
     <link rel="stylesheet" href="/theme.css">
+    <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="/cookie-consent.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'League Spartan', sans-serif;
             background: var(--color-bg);
             color: var(--color-text-main);
             line-height: 1.6;
         }
-        h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'League Spartan', sans-serif; }
 
-        .navbar {
-            position: fixed; top: 0; left: 0; right: 0;
-            z-index: 1000; padding: 1rem 2rem;
-            background: var(--color-primary);
-            transition: all 0.3s ease;
-        }
-        .navbar.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.15); padding: 0.75rem 2rem; }
-        .nav-container {
-            max-width: 1400px; margin: 0 auto;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .logo {
-            text-decoration: none;
-            display: inline-flex; align-items: center;
-        }
-        .logo img { width: 56px; height: 56px; object-fit: contain; display: block; }
-        .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 700; color: white; margin-left: 0.75rem; letter-spacing: -0.02em; }
-        .logo-text span { color: var(--color-accent); font-weight: 700; }
-        .nav-links { display: flex; gap: 2.5rem; align-items: center; list-style: none; position: absolute; left: 50%; transform: translateX(-50%); }
-        .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 500; transition: color 0.3s; }
-        .nav-links a:hover { color: var(--color-accent); }
         .hamburger {
             display: none; background: none; border: none;
-            color: white; font-size: 1.5rem; cursor: pointer;
+            color: var(--text); font-size: 1.5rem; cursor: pointer;
         }
 
         .btn {
@@ -181,18 +161,21 @@
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="/" class="logo" target="_self" aria-label="Ten&See home">
-                <img src="/assets/logo.png" alt="Ten&See logo">
+                <img id="navLogo" src="/assets/logo-dm.png" alt="Ten&See logo">
                 <span class="logo-text">Ten<span>&</span>See</span>
             </a>
             <ul class="nav-links" id="navLinks">
-                <li><a href="/" target="_self">Home</a></li>
-                <li><a href="/listings.html" target="_self">Listings</a></li>
-                <li><a href="/index.html#features" target="_self">Features</a></li>
+                <li><a href="/" target="_self">Homepage</a></li>
+                <li><a href="/listings.html" target="_self">Rent a Room</a></li>
                 <li><a href="/index.html#contact" target="_self">Contact</a></li>
+                <li><a href="/index.html#about" target="_self">About Us</a></li>
             </ul>
-            <button class="hamburger" onclick="toggleMobileNav()" aria-label="Open navigation">
-                <i class="fas fa-bars"></i>
-            </button>
+            <div class="nav-actions">
+                <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to dark mode">
+                    <i class="fas fa-moon" aria-hidden="true"></i>
+                </button>
+                <button class="hamburger" onclick="toggleMobileNav()" aria-label="Open menu">☰</button>
+            </div>
         </div>
     </nav>
 

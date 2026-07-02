@@ -21,54 +21,26 @@
     <meta name="twitter:description" content="Filter verified student rooms by university, budget and room type.">
     <meta name="twitter:image" content="https://tenandsee.homes/assets/logo.png">
 <link rel="icon" type="image/png" href="/assets/logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- AOS Animate On Scroll -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     <script src="/theme.js"></script>
     <link rel="stylesheet" href="/theme.css">
+    <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="/cookie-consent.css">
     <style>
         html { scroll-behavior: smooth; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'League Spartan', sans-serif;
             background: var(--color-bg);
             color: var(--color-text-main);
             line-height: 1.6;
         }
-        h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'League Spartan', sans-serif; }
 
-        /* Navbar */
-        .navbar {
-            position: fixed; top: 0; left: 0; right: 0;
-            z-index: 1000; padding: 1rem 2rem;
-            background: var(--color-primary);
-            transition: all 0.3s ease;
-        }
-        .navbar.scrolled {
-            box-shadow: 0 2px 20px rgba(0,0,0,0.15);
-            padding: 0.75rem 2rem;
-        }
-        .nav-container {
-            max-width: 1400px; margin: 0 auto;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .logo {
-            text-decoration: none;
-            display: inline-flex; align-items: center;
-        }
-        .logo img { width: 64px; height: 64px; object-fit: contain; display: block; border-radius: 0; background: transparent; }
-        .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 1.75rem; font-weight: 700; color: white; margin-left: 0.75rem; letter-spacing: -0.02em; display: flex; align-items: center; }
-        .logo-text span { color: var(--color-accent); font-weight: 700; }
-        .nav-links { display: flex; gap: 2.5rem; align-items: center; list-style: none; position: absolute; left: 50%; transform: translateX(-50%); }
-        .nav-links a {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none; font-weight: 500;
-            transition: color 0.3s;
-        }
-        .nav-links a:hover { color: var(--color-accent); }
         .hamburger {
             display: none;
             background: none; border: none;
@@ -1104,7 +1076,7 @@
             margin-bottom: 2rem;
         }
         .footer-col h4 {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'League Spartan', sans-serif;
             font-size: 1.5rem;
             color: rgba(255,255,255,0.9);
             margin-bottom: 0.75rem;
@@ -1160,8 +1132,6 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-primary); flex-direction: column; padding: 1rem 2rem; gap: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
-            .nav-links.active { display: flex; }
             .hamburger { display: block; }
             .filters-bar { flex-direction: column; align-items: stretch; }
             .filter-group select, .filter-group input { width: 100%; min-width: unset; }
@@ -1320,7 +1290,7 @@
         }
 
         .intro-brand {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'League Spartan', sans-serif;
             font-size: 2.5rem;
             font-weight: 700;
             color: white;
@@ -1335,7 +1305,7 @@
         }
 
         .intro-tagline {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'League Spartan', sans-serif;
             font-size: 1.1rem;
             font-weight: 400;
             color: rgba(255,255,255,0.6);
@@ -1414,7 +1384,7 @@
         }
 
         .intro-feature-title {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'League Spartan', sans-serif;
             font-size: 0.95rem;
             font-weight: 600;
             color: white;
@@ -1561,18 +1531,18 @@
 
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <a href="/" class="logo" target="_self" aria-label="Ten&See home"><img src="/assets/logo.png" alt="Ten&See logo"><span class="logo-text">Ten<span>&</span>See</span></a>
+            <a href="/" class="logo" target="_self" aria-label="Ten&See home"><img id="navLogo" src="/assets/logo-dm.png" alt="Ten&See logo"><span class="logo-text">Ten<span>&</span>See</span></a>
             <ul class="nav-links" id="navLinks">
-                <li><a href="/" target="_self">Home</a></li>
-                <li><a href="/listings.html" target="_self">Listings</a></li>
-                <li><a href="/index.html#features" target="_self">Features</a></li>
+                <li><a href="/" target="_self">Homepage</a></li>
+                <li><a href="/listings.html" target="_self">Rent a Room</a></li>
                 <li><a href="/index.html#contact" target="_self">Contact</a></li>
+                <li><a href="/index.html#about" target="_self">About Us</a></li>
             </ul>
             <div class="nav-actions">
                 <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to dark mode">
                     <i class="fas fa-moon" aria-hidden="true"></i>
                 </button>
-                <button class="hamburger" onclick="toggleMobileNav()">☰</button>
+                <button class="hamburger" onclick="toggleMobileNav()" aria-label="Open menu">☰</button>
             </div>
         </div>
     </nav>

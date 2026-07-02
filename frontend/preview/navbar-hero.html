@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview — Navbar + Hero | Ten&See</title>
+
+  <!-- League Spartan -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- ── THEME TOKENS ── -->
+  <style>
+    /* DARK (default) */
+    :root {
+      --bg:         #0d1117;
+      --surface:    #13161d;
+      --surface2:   #1a1e2a;
+      --surface3:   #1e2330;
+      --border:     rgba(255,255,255,0.07);
+      --border2:    rgba(255,255,255,0.12);
+      --gold:       #f4c875;
+      --gold-dim:   rgba(244,200,117,0.12);
+      --gold-glow:  rgba(244,200,117,0.35);
+      --green:      #7da484;
+      --text:       #e8eaf0;
+      --text-muted: rgba(255,255,255,0.75);
+      --text-dim:   rgba(255,255,255,0.58);
+      --radius-sm:  8px;
+      --radius:     12px;
+      --radius-lg:  18px;
+    }
+
+    /* LIGHT override */
+    [data-theme="light"] {
+      --bg:         #fff9e7;
+      --surface:    #ffffff;
+      --surface2:   #f5f0e8;
+      --surface3:   #ede8dc;
+      --border:     rgba(0,0,0,0.08);
+      --border2:    rgba(0,0,0,0.14);
+      --gold:       #c8920a;
+      --gold-dim:   rgba(200,146,10,0.1);
+      --gold-glow:  rgba(200,146,10,0.3);
+      --green:      #4d7a55;
+      --text:       #111111;        /* darkened — nav links, card titles */
+      --text-muted: rgba(255,255,255,0.82); /* hero sub-text — light over photo */
+      --text-dim:   rgba(255,255,255,0.55); /* stat labels — softer over photo */
+    }
+
+    /* Card/surface text in light mode needs its own darker muted override
+       (--text-muted above is tuned for over-photo; surfaces use this) */
+    [data-theme="light"] .property-card-location,
+    [data-theme="light"] .property-card-detail {
+      color: #666;
+    }
+    [data-theme="light"] .property-card-price span {
+      color: #999;
+    }
+    [data-theme="light"] .nav-links a {
+      color: #444;
+    }
+    [data-theme="light"] .nav-links a:hover {
+      color: #111;
+    }
+    [data-theme="light"] .nav-links a.active {
+      color: var(--gold);
+    }
+    [data-theme="light"] .fb-label {
+      color: #111;
+    }
+    [data-theme="light"] .fb-sub {
+      color: #666;
+    }
+    [data-theme="light"] .property-card-title {
+      color: #111;
+    }
+    [data-theme="light"] .property-card-price {
+      color: #111;
+    }
+    [data-theme="light"] .property-card-badge {
+      color: #4d7a55;
+    }
+
+    /* Light mode hero overlay — less dark so photo shows warmer */
+    [data-theme="light"] .hero-overlay {
+      background: linear-gradient(
+        120deg,
+        rgba(20, 30, 22, 0.72) 0%,
+        rgba(30, 40, 30, 0.58) 60%,
+        rgba(20, 30, 22, 0.35) 100%
+      );
+    }
+    [data-theme="light"] .hero-overlay::after {
+      background: linear-gradient(to right, rgba(20,30,22,0.45) 0%, transparent 50%);
+    }
+
+    /* Light mode navbar gets a warm white surface with subtle shadow */
+    [data-theme="light"] .navbar {
+      box-shadow: 0 1px 0 var(--border), 0 4px 16px rgba(0,0,0,0.06);
+    }
+
+    /* Light mode property card */
+    [data-theme="light"] .property-card {
+      box-shadow: 0 24px 64px rgba(0,0,0,0.12), 0 0 0 1px var(--border);
+    }
+    [data-theme="light"] .float-badge {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+  </style>
+
+  <style>
+    /* ── RESET ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'League Spartan', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2.5rem;
+      height: 68px;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-container {
+      width: 100%;
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    /* Logo */
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .nav-logo img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .nav-logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .nav-logo-text .amp {
+      color: var(--gold);
+    }
+
+    /* Nav links */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      list-style: none;
+      gap: 0.15rem;
+    }
+
+    .nav-links a {
+      display: inline-block;
+      padding: 0.45rem 1rem;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      background: var(--surface2);
+      border-color: var(--border);
+    }
+
+    .nav-links a.active {
+      color: var(--gold);
+      background: var(--gold-dim);
+      border-color: rgba(244,200,117,0.2);
+    }
+
+    /* Nav CTA */
+    .nav-cta { flex-shrink: 0; }
+
+    .btn-gold {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: var(--radius-sm);
+      background: var(--gold);
+      color: #1a1000;
+      font-family: 'League Spartan', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 12px var(--gold-glow);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px var(--gold-glow);
+      filter: brightness(1.06);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-slides {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.4s ease;
+    }
+
+    .hero-slide.active { opacity: 1; }
+
+    /* Heavy dark overlay — Windsurf-style depth */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(
+        120deg,
+        rgba(8, 10, 15, 0.88) 0%,
+        rgba(13, 17, 23, 0.78) 60%,
+        rgba(13, 17, 23, 0.55) 100%
+      );
+    }
+
+    /* Left edge fade to match dark bg */
+    .hero-overlay::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(13,17,23,0.6) 0%,
+        transparent 50%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 2.5rem;
+      padding-top: 68px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    /* Badge */
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: 100px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(244,200,117,0.3);
+      color: var(--gold);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      width: fit-content;
+    }
+
+    /* Headline */
+    .hero-headline {
+      font-size: clamp(2.8rem, 4.5vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+    }
+
+    .hero-headline .accent-gold {
+      color: var(--gold);
+    }
+
+    /* Sub-text */
+    .hero-sub {
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      max-width: 460px;
+      line-height: 1.75;
+    }
+
+    /* CTAs */
+    .hero-ctas {
+      display: flex;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-hero-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.8rem 1.9rem;
+      border-radius: var(--radius);
+      background: var(--gold);
+      color: #1a1000;
+      font-family: 'League Spartan', sans-serif;
+      font-size: 0.98rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 24px var(--gold-glow);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn-hero-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(244,200,117,0.5);
+    }
+
+    .btn-hero-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.8rem 1.9rem;
+      border-radius: var(--radius);
+      background: var(--surface2);
+      color: var(--text);
+      font-family: 'League Spartan', sans-serif;
+      font-size: 0.98rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      border: 1px solid var(--border2);
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn-hero-secondary:hover {
+      background: var(--surface3);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    /* Stats */
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .hero-stat-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      margin-top: 0.35rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* ── PROPERTY CARD (right) ── */
+    .hero-right {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .property-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      width: 340px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px var(--border);
+    }
+
+    .property-card-img {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .property-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .property-card-img-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 2;
+      padding: 0.25rem 0.65rem;
+      border-radius: 100px;
+      background: var(--gold);
+      color: #1a1000;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      pointer-events: none;
+    }
+
+    .property-card-body {
+      padding: 1.2rem;
+    }
+
+    .property-card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.22rem 0.65rem;
+      border-radius: 100px;
+      background: rgba(125,164,132,0.12);
+      color: var(--green);
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-bottom: 0.7rem;
+      border: 1px solid rgba(125,164,132,0.2);
+    }
+
+    .property-card-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+      line-height: 1.35;
+    }
+
+    .property-card-location {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .property-card-details {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .property-card-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .property-card-detail i {
+      color: var(--green);
+      font-size: 0.72rem;
+    }
+
+    .property-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .property-card-price {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .property-card-price span {
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: var(--text-dim);
+    }
+
+    .property-card-btn {
+      padding: 0.4rem 0.95rem;
+      border-radius: var(--radius-sm);
+      background: var(--gold-dim);
+      color: var(--gold);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: 1px solid rgba(244,200,117,0.25);
+      transition: background 0.2s ease;
+    }
+
+    .property-card-btn:hover {
+      background: rgba(244,200,117,0.2);
+    }
+
+    /* Card nav arrows */
+    .card-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .card-nav:hover { background: var(--surface3); border-color: var(--gold); color: var(--gold); }
+    .card-nav-prev { left: -18px; }
+    .card-nav-next { right: -18px; }
+
+    /* Card counter */
+    .card-counter {
+      position: absolute;
+      bottom: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    /* Skeleton loader */
+    .card-skeleton {
+      background: linear-gradient(90deg, var(--surface2) 25%, var(--surface3) 50%, var(--surface2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 4px;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Ensure card body badge never overlaps footer */
+    .property-card-body {
+      display: flex;
+      flex-direction: column;
+    }
+    .property-card-details {
+      flex: 1;
+    }
+    .property-card-footer {
+      margin-top: auto;
+      padding-top: 0.85rem;
+    }
+
+    /* Floating badges */
+    .float-badge {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 0.55rem 0.85rem;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+      min-width: 168px;
+    }
+
+    .float-badge-top {
+      top: -14px;
+      right: -18px;
+    }
+
+    .float-badge-bottom {
+      bottom: -14px;
+      left: -18px;
+    }
+
+    .fb-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .fb-icon.gold { background: var(--gold-dim); color: var(--gold); }
+    .fb-icon.green { background: rgba(125,164,132,0.12); color: var(--green); }
+
+    .fb-texts { display: flex; flex-direction: column; }
+    .fb-label { font-size: 0.76rem; font-weight: 700; color: var(--text); }
+    .fb-sub   { font-size: 0.68rem; color: var(--text-dim); }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════ NAVBAR ═══════════════════════════════ -->
+  <nav class="navbar">
+    <div class="nav-container">
+
+      <!-- Logo -->
+      <a href="#" class="nav-logo">
+        <img id="navLogo" src="/assets/logo-dm.png" alt="Ten&See logo">
+        <span class="nav-logo-text">Ten<span class="amp">&amp;</span>See</span>
+      </a>
+
+      <!-- Nav links -->
+      <ul class="nav-links">
+        <li><a href="#" class="active">Homepage</a></li>
+        <li><a href="#">Rent a Room</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">About Us</a></li>
+      </ul>
+
+      <!-- CTA -->
+      <div class="nav-cta">
+        <a href="#" class="btn-gold">
+          <i class="fas fa-search"></i> Browse Rooms
+        </a>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════ HERO ════════════════════════════════ -->
+  <section class="hero">
+
+    <!-- Slideshow background -->
+    <div class="hero-slides">
+      <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1920&q=80');"></div>
+      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1920&q=80');"></div>
+      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1920&q=80');"></div>
+    </div>
+    <div class="hero-overlay"></div>
+
+    <!-- Content grid -->
+    <div class="hero-content">
+
+      <!-- LEFT: text -->
+      <div class="hero-left">
+
+        <div class="hero-badge">
+          <i class="fas fa-map-marker-alt"></i>
+          Built for International &amp; Local Students
+        </div>
+
+        <h1 class="hero-headline">
+          Find Your New Home,<br>
+          <span class="accent-gold">Near Your University</span>
+        </h1>
+
+        <p class="hero-sub">
+          Ten&amp;See connects students with verified, affordable rooms walking-distance from campus. No agent fees. No guesswork. Just a home.
+        </p>
+
+        <div class="hero-ctas">
+          <a href="#" class="btn-hero-primary">
+            <i class="fas fa-home"></i> Pick Your New Home
+          </a>
+          <a href="#" class="btn-hero-secondary">
+            <i class="fab fa-whatsapp"></i> Enquire via WhatsApp
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-value">50+</div>
+            <div class="hero-stat-label">Verified Rooms</div>
+          </div>
+          <div>
+            <div class="hero-stat-value">6</div>
+            <div class="hero-stat-label">Universities</div>
+          </div>
+          <div>
+            <div class="hero-stat-value">KL</div>
+            <div class="hero-stat-label">Kuala Lumpur</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: live property card -->
+      <div class="hero-right">
+
+        <!-- Prev / Next arrows -->
+        <button class="card-nav card-nav-prev" onclick="cardNav(-1)" aria-label="Previous listing">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="card-nav card-nav-next" onclick="cardNav(1)" aria-label="Next listing">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <div class="property-card" id="heroCard">
+          <!-- skeleton shown while loading -->
+          <div class="property-card-img">
+            <div class="card-skeleton" id="cardImgSkeleton" style="width:100%;height:100%;"></div>
+            <img id="cardImg" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;">
+            <span class="property-card-img-badge" id="cardBadge" style="display:none;">Active</span>
+          </div>
+          <div class="property-card-body">
+            <div class="property-card-badge" id="cardFeaturedBadge">
+              <i class="fas fa-star"></i> <span id="cardType">Loading...</span>
+            </div>
+            <div class="property-card-title" id="cardTitle">Finding rooms near you...</div>
+            <div class="property-card-location" id="cardLocation">
+              <i class="fas fa-map-marker-alt"></i>
+              <span id="cardLocationText">—</span>
+            </div>
+            <div class="property-card-details" id="cardDetails"></div>
+            <div class="property-card-footer">
+              <div class="property-card-price" id="cardPrice">RM — <span>/ month</span></div>
+              <a href="#" id="cardViewBtn" class="property-card-btn">View Room</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating badges -->
+        <div class="float-badge float-badge-top">
+          <div class="fb-icon gold"><i class="fas fa-shield-alt"></i></div>
+          <div class="fb-texts">
+            <span class="fb-label">Verified Listing</span>
+            <span class="fb-sub">Confirmed by Ten&amp;See</span>
+          </div>
+        </div>
+
+        <div class="float-badge float-badge-bottom">
+          <div class="fb-icon green"><i class="fas fa-check-circle"></i></div>
+          <div class="fb-texts">
+            <span class="fb-label">Instant Booking</span>
+            <span class="fb-sub">Confirmed by Ten&amp;See</span>
+          </div>
+        </div>
+
+        <!-- Card counter -->
+        <div class="card-counter" id="cardCounter">— / —</div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Floating theme toggle ── -->
+  <button id="themeToggle" onclick="toggleTheme()" style="
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 9999;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 100px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: #1a1e2a;
+    color: #f4c875;
+    font-family: 'League Spartan', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    transition: all 0.2s ease;
+  ">🌙 Dark Mode</button>
+
+  <!-- ── Slideshow + Live card + toggle JS ── -->
+  <script>
+    /* ── Slideshow ── */
+    const slides = document.querySelectorAll('.hero-slide');
+    let slideCurrent = 0;
+    setInterval(() => {
+      slides[slideCurrent].classList.remove('active');
+      slideCurrent = (slideCurrent + 1) % slides.length;
+      slides[slideCurrent].classList.add('active');
+    }, 4500);
+
+    /* ── Theme toggle ── */
+    let isDark = true;
+    const btn = document.getElementById('themeToggle');
+    function toggleTheme() {
+      isDark = !isDark;
+      const logo = document.getElementById('navLogo');
+      if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        btn.style.background = '#1a1e2a';
+        btn.style.color = '#f4c875';
+        btn.style.borderColor = 'rgba(255,255,255,0.15)';
+        btn.textContent = '🌙 Dark Mode';
+        logo.src = '/assets/logo-dm.png';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        btn.style.background = '#ffffff';
+        btn.style.color = '#c8920a';
+        btn.style.borderColor = 'rgba(0,0,0,0.12)';
+        btn.textContent = '☀️ Light Mode';
+        logo.src = '/assets/logo-lm.png';
+      }
+    }
+
+    /* ── Live listing card ── */
+    let listings = [];
+    let cardIndex = 0;
+
+    const ROOM_TYPE_LABELS = {
+      studio: 'Studio', shared_room: 'Shared Room',
+      private_room: 'Private Room', apartment: 'Apartment', house: 'House'
+    };
+    const AMENITY_ICONS = {
+      wifi: 'fa-wifi', ac: 'fa-snowflake', gym: 'fa-dumbbell',
+      parking: 'fa-car', laundry: 'fa-tshirt', pool: 'fa-swimming-pool',
+      security: 'fa-shield-alt', kitchen: 'fa-utensils'
+    };
+    const FALLBACK_IMGS = [
+      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&q=80',
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80',
+      'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600&q=80'
+    ];
+
+    async function fetchListings() {
+      try {
+        const res = await fetch('/api/listings?limit=10&isActive=true');
+        const data = await res.json();
+        if (data.success && data.data && data.data.length) {
+          listings = data.data;
+          renderCard(0);
+        } else {
+          renderFallback();
+        }
+      } catch(e) {
+        renderFallback();
+      }
+    }
+
+    function renderCard(idx) {
+      const l = listings[idx];
+      if (!l) return;
+      cardIndex = idx;
+
+      // image
+      const img = document.getElementById('cardImg');
+      const skel = document.getElementById('cardImgSkeleton');
+      const imgSrc = (l.images && l.images[0]) || FALLBACK_IMGS[idx % 3];
+      img.style.display = 'none';
+      skel.style.display = 'block';
+      img.onload = () => { skel.style.display = 'none'; img.style.display = 'block'; };
+      img.src = imgSrc;
+      img.alt = l.title || 'Room';
+
+      // badge
+      const badge = document.getElementById('cardBadge');
+      badge.style.display = 'inline-block';
+      badge.textContent = l.isActive ? 'Available Now' : 'Listed';
+
+      // type badge
+      document.getElementById('cardType').textContent =
+        ROOM_TYPE_LABELS[l.roomType] || l.roomType || 'Room';
+
+      // title
+      document.getElementById('cardTitle').textContent =
+        l.title || (ROOM_TYPE_LABELS[l.roomType] + ' for Rent');
+
+      // location
+      const locParts = [l.university, l.area || l.city].filter(Boolean);
+      document.getElementById('cardLocationText').textContent =
+        locParts.join(' · ') || 'Kuala Lumpur';
+
+      // amenities (up to 4)
+      const detailsEl = document.getElementById('cardDetails');
+      const amenities = l.amenities || [];
+      const shown = amenities.slice(0, 4);
+      detailsEl.innerHTML = shown.map(a => {
+        const icon = AMENITY_ICONS[a.toLowerCase()] || 'fa-check';
+        return `<div class="property-card-detail"><i class="fas ${icon}"></i> ${a}</div>`;
+      }).join('') || `<div class="property-card-detail"><i class="fas fa-bed"></i> ${ROOM_TYPE_LABELS[l.roomType] || 'Room'}</div>`;
+
+      // price
+      const price = l.price || l.monthlyRent || 0;
+      document.getElementById('cardPrice').innerHTML =
+        `RM ${price.toLocaleString()} <span>/ month</span>`;
+
+      // view room link
+      document.getElementById('cardViewBtn').href = `/listing.html?id=${l._id}`;
+
+      // counter
+      document.getElementById('cardCounter').textContent =
+        `${idx + 1} / ${listings.length}`;
+
+      // animate card
+      const card = document.getElementById('heroCard');
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(8px)';
+      requestAnimationFrame(() => {
+        card.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      });
+    }
+
+    function renderFallback() {
+      document.getElementById('cardImgSkeleton').style.display = 'none';
+      document.getElementById('cardImg').src = FALLBACK_IMGS[0];
+      document.getElementById('cardImg').style.display = 'block';
+      document.getElementById('cardBadge').style.display = 'inline-block';
+      document.getElementById('cardBadge').textContent = 'Featured';
+      document.getElementById('cardType').textContent = 'Studio';
+      document.getElementById('cardTitle').textContent = 'Premium Studio with City View';
+      document.getElementById('cardLocationText').textContent = "5 min walk · Taylor's University";
+      document.getElementById('cardDetails').innerHTML = '<div class="property-card-detail"><i class="fas fa-bed"></i> Studio</div><div class="property-card-detail"><i class="fas fa-wifi"></i> WiFi</div><div class="property-card-detail"><i class="fas fa-snowflake"></i> AC</div>';
+      document.getElementById('cardPrice').innerHTML = 'RM 1,200 <span>/ month</span>';
+      document.getElementById('cardCounter').textContent = '1 / 1';
+    }
+
+    function cardNav(dir) {
+      if (!listings.length) return;
+      const next = (cardIndex + dir + listings.length) % listings.length;
+      renderCard(next);
+    }
+
+    /* Browse Rooms CTA — wired to listings page */
+    document.querySelectorAll('.btn-hero-primary, .btn-gold').forEach(el => {
+      el.addEventListener('click', e => {
+        if (el.getAttribute('href') === '#') {
+          e.preventDefault();
+          window.location.href = '/listings.html';
+        }
+      });
+    });
+
+    fetchListings();
+  </script>
+
+</body>
+</html>
