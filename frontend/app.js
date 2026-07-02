@@ -79,14 +79,9 @@ AOS.init({ duration: 600, once: true, offset: 60 });
         // Load featured listings
         async function loadFeatured() {
             try {
-                const res = await fetch('/api/listings?limit=3&isFeatured=true&includeAllCities=true');
+                const res = await fetch('/api/listings?limit=3&isActive=true&includeAllCities=true');
                 const data = await res.json();
-                let listings = data.data || [];
-                if (!listings.length) {
-                    const all = await fetch('/api/listings?limit=3&includeAllCities=true');
-                    const allData = await all.json();
-                    listings = allData.data || [];
-                }
+                const listings = data.data || [];
 
                 // Calculate total individual rooms (sum of bedrooms across all properties)
                 const totalRooms = listings.reduce((sum, l) => sum + (l.bedrooms || 1), 0);
