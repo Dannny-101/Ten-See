@@ -2386,6 +2386,7 @@
             const grid = document.getElementById('listingsGrid');
             if (!grid) return;
             grid.style.setProperty('--grid-cols', cols);
+            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
             document.querySelectorAll('.grid-size-btn').forEach(btn => {
                 const active = parseInt(btn.dataset.cols) === cols;
                 btn.classList.toggle('active', active);
@@ -2433,6 +2434,7 @@
                 allProperties = [];
             }
             // Default: Properties view, but fallback to rooms if properties are empty and listings exist
+            grid.style.gridTemplateColumns = `repeat(${currentGridCols}, 1fr)`;
             if (allProperties.length === 0 && allListings.length > 0) {
                 setView('rooms');
             } else {
