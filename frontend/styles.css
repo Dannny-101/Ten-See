@@ -500,8 +500,9 @@ html { scroll-behavior: smooth; }
         /* ── SEARCH BAR ── */
         .search-section {
             padding: 0 2rem;
-            margin-top: -2rem;
             position: relative; z-index: 10;
+            margin-top: 0;
+            margin-bottom: -3.5rem;
         }
         .search-card {
             max-width: 900px; margin: 0 auto;
@@ -510,6 +511,7 @@ html { scroll-behavior: smooth; }
             border-radius: 20px;
             padding: 1.5rem;
             box-shadow: 0 20px 60px -10px rgba(27,46,75,0.2);
+            transform: translateY(-50%);
         }
         .search-card h3 {
             font-size: 1rem; color: var(--color-text-main);
