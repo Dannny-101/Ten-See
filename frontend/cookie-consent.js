@@ -38,48 +38,13 @@
         banner.innerHTML = `
             <div class="cookie-panel">
                 <div class="cookie-copy">
-                    <h2>Cookie preferences</h2>
-                    <p>We use necessary cookies to keep the site working, plus optional cookies to understand visits and improve Ten&See.</p>
+                    <h2>&#x1F36A; We value your privacy</h2>
+                    <p>We use cookies to enhance your browsing experience, serve personalised content, and analyse our traffic.</p>
                 </div>
                 <div class="cookie-actions">
-                    <button class="cookie-btn" type="button" data-cookie-action="reject">Reject optional</button>
-                    <button class="cookie-btn" type="button" data-cookie-action="manage">Manage</button>
-                    <button class="cookie-btn primary" type="button" data-cookie-action="accept">Accept all</button>
-                </div>
-                <div class="cookie-preferences" id="cookiePreferences">
-                    <div class="cookie-option">
-                        <div>
-                            <strong>Necessary cookies</strong>
-                            <span>Required for security, forms, and saved consent.</span>
-                        </div>
-                        <label class="cookie-switch" aria-label="Necessary cookies always on">
-                            <input type="checkbox" checked disabled>
-                            <span class="cookie-slider"></span>
-                        </label>
-                    </div>
-                    <div class="cookie-option">
-                        <div>
-                            <strong>Analytics cookies</strong>
-                            <span>Help us understand which pages are useful.</span>
-                        </div>
-                        <label class="cookie-switch" aria-label="Allow analytics cookies">
-                            <input type="checkbox" id="cookieAnalytics">
-                            <span class="cookie-slider"></span>
-                        </label>
-                    </div>
-                    <div class="cookie-option">
-                        <div>
-                            <strong>Marketing cookies</strong>
-                            <span>Support more relevant updates and campaigns.</span>
-                        </div>
-                        <label class="cookie-switch" aria-label="Allow marketing cookies">
-                            <input type="checkbox" id="cookieMarketing">
-                            <span class="cookie-slider"></span>
-                        </label>
-                    </div>
-                    <div class="cookie-actions">
-                        <button class="cookie-btn primary" type="button" data-cookie-action="save">Save choices</button>
-                    </div>
+                    <button class="cookie-btn" type="button" data-cookie-action="reject">Reject All</button>
+                    <button class="cookie-btn" type="button" data-cookie-action="essential">Essential Only</button>
+                    <button class="cookie-btn primary" type="button" data-cookie-action="accept">Accept All</button>
                 </div>
             </div>
         `;
@@ -90,15 +55,9 @@
             if (!button) return;
 
             const action = button.dataset.cookieAction;
-            if (action === 'accept') saveConsent({ analytics: true, marketing: true });
-            if (action === 'reject') saveConsent({ analytics: false, marketing: false });
-            if (action === 'manage') document.getElementById('cookiePreferences')?.classList.toggle('is-open');
-            if (action === 'save') {
-                saveConsent({
-                    analytics: document.getElementById('cookieAnalytics')?.checked,
-                    marketing: document.getElementById('cookieMarketing')?.checked
-                });
-            }
+            if (action === 'accept')    saveConsent({ analytics: true,  marketing: true  });
+            if (action === 'essential') saveConsent({ analytics: false, marketing: false });
+            if (action === 'reject')    saveConsent({ analytics: false, marketing: false });
         });
     }
 

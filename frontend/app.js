@@ -79,11 +79,11 @@ AOS.init({ duration: 600, once: true, offset: 60 });
         // Load featured listings
         async function loadFeatured() {
             try {
-                const res = await fetch('/api/listings?limit=3&isFeatured=true');
+                const res = await fetch('/api/listings?limit=3&isFeatured=true&includeAllCities=true');
                 const data = await res.json();
                 let listings = data.data || [];
                 if (!listings.length) {
-                    const all = await fetch('/api/listings?limit=3');
+                    const all = await fetch('/api/listings?limit=3&includeAllCities=true');
                     const allData = await all.json();
                     listings = allData.data || [];
                 }
@@ -991,38 +991,81 @@ AOS.init({ duration: 600, once: true, offset: 60 });
             setInterval(nextSlide, slideInterval);
         })();
 
-/* ===== block ===== */
+// ── HERO CARD LIVE CAROUSEL ──
+(function () {
+    const amenityIconMap = { wifi: 'fa-wifi', ac: 'fa-snowflake', 'air cond': 'fa-snowflake', parking: 'fa-car', gym: 'fa-dumbbell', pool: 'fa-swimming-pool', laundry: 'fa-tshirt', security: 'fa-shield-alt', kitchen: 'fa-utensils', tv: 'fa-tv' };
+    let listings = [], idx = 0, timer = null;
 
-// Cookie functions
-        function setCookie(name, value, days) {
-            const expires = new Date(Date.now() + days * 864e5).toUTCString();
-            document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/; domain=' + window.location.hostname;
+    function renderCard(l) {
+        const card = document.getElementById('heroCard');
+        if (!card || !l) return;
+        card.classList.add('hc-fade-out');
+        setTimeout(function() {
+            document.getElementById('hcImg').src = (l.images && l.images[0]) ? l.images[0] : 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80';
+            document.getElementById('hcImg').alt = l.title || '';
+            document.getElementById('hcBadge').textContent = l.isFeatured ? 'Featured' : 'Just Listed';
+            document.getElementById('hcTitle').textContent = l.title || '';
+            var loc = [l.recommendedUniversity, (l.location && (l.location.area || l.location.city))].filter(Boolean).join(' • ');
+            document.getElementById('hcLocation').innerHTML = '<i class="fas fa-map-marker-alt"></i> ' + loc;
+            var details = [
+                l.bedrooms ? '<div class="hc-detail"><i class="fas fa-bed"></i> ' + l.bedrooms + ' BR</div>' : '',
+                l.bathrooms ? '<div class="hc-detail"><i class="fas fa-bath"></i> ' + l.bathrooms + ' Bath</div>' : '',
+                l.propertyType ? '<div class="hc-detail"><i class="fas fa-home"></i> ' + l.propertyType.replace(/_/g,' ') + '</div>' : ''
+            ].filter(Boolean).join('');
+            document.getElementById('hcDetails').innerHTML = details;
+            document.getElementById('hcPrice').innerHTML = 'RM ' + ((l.price||0).toLocaleString()) + ' <span>/ month</span>';
+            var amenities = (l.amenities || []).slice(0, 5);
+            document.getElementById('hcAmenities').innerHTML = amenities.map(function(a) {
+                var key = a.toLowerCase();
+                var icon = Object.entries(amenityIconMap).find(function(e) { return key.includes(e[0]); });
+                return '<div class="hc-amenity" title="' + a + '"><i class="fas ' + (icon ? icon[1] : 'fa-check') + '"></i></div>';
+            }).join('');
+            card.classList.remove('hc-fade-out');
+            updateDots();
+        }, 280);
+    }
+
+    function updateDots() {
+        var dotsEl = document.getElementById('hcDots');
+        if (dotsEl) {
+            dotsEl.innerHTML = listings.slice(0, 8).map(function(_, i) {
+                return '<div class="hc-dot' + (i === idx ? ' active' : '') + '" onclick="hcGoTo(' + i + ')"></div>';
+            }).join('');
         }
-        
-        function getCookie(name) {
-            return document.cookie.split('; ').reduce((r, v) => {
-                const parts = v.split('=');
-                return parts[0] === name ? decodeURIComponent(parts[1]) : r;
-            }, '');
+        var counterEl = document.getElementById('hcCounter');
+        if (counterEl && listings.length > 1) {
+            counterEl.textContent = (idx + 1) + ' of ' + listings.length + ' listings';
         }
-        
-        function acceptEssential() {
-            setCookie('cookieConsent', 'essential', 365);
-            hideBanner();
-        }
-        
-        function acceptAll() {
-            setCookie('cookieConsent', 'all', 365);
-            hideBanner();
-        }
-        
-        function hideBanner() {
-            document.getElementById('cookieBanner').style.transform = 'translateY(100%)';
-        }
-        
-        // Show banner if no consent
-        if (!getCookie('cookieConsent')) {
-            setTimeout(() => {
-                document.getElementById('cookieBanner').style.transform = 'translateY(0)';
-            }, 1000);
-        }
+    }
+
+    window.hcNav = function(dir) {
+        if (!listings.length) return;
+        idx = (idx + dir + listings.length) % listings.length;
+        renderCard(listings[idx]);
+        resetTimer();
+    };
+    window.hcGoTo = function(i) {
+        idx = i; renderCard(listings[idx]); resetTimer();
+    };
+
+    function resetTimer() {
+        clearInterval(timer);
+        timer = setInterval(function() { hcNav(1); }, 5000);
+    }
+
+    function init() {
+        fetch('/api/listings?isActive=true&limit=8&includeAllCities=true')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                listings = (data.data || []).filter(function(l) { return l.images && l.images.length; });
+                if (!listings.length) return;
+                idx = 0;
+                renderCard(listings[0]);
+                resetTimer();
+            })
+            .catch(function() { /* keep static fallback */ });
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+})();
+

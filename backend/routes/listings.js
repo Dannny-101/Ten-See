@@ -61,7 +61,8 @@ router.get('/', async (req, res) => {
     try {
         const { 
             city, area, university, propertyType, minPrice, maxPrice, 
-            bedrooms, amenities, search, isActive, includeAllCities 
+            bedrooms, amenities, search, isActive, includeAllCities,
+            isFeatured, limit
         } = req.query;
 
         let query = {};
@@ -84,6 +85,7 @@ router.get('/', async (req, res) => {
         if (propertyType) query.propertyType = propertyType;
         if (bedrooms) query.bedrooms = parseInt(bedrooms);
         if (amenities) query.amenities = { $in: amenities.split(',') };
+        if (isFeatured !== undefined) query.isFeatured = isFeatured === 'true';
 
         if (minPrice || maxPrice) {
             query.price = {};
@@ -100,7 +102,9 @@ router.get('/', async (req, res) => {
             ];
         }
 
-        const listings = await Listing.find(query).sort({ isFeatured: -1, createdAt: -1 });
+        let q = Listing.find(query).sort({ isFeatured: -1, createdAt: -1 });
+        if (limit) q = q.limit(parseInt(limit));
+        const listings = await q;
         
         // Calculate total rooms across all listings
         const totalRoomsAvailable = listings.reduce((sum, listing) => sum + (listing.availableRooms || 0), 0);

@@ -37,7 +37,7 @@
         <div class="nav-container">
             <a href="/" class="logo" target="_self" aria-label="Ten&See home"><img id="navLogo" src="/assets/logo-dm.png" alt="Ten&See logo"><span class="logo-text">Ten<span>&</span>See</span></a>
             <ul class="nav-links" id="navLinks">
-                <li><a href="/" target="_self">Homepage</a></li>
+                <li><a href="/" target="_self" aria-current="page">Homepage</a></li>
                 <li><a href="/listings.html" target="_self">Rent a Room</a></li>
                 <li><a href="#contact" target="_self">Contact</a></li>
                 <li><a href="#about" target="_self">About Us</a></li>
@@ -107,30 +107,37 @@
                 </div>
             </div>
             <div class="hero-visual" data-aos="fade-left">
-                <!-- Enhanced Hero Popup Card with Rich Details -->
-                <div class="hero-card-main">
-                    <div class="hc-img">
-                        <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80" alt="Modern studio apartment with city view">
-                        <div class="hc-img-overlay">
-                            <span class="hc-img-badge">Just Listed</span>
+                <div class="hero-card-wrapper">
+                    <button class="hc-nav hc-nav-prev" onclick="hcNav(-1)" aria-label="Previous listing"><i class="fas fa-chevron-left"></i></button>
+                    <button class="hc-nav hc-nav-next" onclick="hcNav(1)" aria-label="Next listing"><i class="fas fa-chevron-right"></i></button>
+                    <div class="hero-card-main" id="heroCard">
+                        <div class="hc-img">
+                            <img id="hcImg" src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80" alt="Listing">
+                            <div class="hc-img-overlay">
+                                <span class="hc-img-badge" id="hcBadge">Just Listed</span>
+                            </div>
+                        </div>
+                        <span class="hc-badge"><i class="fas fa-star"></i> Featured Listing</span>
+                        <div class="hc-title" id="hcTitle">Premium Studio with City View</div>
+                        <div class="hc-location" id="hcLocation"><i class="fas fa-map-marker-alt"></i> 5 min walk to Taylor's University • Subang Jaya</div>
+                        <div class="hc-details" id="hcDetails">
+                            <div class="hc-detail"><i class="fas fa-bed"></i> Studio</div>
+                            <div class="hc-detail"><i class="fas fa-bath"></i> 1 Bath</div>
+                            <div class="hc-detail"><i class="fas fa-wifi"></i> WiFi</div>
+                            <div class="hc-detail"><i class="fas fa-snowflake"></i> AC</div>
+                        </div>
+                        <div class="hc-price" id="hcPrice">RM 1,200 <span>/ month</span></div>
+                        <div class="hc-amenities" id="hcAmenities">
+                            <div class="hc-amenity" title="Gym"><i class="fas fa-dumbbell"></i></div>
+                            <div class="hc-amenity" title="Swimming Pool"><i class="fas fa-swimming-pool"></i></div>
+                            <div class="hc-amenity" title="24/7 Security"><i class="fas fa-shield-alt"></i></div>
+                            <div class="hc-amenity" title="Parking"><i class="fas fa-car"></i></div>
+                            <div class="hc-amenity" title="Laundry"><i class="fas fa-tshirt"></i></div>
                         </div>
                     </div>
-                    <span class="hc-badge"><i class="fas fa-star"></i> Featured Listing</span>
-                    <div class="hc-title">Premium Studio with City View</div>
-                    <div class="hc-location"><i class="fas fa-map-marker-alt"></i> 5 min walk to Taylor's University • Subang Jaya</div>
-                    <div class="hc-details">
-                        <div class="hc-detail"><i class="fas fa-bed"></i> Studio</div>
-                        <div class="hc-detail"><i class="fas fa-bath"></i> 1 Bath</div>
-                        <div class="hc-detail"><i class="fas fa-wifi"></i> WiFi</div>
-                        <div class="hc-detail"><i class="fas fa-snowflake"></i> AC</div>
-                    </div>
-                    <div class="hc-price">RM 1,200 <span>/ month</span></div>
-                    <div class="hc-amenities">
-                        <div class="hc-amenity" title="Gym"><i class="fas fa-dumbbell"></i></div>
-                        <div class="hc-amenity" title="Swimming Pool"><i class="fas fa-swimming-pool"></i></div>
-                        <div class="hc-amenity" title="24/7 Security"><i class="fas fa-shield-alt"></i></div>
-                        <div class="hc-amenity" title="Parking"><i class="fas fa-car"></i></div>
-                        <div class="hc-amenity" title="Laundry"><i class="fas fa-tshirt"></i></div>
+                    <div class="hc-dots-row">
+                        <div class="hc-dots" id="hcDots"></div>
+                        <div class="hc-counter" id="hcCounter"></div>
                     </div>
                 </div>
                 <div class="float-badge fb-top" data-aos="fade-down" data-aos-delay="300">
@@ -187,7 +194,7 @@
     </div>
 
     <!-- ── FEATURED LISTINGS ── -->
-    <section class="section" id="listings" style="padding-top:0;">
+    <section class="section section-dark" id="listings" style="padding-top:0;">
         <div class="section-inner">
             <div class="section-header-row" data-aos="fade-up">
                 <div>
@@ -512,28 +519,11 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-    <!-- Cookie Banner -->
-    <div id="cookieBanner" style="position:fixed;bottom:0;left:0;right:0;background:rgba(26,26,46,0.98);backdrop-filter:blur(20px);border-top:1px solid rgba(201,168,76,0.2);z-index:10000;transform:translateY(100%);transition:transform 0.6s cubic-bezier(0.16,1,0.3,1);font-family:'League Spartan',sans-serif;">
-        <div style="max-width:1200px;margin:0 auto;padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;">
-            <div style="display:flex;align-items:flex-start;gap:1rem;flex:1;">
-                <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,rgba(201,168,76,0.2),rgba(240,217,160,0.2));border:1px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#c9a84c;flex-shrink:0;">
-                    <i class="fas fa-cookie-bite"></i>
-                </div>
-                <div>
-                    <h4 style="font-family:'League Spartan',sans-serif;font-size:1.1rem;font-weight:600;color:#f8fafc;margin:0 0 0.5rem 0;">We value your privacy</h4>
-                    <p style="font-size:0.9rem;color:#64748b;line-height:1.6;margin:0;max-width:600px;">We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic.</p>
-                </div>
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-shrink:0;">
-                <button onclick="acceptEssential()" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.75rem 1.25rem;border-radius:10px;font-weight:600;font-size:0.875rem;cursor:pointer;transition:all 0.3s;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#94a3b8;">Essential Only</button>
-                <button onclick="acceptAll()" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.75rem 1.25rem;border-radius:10px;font-weight:600;font-size:0.875rem;cursor:pointer;transition:all 0.3s;border:none;background:linear-gradient(135deg,#c9a84c,#B8954A);color:#1a1a2e;box-shadow:0 4px 15px rgba(201,168,76,0.3);">Accept All</button>
-            </div>
-        </div>
-    </div>
 
     <!-- Hero Slideshow JavaScript -->
 
     <script src="/app.js"></script>
+    <script src="/cookie-consent.js"></script>
 </body>
 </html>
 

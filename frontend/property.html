@@ -34,18 +34,15 @@
         body { font-family: 'League Spartan', sans-serif; background: var(--color-bg); color: var(--color-text-main); min-height: 100vh; }
 
         /* NAV - Fixed dark green like homepage */
-        .nav { position: sticky; top: 0; z-index: 100; background: #386641; backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between; }
-        .nav-back { display: flex; align-items: center; gap: 0.5rem; color: rgba(255,255,255,0.7); font-size: 0.9rem; font-weight: 500; text-decoration: none; transition: color 0.2s; }
+        .nav { position: sticky; top: 0; z-index: 100; background: var(--surface); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+        .nav-back { display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; text-decoration: none; transition: color 0.2s; }
         .nav-back:hover { color: var(--color-accent); }
         .logo { font-family: 'League Spartan', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--gold); text-decoration: none; display: inline-flex; align-items: center; }
         .logo img { width: 48px; height: 48px; object-fit: contain; display: block; border-radius: 0; background: transparent; }
         .logo-text { font-family: 'League Spartan', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--text); margin-left: 0.5rem; letter-spacing: -0.02em; display: flex; align-items: center; }
         .logo-text span { color: var(--color-accent); font-weight: 700; }
-        /* Theme toggle - inherits rounded square from theme.css, override colors for dark nav */
-        .nav .theme-toggle { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; }
+        .nav .theme-toggle { border-color: var(--border); background: transparent; color: var(--text-muted); }
         .nav .theme-toggle:hover { border-color: var(--color-accent); color: var(--color-accent); }
-        [data-theme="light"] .nav .theme-toggle { color: rgba(255,255,255,0.8); }
-        [data-theme="light"] .nav .theme-toggle:hover { color: var(--color-accent); }
 
         /* HERO */
         .property-hero { position: relative; height: 420px; overflow: hidden; background: var(--color-primary); }
