@@ -2196,6 +2196,9 @@
         document.addEventListener('DOMContentLoaded', () => {
             initIntro();
             initBannerLoop();
+            document.querySelectorAll('.grid-size-btn').forEach(btn => {
+                btn.addEventListener('click', () => setGridSize(parseInt(btn.dataset.cols)));
+            });
         });
 
         // ── BANNER LOOP ANIMATION ──
@@ -2381,10 +2384,16 @@
         function setGridSize(cols) {
             currentGridCols = cols;
             const grid = document.getElementById('listingsGrid');
+            if (!grid) return;
             grid.style.setProperty('--grid-cols', cols);
             document.querySelectorAll('.grid-size-btn').forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.dataset.cols) === cols);
+                const active = parseInt(btn.dataset.cols) === cols;
+                btn.classList.toggle('active', active);
+                btn.setAttribute('aria-pressed', active ? 'true' : 'false');
             });
+            // Refresh current view so AOS recalculates if needed
+            if (currentView === 'rooms') applyFilters();
+            else renderProperties(allProperties);
         }
 
         function setView(view) {
@@ -2423,8 +2432,12 @@
                 console.error('Error loading properties:', e);
                 allProperties = [];
             }
-            // Default: Properties view
-            renderProperties(allProperties);
+            // Default: Properties view, but fallback to rooms if properties are empty and listings exist
+            if (allProperties.length === 0 && allListings.length > 0) {
+                setView('rooms');
+            } else {
+                renderProperties(allProperties);
+            }
         }
 
         async function loadFilterOptions() {
