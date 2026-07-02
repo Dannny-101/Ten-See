@@ -1111,6 +1111,51 @@ html { scroll-behavior: smooth; }
         [data-theme="light"] .cta-section .section-desc  { color: rgba(0,0,0,0.65) !important; }
         [data-theme="light"] .cta-section .section-label { background: rgba(0,0,0,0.08); border-color: rgba(0,0,0,0.12); color: var(--color-primary); }
 
+        /* ── PLACEHOLDER SECTION ── */
+        .placeholder-section {
+            background: var(--color-surface);
+            padding: 5rem 2rem;
+            min-height: 360px;
+        }
+
+        /* ── HOME MORE CONTENT REVEAL ── */
+        .home-more-content {
+            display: none;
+        }
+        .home-more-content.revealed {
+            display: block;
+            animation: revealMore 0.55s ease-out;
+        }
+        @keyframes revealMore {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .view-more-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 2.5rem;
+        }
+        .btn-view-more {
+            background: transparent;
+            color: var(--color-accent);
+            border: 1.5px solid var(--color-accent);
+            border-radius: 100px;
+            padding: 0.75rem 1.75rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .btn-view-more:hover {
+            background: var(--color-accent);
+            color: var(--color-primary);
+            box-shadow: 0 0 18px var(--gold-glow);
+        }
+        .btn-view-more i { transition: transform 0.2s ease; }
+        .btn-view-more:hover i { transform: translateY(2px); }
+
         /* Dark mode: flat dark tones, two alternating levels */
         [data-theme="dark"] .search-section   { background: #13161d; }
         [data-theme="dark"] #listings          { background: #0d1117; }

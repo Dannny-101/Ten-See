@@ -968,6 +968,20 @@ AOS.init({ duration: 600, once: true, offset: 60 });
 
 /* ===== block ===== */
 
+// Reveal hidden homepage sections below Our Coverage
+function revealHomeMore() {
+    const more = document.getElementById('homeMoreContent');
+    const btn = document.getElementById('viewMoreBtn');
+    if (!more) return;
+    more.classList.add('revealed');
+    if (btn) btn.style.display = 'none';
+    const first = more.querySelector('section');
+    if (first) {
+        setTimeout(() => first.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    }
+    if (window.AOS) AOS.refresh();
+}
+
 // HERO SLIDESHOW SYSTEM
         // Automatically cycles through hero background slides every 6 seconds
         // Configurable: Change slideInterval (ms) to adjust rotation speed
