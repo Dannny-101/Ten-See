@@ -1057,7 +1057,7 @@ AOS.init({ duration: 600, once: true, offset: 60 });
         fetch('/api/listings?isActive=true&limit=8&includeAllCities=true')
             .then(function(r) { return r.json(); })
             .then(function(data) {
-                listings = (data.data || []).filter(function(l) { return l.images && l.images.length; });
+                listings = (data.data || []);
                 if (!listings.length) return;
                 idx = 0;
                 renderCard(listings[0]);
@@ -1066,6 +1066,10 @@ AOS.init({ duration: 600, once: true, offset: 60 });
             .catch(function() { /* keep static fallback */ });
     }
 
-    document.addEventListener('DOMContentLoaded', init);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 })();
 
