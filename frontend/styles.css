@@ -501,8 +501,6 @@ html { scroll-behavior: smooth; }
         .search-section {
             padding: 0 2rem;
             position: relative; z-index: 10;
-            margin-top: 0;
-            margin-bottom: -3.5rem;
         }
         .search-card {
             max-width: 900px; margin: 0 auto;
